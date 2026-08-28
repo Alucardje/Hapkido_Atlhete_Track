@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Medición del Atleta de Hapkido</title>
+    <!-- PWA Manifest & Mobile Meta Tags -->
+    <meta name="theme-color" content="#00b4d8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HapkidoTracker">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- Local Fonts: Outfit (modern sans-serif) & Orbitron (for digital scores) -->
+    <link rel="stylesheet" href="vendor/fonts/fonts.css">
+    <!-- Local FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
+    <!-- Local Chart.js for interactive analytics -->
+    <script src="vendor/chartjs/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260828-1">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-yin-yang fa-spin"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>HAPKIDO</h2>
+                    <p>MEDICIÓN DEL ATLETA</p>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <!-- Dashboard -->
+                <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Atletas Dropdown Group -->
+                <div class="nav-group" id="group-atletas">
+                    <button type="button" class="nav-group-header" onclick="app.toggleNavGroup('group-atletas')">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Atletas</span>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="nav-group-items">
+                        <a href="#atletas" class="nav-subitem" id="nav-atletas">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>Gestión Atletas</span>
+                        </a>
+                        <a href="#historial" class="nav-subitem" id="nav-historial">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>Historial / Gráficos</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mediciones Dropdown Group -->
+                <div class="nav-group" id="group-mediciones">
+                    <button type="button" class="nav-group-header" onclick="app.toggleNavGroup('group-mediciones')">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <span>Mediciones</span>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="nav-group-items">
+                        <a href="#fisica" class="nav-subitem" id="nav-fisica">
+                            <i class="fa-solid fa-notes-medical"></i>
+                            <span>Medición Física</span>
+                        </a>
+                        <a href="#combate" class="nav-subitem" id="nav-combate">
+                            <i class="fa-solid fa-user-ninja"></i>
+                            <span>Medición Combate</span>
+                        </a>
+                        <a href="#examenes" class="nav-subitem" id="nav-examenes">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Exámenes de Cinta</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Organización Dropdown Group -->
+                <div class="nav-group" id="group-organizacion">
+                    <button type="button" class="nav-group-header" onclick="app.toggleNavGroup('group-organizacion')">
+                        <i class="fa-solid fa-school"></i>
+                        <span>Organización</span>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="nav-group-items">
+                        <a href="#escuelas" class="nav-subitem" id="nav-escuelas">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Escuelas / Dojangs</span>
+                        </a>
+                        <a href="#torneos" class="nav-subitem" id="nav-torneos">
+                            <i class="fa-solid fa-trophy"></i>
+                            <span>Torneos y Topes</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Manual -->
+                <a href="#manual" class="nav-item" id="nav-manual">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Manual de Estudio</span>
+                </a>
+
+                <!-- Configuración Dropdown Group -->
+                <div class="nav-group" id="group-configuracion">
+                    <button type="button" class="nav-group-header" onclick="app.toggleNavGroup('group-configuracion')">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Configuración</span>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </button>
+                    <div class="nav-group-items">
+                        <a href="#usuarios" class="nav-subitem" id="nav-usuarios">
+                            <i class="fa-solid fa-users-gear"></i>
+                            <span>Gestión Usuarios</span>
+                        </a>
+                        <a href="#ajustes" class="nav-subitem" id="nav-ajustes">
+                            <i class="fa-solid fa-gears"></i>
+                            <span>Respaldos / Ajustes</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>FEVEHAPKIDO 2026</p>
+                <small>Reglamento Oficial</small>
+                <button class="logout-btn" onclick="app.logout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <div class="user-active-badge" id="header-user-badge" style="display: none;">
+                        <i class="fa-solid fa-user-ninja" id="header-user-icon"></i>
+                        <div class="user-active-details">
+                            <span class="user-active-name" id="header-user-name">--</span>
+                            <span class="user-active-meta" id="header-user-meta">--</span>
+                        </div>
+                    </div>
+                    <div class="datetime">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span id="current-date">--/--/----</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="section-dashboard" class="app-section active">
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Atletas</h3>
+                            <p class="stat-value" id="stat-total-atletas">0</p>
+                        </div>
+                        <div class="stat-icon bg-blue">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Modalidad Deportiva</h3>
+                            <p class="stat-value" id="stat-atletas-deportivo">0</p>
+                        </div>
+                        <div class="stat-icon bg-cyan">
+                            <i class="fa-solid fa-medal"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Defensa Personal</h3>
+                            <p class="stat-value" id="stat-atletas-tradicional">0</p>
+                        </div>
+                        <div class="stat-icon bg-gold">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Mediciones Registradas</h3>
+                            <p class="stat-value" id="stat-total-mediciones">0</p>
+                        </div>
+                        <div class="stat-icon bg-purple">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Quick Actions -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-bolt"></i> Acciones Rápidas</h2>
+                        </div>
+                        <div class="panel-body quick-actions-grid">
+                            <button class="action-btn" onclick="app.navigateTo('atletas')">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Nuevo Atleta</span>
+                            </button>
+                            <button class="action-btn" onclick="app.navigateTo('combate')">
+                                <i class="fa-solid fa-circle-play"></i>
+                                <span>Evaluar Combate</span>
+                            </button>
+                            <button class="action-btn" onclick="app.navigateTo('fisica')">
+                                <i class="fa-solid fa-calculator"></i>
+                                <span>Ficha de Evaluación</span>
+                            </button>
+                            <button class="action-btn" onclick="app.navigateTo('historial')">
+                                <i class="fa-solid fa-chart-simple"></i>
+                                <span>Ver Gráficos</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Top Athletes Card -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-ranking-star"></i> Atletas Recientes</h2>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="recent-list" id="recent-athletes-list">
+                                <li class="empty-list">No hay atletas registrados. ¡Registra uno en la pestaña Atletas!</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Attention Card: athletes with stale or missing measurements -->
+                    <div id="athletes-attention-card" class="panel-card mt-20 instructor-only" style="display:none; border-left: 3px solid #f59e0b;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i> Atletas que Requieren Atención</h2>
+                        </div>
+                        <div class="panel-body">
+                            <div id="athletes-attention-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista de Atleta (Se muestra dinámicamente si el rol es Atleta) -->
+                <div id="athlete-dashboard-view" class="athlete-only mt-20" style="display: none;">
+                    <div class="athlete-profile-banner">
+                        <div class="ath-banner-avatar">
+                            <i class="fa-solid fa-user-ninja"></i>
+                        </div>
+                        <div class="ath-banner-details">
+                            <h2 id="ath-dash-name">--</h2>
+                            <p><span id="ath-dash-belt" class="badge">--</span> • <span id="ath-dash-school">--</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid mt-20">
+                        <!-- Ficha Rápida -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-id-card"></i> Información Personal</h2>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="info-list">
+                                    <li><strong>Edad:</strong> <span id="ath-dash-age">--</span></li>
+                                    <li><strong>Género:</strong> <span id="ath-dash-gender">--</span></li>
+                                    <li><strong>Peso actual:</strong> <span id="ath-dash-weight">--</span></li>
+                                    <li><strong>Categoría / División:</strong> <span id="ath-dash-category">--</span></li>
+                                    <li><strong>Experiencia:</strong> <span id="ath-dash-exp">--</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Último Test Fisiológico -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-heart-pulse"></i> Última Evaluación</h2>
+                            </div>
+                            <div class="panel-body" id="ath-dash-phys-summary">
+                                <div class="empty-list">No hay evaluaciones físicas registradas.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plan de Entrenamiento Personalizado -->
+                    <div class="panel-card mt-20" id="ath-dash-plan-card" style="display: none;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-dumbbell"></i> Plan de Entrenamiento Adaptado</h2>
+                        </div>
+                        <div class="panel-body" id="ath-dash-plan-content">
+                            <!-- Dinámico -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Atletas Section -->
+            <section id="section-atletas" class="app-section">
+                <div class="section-actions">
+                    <button class="primary-btn" id="btn-new-athlete"><i class="fa-solid fa-user-plus"></i> Nuevo Atleta</button>
+                </div>
+
+                <div class="panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-list"></i> Listado de Atletas</h2>
+                    </div>
+                    <div class="panel-body table-responsive">
+                        <table class="data-table" id="athletes-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Edad</th>
+                                    <th>Género</th>
+                                    <th>Cinturón</th>
+                                    <th>Peso / Est.</th>
+                                    <th>Modalidad</th>
+                                    <th>Categoría / División</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Atletas Inactivos (Histórico) -->
+                <div id="inactive-athletes-section" class="panel-card mt-20" style="display:none; border-left: 3px solid var(--text-muted);">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-user-slash" style="color:var(--text-muted);"></i> Atletas Inactivos <small style="font-size:13px; font-weight:400; color:var(--text-muted);">(Historial conservado)</small></h2>
+                    </div>
+                    <div class="panel-body table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Cinturón</th>
+                                    <th>Escuela</th>
+                                    <th>Desactivado</th>
+                                    <th>Historial</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal para Nuevo Atleta -->
+                <div class="modal" id="athlete-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="athlete-modal-title">Agregar Nuevo Atleta</h2>
+                            <span class="close-modal" id="close-athlete-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="athlete-form">
+                                <input type="hidden" id="athlete-id">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="athlete-name">Nombre Completo</label>
+                                        <input type="text" id="athlete-name" required placeholder="Ej: Juan Pérez">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="athlete-birthdate">Fecha de Nacimiento</label>
+                                        <input type="date" id="athlete-birthdate" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="athlete-gender">Género (Rama)</label>
+                                        <select id="athlete-gender" required>
+                                            <option value="MASCULINO">Masculino</option>
+                                            <option value="FEMENINO">Femenino</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="athlete-belt">Cinturón (Grado)</label>
+                                        <select id="athlete-belt" required>
+                                            <option value="Blanco">Blanco</option>
+                                            <option value="Amarillo">Amarillo</option>
+                                            <option value="Naranja">Naranja</option>
+                                            <option value="Verde">Verde</option>
+                                            <option value="Azul">Azul</option>
+                                            <option value="Morado">Morado</option>
+                                            <option value="Rojo">Rojo</option>
+                                            <option value="Marrón">Marrón</option>
+                                            <option value="Negro 1er Dan">Negro 1er Dan</option>
+                                            <option value="Negro 2do Dan">Negro 2do Dan</option>
+                                            <option value="Negro 3er Dan">Negro 3er Dan</option>
+                                            <option value="Negro 4to Dan">Negro 4to Dan</option>
+                                            <option value="Negro 5to Dan">Negro 5to Dan</option>
+                                            <option value="Negro 6to Dan">Negro 6to Dan</option>
+                                            <option value="Negro 7mo Dan">Negro 7mo Dan</option>
+                                            <option value="Negro 8vo Dan">Negro 8vo Dan</option>
+                                            <option value="Negro 9no Dan">Negro 9no Dan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="athlete-weight">Peso actual (kg)</label>
+                                        <input type="number" id="athlete-weight" step="0.1" placeholder="Ej: 65.5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="athlete-height">Estatura actual (cm)</label>
+                                        <input type="number" id="athlete-height" step="1" placeholder="Ej: 171">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="athlete-experience">Nivel de Experticia</label>
+                                        <select id="athlete-experience" required>
+                                            <option value="PRINCIPIANTE">Principiante (Blanco a Verde)</option>
+                                            <option value="INTERMEDIO">Intermedio (Azul a Rojo)</option>
+                                            <option value="AVANZADO">Avanzado (Negro)</option>
+                                            <option value="MASTER">Master (Grados superiores)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="athlete-school">Escuela / Dojang</label>
+                                        <select id="athlete-school" required>
+                                            <!-- Dinámico -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group" id="ayudante-group" style="display: none; justify-content: center; align-items: center; height: 100%; padding-top: 25px;">
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="checkbox" id="athlete-is-ayudante">
+                                            <span>Instructor en Entrenamiento</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Modalidad de Enseñanza</label>
+                                    <div class="radio-checkbox-group">
+                                        <label><input type="checkbox" id="mod-tradicional" checked> Tradicional (Defensa Personal)</label>
+                                        <label><input type="checkbox" id="mod-deportivo" checked> Deportivo (Competitivo)</label>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn-cancel" id="btn-cancel-athlete">Cancelar</button>
+                                    <button type="submit" class="primary-btn">Guardar Atleta</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Medición Combate Section -->
+            <section id="section-combate" class="app-section">
+                <div class="combate-setup">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-gears"></i> Configuración de la Evaluación de Combate</h2>
+                        </div>
+                        <div class="panel-body form-row align-end">
+                            <div class="form-group flex-2">
+                                <label for="combate-athlete-select">Seleccionar Atleta Deportivo</label>
+                                <select id="combate-athlete-select">
+                                    <option value="">-- Seleccione un atleta deportivo --</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-2">
+                                <label for="combate-opponent-select">Seleccionar Oponente (Rojo)</label>
+                                <select id="combate-opponent-select">
+                                    <option value="">-- Seleccione un oponente --</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="combate-stage">Tipo de Combate</label>
+                                <select id="combate-stage">
+                                    <option value="ELIMINATORIA">Fase Eliminatoria</option>
+                                    <option value="FINAL">Final</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <button class="primary-btn w-full" id="btn-start-scoring" disabled>Iniciar Puntuación</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Scoreboard Interface -->
+                <div id="scoreboard-container" class="scoreboard-container hidden">
+                    <div class="scoreboard-header">
+                        <div class="athlete-display">
+                            <span class="badge" id="score-category">Categoría: --</span>
+                            <span class="badge" id="score-weight-div">División: --</span>
+                        </div>
+                        <div class="combat-timer-panel">
+                            <div class="timer-title" id="score-round-title">ROUND 1</div>
+                            <div class="timer-display" id="timer-display">02:00</div>
+                            <div class="timer-controls">
+                                <button class="timer-btn" id="btn-timer-play"><i class="fa-solid fa-play"></i></button>
+                                <button class="timer-btn" id="btn-timer-reset"><i class="fa-solid fa-rotate-left"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scoreboard-board">
+                        <!-- Blue Competitor (Our Athlete) -->
+                        <div class="competitor blue-side">
+                            <h2 id="score-blue-name">ATLETA AZUL (EVALUADO)</h2>
+                            <div class="total-score" id="score-blue-total">0</div>
+                            <div class="penalties-display">
+                                <div class="penalty-box">
+                                    <span class="penalty-label">KYONGOS (Amonestaciones)</span>
+                                    <div class="penalty-count" id="score-blue-kyongo">0</div>
+                                </div>
+                                <div class="penalty-box">
+                                    <span class="penalty-label">GANCHOMS (Deducciones)</span>
+                                    <div class="penalty-count" id="score-blue-ganchom">0</div>
+                                </div>
+                            </div>
+                            <div class="scoring-controls">
+                                <h3>Registrar Puntos</h3>
+                                <div class="scoring-btns">
+                                    <button class="score-btn plus-1" onclick="app.addScore('blue', 1, 'Golpe/Patada simple')">+1 Punto</button>
+                                    <button class="score-btn plus-2" onclick="app.addScore('blue', 2, 'Giro / Cabeza / Barrido 1 pie')">+2 Puntos</button>
+                                    <button class="score-btn plus-3" onclick="app.addScore('blue', 3, 'Giro Cabeza / Barrido 2 pies / Proyección / Sumisión 10s')">+3 Puntos</button>
+                                </div>
+                                <h3>Penalizaciones</h3>
+                                <div class="scoring-btns">
+                                    <button class="score-btn kyongo-btn" onclick="app.addPenalty('blue', 'kyongo')">+1 Kyongo (Falta leve)</button>
+                                    <button class="score-btn ganchom-btn" onclick="app.addPenalty('blue', 'ganchom')">+1 Ganchom (-1 Punto)</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Red Competitor (Opponent) -->
+                        <div class="competitor red-side">
+                            <h2 id="score-red-name">OPONENTE (ROJO)</h2>
+                            <div class="total-score" id="score-red-total">0</div>
+                            <div class="penalties-display">
+                                <div class="penalty-box">
+                                    <span class="penalty-label">KYONGOS</span>
+                                    <div class="penalty-count" id="score-red-kyongo">0</div>
+                                </div>
+                                <div class="penalty-box">
+                                    <span class="penalty-label">GANCHOMS</span>
+                                    <div class="penalty-count" id="score-red-ganchom">0</div>
+                                </div>
+                            </div>
+                            <div class="scoring-controls">
+                                <h3>Registrar Puntos</h3>
+                                <div class="scoring-btns">
+                                    <button class="score-btn plus-1" onclick="app.addScore('red', 1, 'Golpe/Patada simple')">+1 Punto</button>
+                                    <button class="score-btn plus-2" onclick="app.addScore('red', 2, 'Giro / Cabeza / Barrido 1 pie')">+2 Puntos</button>
+                                    <button class="score-btn plus-3" onclick="app.addScore('red', 3, 'Giro Cabeza / Barrido 2 pies / Proyección / Sumisión 10s')">+3 Puntos</button>
+                                </div>
+                                <h3>Penalizaciones</h3>
+                                <div class="scoring-btns">
+                                    <button class="score-btn kyongo-btn" onclick="app.addPenalty('red', 'kyongo')">+1 Kyongo (Falta leve)</button>
+                                    <button class="score-btn ganchom-btn" onclick="app.addPenalty('red', 'ganchom')">+1 Ganchom (-1 Punto)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Log de Acciones del Round -->
+                    <div class="combat-actions-log">
+                        <div class="panel-header">
+                            <h3>Historial de Puntos del Round</h3>
+                        </div>
+                        <div class="panel-body log-list" id="combat-log-list">
+                            <!-- Dinámico -->
+                        </div>
+                    </div>
+
+                    <!-- Panel de Navegación de Rounds y Cierre -->
+                    <div class="scoreboard-footer">
+                        <button class="sec-btn" id="btn-score-prev-round" disabled>Round Anterior</button>
+                        <button class="primary-btn" id="btn-score-next-round">Siguiente Round</button>
+                        <button class="danger-btn" id="btn-score-end-fight">Finalizar Combate</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Medición Física Section -->
+            <section id="section-fisica" class="app-section">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-heart-pulse"></i> Registro de Ficha Fisiológica y Pruebas Técnicas</h2>
+                    </div>
+                    <div class="panel-body">
+                        <form id="physical-test-form">
+                            <div class="form-row">
+                                <div class="form-group flex-2">
+                                    <label for="physical-athlete-select">Seleccionar Atleta</label>
+                                    <select id="physical-athlete-select" required>
+                                        <option value="">-- Seleccione un atleta --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label for="physical-date">Fecha de la Prueba</label>
+                                    <input type="date" id="physical-date" required>
+                                </div>
+                            </div>
+
+                            <!-- Composición Corporal -->
+                            <!-- Composición Corporal y Antropometría Marcial -->
+                            <div class="sub-section-title"><i class="fa-solid fa-ruler-combined"></i> Composición Corporal y Antropometría Marcial</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-height">Estatura de Evaluación (cm)</label>
+                                    <input type="number" id="fit-height" min="50" max="250" placeholder="Ej: 171">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-weight">Peso de Evaluación (kg)</label>
+                                    <input type="number" id="fit-weight" min="10" max="250" step="0.1" placeholder="Ej: 83.0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-waist">Circunferencia de Cintura (cm)</label>
+                                    <input type="number" id="fit-waist" min="30" max="200" step="0.1" placeholder="Ej: 85">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-fat">Grasa Corporal (%)</label>
+                                    <input type="number" id="fit-fat" min="1" max="60" step="0.1" placeholder="Auto" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-wingspan">Envergadura de Brazos (cm)</label>
+                                    <input type="number" id="fit-wingspan" min="50" max="260" step="0.1" placeholder="Ej: 176">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Punta a punta con brazos extendidos (Alcance de combate).</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-neck">Circunferencia de Cuello (cm)</label>
+                                    <input type="number" id="fit-neck" min="20" max="70" step="0.1" placeholder="Ej: 39.5">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Protección cervical ante impactos y estrangulamientos.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-thigh">Perímetro de Muslo (cm)</label>
+                                    <input type="number" id="fit-thigh" min="25" max="100" step="0.1" placeholder="Ej: 56.0">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Medido a 15 cm sobre la rótula (Potencia de pateo).</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-skinfold-tri">Pliegue Tríceps (mm) <small>(Opcional)</small></label>
+                                    <input type="number" id="fit-skinfold-tri" min="2" max="60" step="0.5" placeholder="Ej: 12.0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-skinfold-abd">Pliegue Abdominal (mm) <small>(Opcional)</small></label>
+                                    <input type="number" id="fit-skinfold-abd" min="2" max="70" step="0.5" placeholder="Ej: 18.5">
+                                </div>
+                            </div>
+
+                            <!-- Cardio Panel (Ruffier & FC Basal) -->
+                            <div class="sub-section-title"><i class="fa-solid fa-heart-pulse"></i> Evaluación Cardiovascular (Ruffier & FC Reposo)</div>
+                            <div class="alert-info-box">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>Test de Ruffier: 30 sentadillas en 45 segundos. FCR Basal: pulsaciones matutinas o tras 5 min de calma.</span>
+                            </div>
+                            <div class="form-row mt-10">
+                                <div class="form-group">
+                                    <label for="fit-rhr">FC en Reposo Basal (lpm)</label>
+                                    <input type="number" id="fit-rhr" min="30" max="120" placeholder="Ej: 58">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pulse-p1">P1: Pulso previo al test (lpm)</label>
+                                    <input type="number" id="pulse-p1" min="30" max="220" required placeholder="Ej: 62">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pulse-p2">P2: Pulso post-esfuerzo (lpm)</label>
+                                    <input type="number" id="pulse-p2" min="30" max="220" required placeholder="Ej: 115">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pulse-p3">P3: Pulso recuperación 1 min (lpm)</label>
+                                    <input type="number" id="pulse-p3" min="30" max="220" required placeholder="Ej: 72">
+                                </div>
+                            </div>
+                            <div class="ruffier-result-panel" id="ruffier-result-panel">
+                                <span>Índice de Ruffier: <strong id="ruffier-index-val">--</strong></span>
+                                <span class="badge" id="ruffier-level-badge">Estado: --</span>
+                            </div>
+
+                            <!-- Fuerza, Core y Resistencia Muscular -->
+                            <div class="sub-section-title"><i class="fa-solid fa-dumbbell"></i> Fuerza, Core y Resistencia Muscular</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-pushups">Flexiones de pecho (1 min - reps)</label>
+                                    <input type="number" id="fit-pushups" min="0" placeholder="Ej: 35">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-situps">Abdominales (1 min - reps)</label>
+                                    <input type="number" id="fit-situps" min="0" placeholder="Ej: 40">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-plank">Plancha Prona Isométrica (segundos)</label>
+                                    <input type="number" id="fit-plank" min="0" max="600" placeholder="Ej: 75">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-grip">Fuerza de Agarre / Suspensión en Barra (seg)</label>
+                                    <input type="number" id="fit-grip" min="0" placeholder="Ej: 60">
+                                </div>
+                            </div>
+
+                            <!-- Potencia Explosiva y Saltabilidad -->
+                            <div class="sub-section-title"><i class="fa-solid fa-bolt"></i> Potencia Explosiva y Saltabilidad</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-jump-vertical">Salto Vertical / Sargent Jump (cm)</label>
+                                    <input type="number" id="fit-jump-vertical" min="0" placeholder="Ej: 45">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-jump-horizontal">Salto Horizontal a Pies Juntos (cm)</label>
+                                    <input type="number" id="fit-jump-horizontal" min="0" max="400" placeholder="Ej: 210">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Potencia horizontal de piernas desde parado.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-cooper">Test de Cooper (Metros en 12 min)</label>
+                                    <input type="number" id="fit-cooper" min="0" placeholder="Ej: 2400">
+                                </div>
+                            </div>
+
+                            <!-- Flexibilidad, Equilibrio y Movilidad Articular -->
+                            <div class="sub-section-title"><i class="fa-solid fa-person-walking"></i> Flexibilidad, Movilidad y Equilibrio</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-flexibility">Flexibilidad Sit & Reach (cm)</label>
+                                    <input type="number" id="fit-flexibility" placeholder="Ej: 12">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-split">Flexibilidad Abductora / Split (cm al suelo)</label>
+                                    <input type="number" id="fit-split" min="0" placeholder="Ej: 15">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-kick-flex">Flexibilidad Activa de Patada (% Estatura)</label>
+                                    <input type="number" id="fit-kick-flex" min="30" max="180" step="0.5" placeholder="Ej: 110">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Altura máxima alcanzada con Naeryo/Ap Chagi sin asistencia.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-balance">Test del Flamenco / Equilibrio Unipodal (seg)</label>
+                                    <input type="number" id="fit-balance" min="0" max="300" placeholder="Ej: 35">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Estabilidad en un solo pie para precisión de patadas.</small>
+                                </div>
+                            </div>
+
+                            <!-- Velocidad, Agilidad y Reflejos de Combate -->
+                            <div class="sub-section-title"><i class="fa-solid fa-gauge-high"></i> Velocidad, Agilidad y Reflejos</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-agility">Velocidad 10m Planos (segundos)</label>
+                                    <input type="number" id="fit-agility" step="0.01" min="0" placeholder="Ej: 2.85">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-shuttle">Agilidad Shuttle Run 4×10m (segundos)</label>
+                                    <input type="number" id="fit-shuttle" step="0.01" min="0" placeholder="Ej: 10.40">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Desplazamientos y cambios bruscos de dirección.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-reaction">Tiempo de Reacción Técnica (segundos)</label>
+                                    <input type="number" id="fit-reaction" step="0.01" min="0" placeholder="Ej: 0.35">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Tiempo de respuesta motriz ante estímulo de ataque.</small>
+                                </div>
+                            </div>
+
+                            <!-- Específicas de Combate & Potencia Anaeróbica -->
+                            <div class="sub-section-title"><i class="fa-solid fa-hand-fist"></i> Rendimiento Específico de Combate</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fit-kick-speed">Velocidad de Patada FSKT (reps en 10 seg)</label>
+                                    <input type="number" id="fit-kick-speed" min="0" max="60" placeholder="Ej: 22">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Frecuencia e impacto continuo de Bandal Chagi al escudo.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fit-anaerobic">Potencia Anaeróbica / Ráfaga 30s (reps)</label>
+                                    <input type="number" id="fit-anaerobic" min="0" max="150" placeholder="Ej: 42">
+                                    <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Capacidad aláctica/láctica de encadenamiento técnico.</small>
+                                </div>
+                            </div>
+
+
+
+                            <!-- Specific Competitive Physical Tests (Sport Hapkido) -->
+                            <div class="deportivo-tests-block" id="deportivo-tests-block" style="display: none;">
+                                <div class="sub-section-title">Pruebas Competitivas Deportivas</div>
+                                <div class="form-row">
+                                    <div class="form-group" id="group-jump-long" style="display: none;">
+                                        <label for="jump-long">Salto Largo (metros)</label>
+                                        <input type="number" id="jump-long" step="0.01" min="0" placeholder="Ej: 2.10">
+                                    </div>
+                                    <div class="form-group" id="group-jump-high" style="display: none;">
+                                        <label for="jump-high">Salto Alto (metros)</label>
+                                        <input type="number" id="jump-high" step="0.01" min="0" placeholder="Ej: 1.25">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group" id="group-score-figures-sin" style="display: none;">
+                                        <label for="score-figures-sin">Figuras Sin Armas (Puntuación 1-10)</label>
+                                        <input type="number" id="score-figures-sin" step="0.1" min="0" max="10" placeholder="Ej: 8.5">
+                                    </div>
+                                    <div class="form-group" id="group-score-figures-con" style="display: none;">
+                                        <label for="score-figures-con">Figuras Con Armas (Puntuación 1-10)</label>
+                                        <input type="number" id="score-figures-con" step="0.1" min="0" max="10" placeholder="Ej: 8.0">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group" id="group-score-demo" style="display: none;">
+                                        <label for="score-demo">Demostraciones de Defensa Personal (Puntuación 1-10)</label>
+                                        <input type="number" id="score-demo" step="0.1" min="0" max="10" placeholder="Ej: 9.0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions mt-20">
+                                <button type="reset" class="btn-cancel">Limpiar</button>
+                                <button type="submit" class="primary-btn">Registrar Ficha</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exámenes de Cinta Section -->
+            <section id="section-examenes" class="app-section">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-graduation-cap"></i> Exámenes de Cinta y Currículum Técnico</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-row align-end">
+                            <div class="form-group flex-2">
+                                <label for="exam-athlete-select">Seleccionar Atleta para Examen</label>
+                                <select id="exam-athlete-select">
+                                    <option value="">-- Seleccione un atleta --</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <button class="primary-btn w-full" id="btn-load-exam" disabled>Cargar Currículum de Examen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exam Evaluation Form -->
+                <div class="panel-card mt-20 hidden" id="exam-evaluation-panel">
+                    <div class="panel-header">
+                        <h2 id="exam-title-text">Evaluación de Promoción de Cinturón</h2>
+                        <div class="belt-promotion-indicator">
+                            <span class="badge" id="exam-current-belt">Cinta Actual: --</span>
+                            <i class="fa-solid fa-angles-right"></i>
+                            <span class="badge" id="exam-target-belt" style="background-color: var(--primary-glow); color: var(--primary);">Siguiente Cinta: --</span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <form id="belt-exam-form">
+                            <div class="alert-info-box">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <span>El estudiante debe demostrar competencia en todas las técnicas correspondientes a su cinturón objetivo y repasar las de los rangos inferiores.</span>
+                            </div>
+
+                            <!-- Technical Curriculum Checklist -->
+                            <div class="sub-section-title">Lista de Chequeo de Currículum Técnico</div>
+                            <div id="exam-curriculum-checklist" class="curriculum-checklist-box">
+                                <p class="text-muted" style="text-align: center; font-size: 13px; margin: 0;">Carga un atleta para ver la lista de técnicas obligatorias y de repaso.</p>
+                            </div>
+
+                            <div class="sub-section-title">Bloques Técnicos a Evaluar</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="exam-strikes">Golpes y Defensas (Kwonbeop / Chigi) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-strikes" step="0.1" min="1" max="10" required placeholder="Ej: 8.0">
+                                    <small class="text-muted" id="curriculum-strikes-info">Detalles técnicas del cinturón...</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exam-kicks">Patadas (Chagi) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-kicks" step="0.1" min="1" max="10" required placeholder="Ej: 7.5">
+                                    <small class="text-muted" id="curriculum-kicks-info">Detalles técnicas del cinturón...</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="exam-locks">Llaves / Luxaciones (Koki / Guk) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-locks" step="0.1" min="1" max="10" required placeholder="Ej: 8.5">
+                                    <small class="text-muted" id="curriculum-locks-info">Detalles técnicas del cinturón...</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exam-throws">Proyecciones / Barridos (Chigi / Derribos) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-throws" step="0.1" min="1" max="10" required placeholder="Ej: 7.0">
+                                    <small class="text-muted" id="curriculum-throws-info">Detalles técnicas del cinturón...</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="exam-nakbeop">Caídas (Nakbeop) y Escapes de Agarre - Puntuación 1-10</label>
+                                    <input type="number" id="exam-nakbeop" step="0.1" min="1" max="10" required placeholder="Ej: 8.0">
+                                    <small class="text-muted" id="curriculum-nakbeop-info">Repaso de cinturones anteriores...</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exam-hyungs">Hyungs / Formas (Fluidez, Equilibrio y Potencia) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-hyungs" step="0.1" min="1" max="10" placeholder="Ej: 8.5">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="exam-hosinsul">Hosinsul / Defensa Personal (Tiempo Reacción/Eje/Centro) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-hosinsul" step="0.1" min="1" max="10" placeholder="Ej: 9.0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exam-weapons">Mu Do / Manejo de Armas (Dan Bong, Jang Bong, Kum) - Puntuación 1-10</label>
+                                    <input type="number" id="exam-weapons" step="0.1" min="1" max="10" placeholder="Ej: 8.0">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group flex-2">
+                                    <label for="exam-notes">Observaciones del Sabon / Evaluador</label>
+                                    <input type="text" id="exam-notes" placeholder="Ej: Demuestra buen equilibrio, mejorar la velocidad de giro.">
+                                </div>
+                            </div>
+
+                            <div class="form-actions mt-20">
+                                <button type="button" class="btn-cancel" onclick="document.getElementById('exam-evaluation-panel').classList.add('hidden')">Cancelar</button>
+                                <button type="submit" class="primary-btn"><i class="fa-solid fa-award"></i> Aprobar Examen y Promover Cinta</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Exam History List -->
+                <div class="panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-clock-rotate-left"></i> Historial de Exámenes y Promociones</h2>
+                    </div>
+                    <div class="panel-body table-responsive">
+                        <table class="data-table" id="exam-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Atleta</th>
+                                    <th>Cinta Anterior</th>
+                                    <th>Cinta Nueva</th>
+                                    <th>Calificación Promedio</th>
+                                    <th>Estado</th>
+                                    <th>Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Historial Section -->
+            <section id="section-historial" class="app-section">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-chart-line"></i> Análisis de Atleta</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group" style="max-width: 400px;">
+                            <label for="analysis-athlete-select">Seleccionar Atleta para Ver Progreso</label>
+                            <select id="analysis-athlete-select">
+                                <option value="">-- Seleccione un atleta --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-charts-container hidden" id="progress-charts-container">
+                    <!-- Ficha de Rendimiento Físico Reciente -->
+                    <div class="panel-card" id="athlete-physical-card" style="margin-bottom: 24px;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-heart-pulse"></i> Ficha de Rendimiento Físico Reciente</h2>
+                        </div>
+                        <div class="panel-body" id="athlete-physical-content">
+                            <!-- Dinámico -->
+                        </div>
+                    </div>
+
+                    <!-- Plan de Entrenamiento Recomendado -->
+                    <div class="panel-card" id="athlete-plan-card" style="margin-bottom: 24px;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-dumbbell"></i> Plan de Entrenamiento Personalizado</h2>
+                        </div>
+                        <div class="panel-body" id="athlete-plan-content">
+                            <!-- Dinámico -->
+                        </div>
+                    </div>
+
+                    <!-- GRUPO 1: ACONDICIONAMIENTO Y RENDIMIENTO FÍSICO (EL MÁS IMPORTANTE) -->
+                    <div class="charts-group-title">Acondicionamiento y Rendimiento Físico (Evaluación Regular)</div>
+                    <div class="dashboard-grid">
+                        <!-- Physical Capacities Profile Chart (Radar) -->
+                        <div class="panel-card" style="grid-column: span 2;">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-chart-radar"></i> Perfil Físico de Capacidades (Último Test - Puntuación 1-10)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper" style="height: 350px;">
+                                    <canvas id="chart-physical-profile"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ruffier Chart (Cardio) -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-heart-pulse"></i> Evolución de Condición Cardiovascular (Ruffier)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-ruffier"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fuerza y Resistencia Chart -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-dumbbell"></i> Evolución de Fuerza y Resistencia</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-strength"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Flexibilidad y Agilidad Chart -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-child"></i> Evolución de Elasticidad y Agilidad</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-flex-agility"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resistencia Cooper y Salto Vertical Chart -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-person-running"></i> Resistencia Aeróbica y Potencia</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-aerobic-jump"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GRUPO 2: RENDIMIENTO COMPETITIVO Y TÉCNICO -->
+                    <div class="charts-group-title mt-20">Rendimiento Competitivo y Técnico (Eventos y Torneos)</div>
+                    <div class="dashboard-grid">
+                        <!-- Jumps Chart (For Deportivo Athletes) -->
+                        <div class="panel-card" id="card-chart-jumps">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-arrow-up-right-dots"></i> Saltos Competitivos (Largo y Alto)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-jumps"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scores (Deportivo Figures/Demo) -->
+                        <div class="panel-card" id="card-chart-scores">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-award"></i> Evolución de Calificaciones (Figuras y Demos)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-scores"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Performance Chart (Traditional) -->
+                        <div class="panel-card" id="card-chart-technical">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-graduation-cap"></i> Evolución Técnica Tradicional (Básico/Examen)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-technical"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Combat Performance Chart -->
+                        <div class="panel-card" id="card-chart-combat">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-user-ninja"></i> Evolución de Combates (Puntos y Resultados)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-combat"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historial Tabular -->
+                    <div class="panel-card mt-20">
+                        <div class="panel-header">
+                            <h3>Historial de Registros</h3>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="data-table" id="athlete-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo de Registro</th>
+                                        <th>Fisiología / Puntuación</th>
+                                        <th>Detalles</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dinámico -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manual de Estudio Section -->
+            <section id="section-manual" class="app-section">
+                <div class="manual-tabs">
+                    <button class="manual-tab-btn active" onclick="app.switchManualTab('historia')"><i class="fa-solid fa-hourglass-start"></i> Historia de Hapkido</button>
+                    <button class="manual-tab-btn" onclick="app.switchManualTab('protocolo')"><i class="fa-solid fa-handshake-simple"></i> Protocolos y Jerarquía</button>
+                    <button class="manual-tab-btn" onclick="app.switchManualTab('vocabulario')"><i class="fa-solid fa-book"></i> Glosario y Vocabulario</button>
+                    <button class="manual-tab-btn" onclick="app.switchManualTab('reglamento')"><i class="fa-solid fa-gavel"></i> Reglamento de Combate 2026</button>
+                    <button class="manual-tab-btn" onclick="app.switchManualTab('programa')"><i class="fa-solid fa-graduation-cap"></i> Programa Técnico</button>
+                </div>
+
+                <!-- Historia Section -->
+                <div id="manual-tab-historia" class="manual-tab-content active panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-book-open"></i> Origen, Historia y Filosofía del Hapkido</h2>
+                    </div>
+                    <div class="panel-body manual-reading-view">
+                        <div class="concept-badge-container">
+                            <span class="concept-badge"><strong class="korean-text">HAP (합)</strong> Armonía / Unión</span>
+                            <span class="concept-badge"><strong class="korean-text">KI (기)</strong> Energía / Fuerza Interna</span>
+                            <span class="concept-badge"><strong class="korean-text">DO (도)</strong> Camino / Filosofía</span>
+                        </div>
+                        
+                        <div class="manual-text-block">
+                            <h3>1. Significado Etimológico</h3>
+                            <p>El término <strong>Hapkido</strong> se traduce literalmente como <em>"El camino para la unión de toda la energía"</em>, representando la integración armónica entre la fuerza física y mental. Es un sistema híbrido que combina la suavidad y el control de la energía interna con la contundencia de golpes y proyecciones externas.</p>
+                            
+                            <h3>2. Raíces Históricas y Fundación</h3>
+                            <p>Para comprender el origen del Hapkido, debemos situarnos en la turbulenta historia de Corea y Japón durante el siglo XX. Durante la ocupación japonesa de Corea (1910-1945), muchos coreanos fueron deportados a territorio nipón para realizar trabajos forzados.</p>
+                            <p>Uno de estos niños deportados fue el gran maestro <strong>Choy Young-sul</strong> (nacido el 20 de julio de 1904 en la provincia de Chungcheong, Corea del Sur). A los 9 años de edad, Choy ingresó a la escuela del legendario maestro japonés <strong>Sogaku Takeda</strong> (heredero del clan Takeda y patriarca de la escuela <em>Daito-ryu Aiki-jujutsu</em>), donde entrenó durante más de 30 años compartiendo clases con figuras como Morihei Ueshiba (fundador del Aikido) y Doshin So (fundador del Shorinji Kempo).</p>
+                            
+                            <h3>3. El Retorno a Corea y Evolución Técnica</h3>
+                            <p>Tras la liberación de Corea en 1945, el maestro Choy regresó a su país natal estableciéndose en Daegu. En 1948, comenzó a enseñar su sistema de defensa personal (inicialmente denominado <em>Hapki Yu Sul</em> o <em>Yu Kwon Sul</em>) en una cervecería local de Shu Bok-sup, un practicante de Judo impresionado por la efectividad de las técnicas de Choy.</p>
+                            <p>Posteriormente, el maestro Choy y sus alumnos incorporaron técnicas tradicionales coreanas de pierna como el <em>Taekyon</em> y el <em>Soo Bahk Do</em>, enriqueciendo el repertorio original del Aiki-jujutsu con espectaculares patadas, saltos y caídas.</p>
+                            
+                            <h3>4. La Consolidación del Nombre y Expansión</h3>
+                            <p>El término definitivo <strong>Hapkido</strong> fue popularizado y formalizado en <strong>1959</strong> por el maestro <strong>Ji Han-jae</strong>, uno de los alumnos más influyentes de Choy. Ji Han-jae no solo organizó el currículum, sino que incorporó el manejo de armas tradicionales (como el palo largo <em>Bong</em>, el bastón corto <em>Tanbo</em> y el nunchaku <em>Sancholbong</em>), técnicas de meditación taoísta y control del Ki (energía interna) conocidas como <em>Son Do Su</em>.</p>
+                            <p>El Hapkido es hoy en día el sistema de defensa personal por excelencia en las fuerzas de seguridad y ejércitos del mundo debido a su versatilidad y realismo práctico.</p>
+
+                            <h3>5. Los 3 Principios Fundamentales</h3>
+                            <div class="principles-grid">
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-water"></i>
+                                        <h4>Yu (El Principio del Agua)</h4>
+                                    </div>
+                                    <p>No confrontar la fuerza del oponente de forma directa, sino fluir a través de ella. Como el agua que rodea los obstáculos y penetra en las grietas, el hapkidoka se adapta a los movimientos del agresor para redirigir su fuerza de ataque.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-rotate"></i>
+                                        <h4>Won (El Principio del Círculo)</h4>
+                                    </div>
+                                    <p>Toda fuerza entrante debe ser desviada o redirigida en una trayectoria circular. El círculo permite desviar ataques rectilíneos de forma suave y acumular inercia para aplicar llaves, proyecciones y barridos con el menor esfuerzo físico posible.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-yin-yang"></i>
+                                        <h4>Hwa (El Principio de la Armonía)</h4>
+                                    </div>
+                                    <p>Unificarse con el movimiento y la intención del atacante. En lugar de chocar, el defensor asimila la acción del agresor convirtiéndose en una sola unidad móvil para tomar el control total de la situación.</p>
+                                </div>
+                            </div>
+
+                            <h3 class="mt-20">6. Pregón del Hapkido: Principios de Hapki Kwan-Do</h3>
+                            <p>Las bases del Hapkido y de las artes del Hapki Kwan-Do tienen sus raíces en el antiguo <strong>Daito-Ryu del Maestro Takeda</strong>. Los principios de comportamiento y vida social están designados por la actitud del principio del comportamiento humano; tales preceptos han fortalecido a grandes naciones como Japón, China, Corea y otras. El hecho de pensar diferente y comportarnos bajo otros preceptos ya nos hace diferentes:</p>
+                            <div class="principles-grid">
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-handshake" style="color: var(--primary);"></i>
+                                        <h4>Ye Uin (예의 - Cortesía)</h4>
+                                    </div>
+                                    <p>Respeto mutuo, trato cortés y buenos modales con todas las personas, dentro y fuera del Dojang.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
+                                        <h4>Jong-Chi (정직 - Integridad)</h4>
+                                    </div>
+                                    <p>Honestidad, nobleza y coherencia entre lo que se piensa, se dice y se hace en todo momento.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-hourglass-half" style="color: var(--primary);"></i>
+                                        <h4>In-Nae (인내 - Perseverancia, Paciencia)</h4>
+                                    </div>
+                                    <p>Constancia, resistencia y calma ante la adversidad, superando los obstáculos con paciencia y tenacidad.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-user-check" style="color: var(--primary);"></i>
+                                        <h4>Gukgui (극기 - Autocontrol)</h4>
+                                    </div>
+                                    <p>Dominio propio sobre las emociones, impulsos y acciones para actuar con serenidad y prudencia.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-fire-flame-simple" style="color: var(--primary);"></i>
+                                        <h4>Baeyu Bu Gul (배유불굴 - Espíritu Indomable)</h4>
+                                    </div>
+                                    <p>Fuerza de voluntad inquebrantable, valentía y convicción para no rendirse jamás ante la dificultad.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-scale-balanced" style="color: var(--primary);"></i>
+                                        <h4>Jong Euje (정의 - Rectitud)</h4>
+                                    </div>
+                                    <p>Sentido de justicia, honor y apego a hacer lo correcto en cada circunstancia de la vida.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-heart" style="color: var(--primary);"></i>
+                                        <h4>Sa Chin E Hyo (사친효 - Lealtad a Padres y Maestros)</h4>
+                                    </div>
+                                    <p>Devoción filial, gratitud, respeto incondicional y honor hacia los padres y maestros formadores.</p>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-users" style="color: var(--primary);"></i>
+                                        <h4>Kyo Woo E Chin (교우의친 - Confianza y Hermandad entre Amigos)</h4>
+                                    </div>
+                                    <p>Solidaridad, lealtad y fraternidad sincera entre compañeros de práctica y amigos verdaderos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protocolos Section -->
+                <div id="manual-tab-protocolo" class="manual-tab-content panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-handshake-simple"></i> Protocolos, Saludos y Jerarquía del Dojang</h2>
+                    </div>
+                    <div class="panel-body manual-reading-view">
+                        <div class="manual-text-block">
+                            <h3>1. Protocolo de Entrada y Salida del Dojang</h3>
+                            <p>El <strong>Dojang (도장)</strong> es el lugar sagrado de práctica marcial. Para mantener el respeto y la concentración, todo estudiante e instructor debe seguir el siguiente protocolo de cortesía:</p>
+                            <ul>
+                                <li><strong>Ingreso al recinto:</strong> Antes de cruzar la puerta de entrada, detente en la línea, quítate el calzado exterior y colócalo ordenadamente en el área designada. Mantén un tono de voz bajo y respetuoso.</li>
+                                <li><strong>Saludo al Dojang:</strong> De pie en la entrada, realiza una inclinación del torso de aproximadamente 15 grados hacia el área de práctica y las banderas, diciendo en voz alta el saludo marcial <strong>"¡Hapki!" (합기)</strong>. Esto simboliza dejar fuera del Dojang los problemas del mundo exterior y preparar la mente para el entrenamiento.</li>
+                                <li><strong>Salida del Dojang:</strong> Al finalizar la práctica, al salir del área de tatami o cruzar la puerta exterior, se repite el saludo de inclinación hacia el centro del Dojang y las banderas en señal de agradecimiento por el aprendizaje y la seguridad durante la clase.</li>
+                            </ul>
+
+                            <h3>2. Saludo a las Banderas (Kukki-e Daehayeo Gyeongnye)</h3>
+                            <p>El saludo a las banderas nacionales y de la escuela representa patriotismo, respeto por el origen geográfico del Hapkido (Corea del Sur) y respeto por el dojang local. Se realiza al inicio y al final de cada clase bajo la guía del alumno de mayor grado (Seonbae):</p>
+                            <div class="step-card-container">
+                                <div class="step-card">
+                                    <div class="step-num">1</div>
+                                    <div class="step-content">
+                                        <h4>Charyeot (차렷)</h4>
+                                        <p>Posición de firmes. Pies juntos en un ángulo de 45 grados (talones unidos), espalda recta, hombros relajados y manos a los costados del cuerpo. Vista al frente.</p>
+                                    </div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-num">2</div>
+                                    <div class="step-content">
+                                        <h4>Kukki-e Daehayeo... (국기에 대하여...)</h4>
+                                        <p>Comando preparatorio: <em>"Hacia las banderas..."</em>. Los practicantes giran suavemente el cuerpo para quedar de frente a la pared de honor donde se sitúan las banderas.</p>
+                                    </div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-num">3</div>
+                                    <div class="step-content">
+                                        <h4>Gyeongnye (경례)</h4>
+                                        <p>Comando de ejecución: <em>"Saludo"</em>. Los practicantes colocan su <strong>mano derecha abierta sobre el corazón</strong> (lado izquierdo del pecho), manteniendo la espalda recta, mirando con respeto hacia la bandera sin inclinar la cabeza (o realizando una leve inclinación de cabeza de 10 grados). Permanecen firmes en silencio.</p>
+                                    </div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-num">4</div>
+                                    <div class="step-content">
+                                        <h4>Baro (바로)</h4>
+                                        <p>Retorno a la posición. Los practicantes bajan la mano derecha a los costados y vuelven a girar el cuerpo hacia la posición inicial de frente al instructor.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3>3. Saludo al Maestro (Sabeomnim-kke Gyeongnye)</h3>
+                            <p>Inmediatamente después del saludo a las banderas, se realiza el saludo al Maestro de la clase. El alumno de mayor grado comanda:</p>
+                            <ul>
+                                <li><strong>Sabeomnim-kke... (사범님께...)</strong>: "Hacia el Maestro..." (Los alumnos miran al instructor).</li>
+                                <li><strong>Gyeongnye (경례)</strong>: "Saludo" (Los alumnos realizan una inclinación del torso de 30 a 45 grados con las manos a los costados y la mirada hacia el suelo, diciendo en voz alta: <strong>"¡Hapki!"</strong> o <strong>"¡Gamsahamnida!"</strong> (Gracias)).</li>
+                            </ul>
+
+                            <h3>4. Rangos y Títulos Jerárquicos en el Dojang</h3>
+                            <p>El Hapkido mantiene una estructura jerárquica estricta basada en el respeto al conocimiento y al tiempo de práctica. Los títulos oficiales en idioma Coreano son:</p>
+                            <div class="ranks-grid">
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Kwanjangnim (관장님)</div>
+                                    <div class="rank-spanish">Director de la Escuela / Gran Maestro</div>
+                                    <p>Máxima autoridad del Dojang. Generalmente ostenta el grado de 5to Dan en adelante. Fundador o director general de la escuela marcial.</p>
+                                </div>
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Sabeomnim (사범님)</div>
+                                    <div class="rank-spanish">Maestro / Instructor Principal</div>
+                                    <p>Instructor calificado para dirigir clases autónomamente. Posee el grado de 4to Dan en adelante (o menor si dirige oficialmente su propia filial).</p>
+                                </div>
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Bosabeonim (보사범님)</div>
+                                    <div class="rank-spanish">Sub-Maestro / Instructor Adjunto</div>
+                                    <p>Rango intermedio superior a Kyosanim e inferior a Sabeonim. Usualmente comprendido entre el 2.º o 3.º Dan, actúa como principal apoyo del Maestro en el Tatami y asume el mando en su ausencia.</p>
+                                </div>
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Kyosanim (교사님)</div>
+                                    <div class="rank-spanish">Instructor Asistente / Profesor</div>
+                                    <p>Cinturón negro calificado que dicta clases bajo la supervisión del Maestro. Comprendido generalmente entre el 1er y 3er Dan.</p>
+                                </div>
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Jogyonim (조교님)</div>
+                                    <div class="rank-spanish">Ayudante / Monitor</div>
+                                    <p>Estudiante avanzado (cinturón negro junior o grados superiores como rojo/marrón) que colabora en el calentamiento y guía a principiantes.</p>
+                                </div>
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Seonbae / Sunbae (선배)</div>
+                                    <div class="rank-spanish">Compañero Mayor (Senior)</div>
+                                    <p>Cualquier practicante que tenga mayor grado o mayor antigüedad de práctica que uno mismo. Se le debe cortesía y obediencia durante la clase.</p>
+                                </div>
+                                <div class="rank-badge-card">
+                                    <div class="rank-korean">Hubae (후배)</div>
+                                    <div class="rank-spanish">Compañero Menor (Junior)</div>
+                                    <p>Cualquier practicante que tenga menor grado o menor antigüedad que uno mismo. Debe ser guiado y protegido por los Seonbae.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vocabulario Section -->
+                <div id="manual-tab-vocabulario" class="manual-tab-content panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-language"></i> Glosario de Términos Coreanos Oficiales</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="search-filters-row">
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="manual-vocab-search" placeholder="Buscar término en coreano o español..." oninput="app.filterManualVocab()">
+                            </div>
+                            <div class="filter-box">
+                                <label for="manual-vocab-category">Categoría:</label>
+                                <select id="manual-vocab-category" onchange="app.filterManualVocab()">
+                                    <option value="all">Todas las Categorías</option>
+                                    <option value="cuerpo">Partes del Cuerpo</option>
+                                    <option value="direcciones">Direcciones y Zonas</option>
+                                    <option value="tecnicas">Técnicas y Acciones</option>
+                                    <option value="generales">Términos Generales</option>
+                                    <option value="numeros">Números y Cifras</option>
+                                    <option value="principios">Pregón / Principios</option>
+                                </select>
+                            </div>
+                            <div class="filter-box" id="vocab-subcat-filter-box" style="display:none; align-items:center; gap:8px;">
+                                <label for="manual-vocab-subcat">Tipo:</label>
+                                <select id="manual-vocab-subcat" onchange="app.filterManualVocab()">
+                                    <option value="all">Todos los tipos</option>
+                                    <option value="posicion">Posición / Guardia (Seogi / Gubi)</option>
+                                    <option value="chagi">Patada (Chagi)</option>
+                                    <option value="jireugi">Golpe de Puño (Jireugi)</option>
+                                    <option value="chigi">Golpe / Strike (Chigi)</option>
+                                    <option value="makgi">Bloqueo / Defensa (Makgi)</option>
+                                    <option value="kkeokgi">Llave / Luxación (Kkeokgi)</option>
+                                    <option value="deonjigi">Proyección / Derribo (Deonjigi)</option>
+                                    <option value="nakbeop">Caída / Rodada (Nakbeop)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="vocab-grid mt-20" id="manual-vocab-list">
+                            <!-- Dinámico en app.js -->
+                        </div>
+                        
+                        <!-- Guía Didáctica de Conteo, Números y Colores -->
+                        <div class="manual-reading-view mt-20" style="border-top: 1px dashed var(--border-color); padding-top: 24px;">
+                            <div class="principles-grid">
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-list-ol" style="color: var(--accent);"></i>
+                                        <h4>10. Guía de Conteo y Números</h4>
+                                    </div>
+                                    <p>En el Dojang de Hapkido se utiliza el <strong>Conteo Nativo Coreano</strong> para contar las repeticiones de los ejercicios y técnicas, y el <strong>Conteo Sino-Coreano</strong> para designar los grados de cinturón negro (Dan), los minutos del combate y las fechas oficiales.</p>
+                                    
+                                    <h5 class="mt-10" style="color: var(--text-secondary); font-size: 13px;">Cómo contar del 11 al 19:</h5>
+                                    <p>Se forma diciendo diez (<em>Iol</em>) seguido del número de la unidad. Por ejemplo: 11 es <strong>IOL JANA</strong>, 12 es <strong>IOL DUL</strong>, 13 es <strong>IOLSET</strong>... hasta 19 que es <strong>IOLAJOP</strong>.</p>
+                                    
+                                    <h5 class="mt-10" style="color: var(--text-secondary); font-size: 13px;">Tabla de Conteo y Cifras Clave (Sonidos Diferentes):</h5>
+                                    <table class="data-table mt-10">
+                                        <thead>
+                                            <tr>
+                                                <th>Cifra</th>
+                                                <th>Coreano (Fiel a la Guía)</th>
+                                                <th>Aplicación en Hapkido</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>1</td><td><strong>JANA</strong> (하나)</td><td>Uno / Primera repetición</td></tr>
+                                            <tr><td>2</td><td><strong>DUL</strong> (둘)</td><td>Dos</td></tr>
+                                            <tr><td>3</td><td><strong>SET</strong> (셋)</td><td>Tres</td></tr>
+                                            <tr><td>4</td><td><strong>NET</strong> (넷)</td><td>Cuatro</td></tr>
+                                            <tr><td>5</td><td><strong>DASOT</strong> (다섯)</td><td>Cinco</td></tr>
+                                            <tr><td>6</td><td><strong>IOSOT</strong> (여섯)</td><td>Seis</td></tr>
+                                            <tr><td>7</td><td><strong>ILKOP</strong> (일곱)</td><td>Siete</td></tr>
+                                            <tr><td>8</td><td><strong>IODUL</strong> (여덟)</td><td>Ocho</td></tr>
+                                            <tr><td>9</td><td><strong>AJOP</strong> (아홉)</td><td>Nueve</td></tr>
+                                            <tr><td>10</td><td><strong>IOL</strong> (열)</td><td>Diez</td></tr>
+                                            <tr><td>11-19</td><td><strong>IOL + Unidad</strong></td><td>Ej: IOL JANA (11), IOL DUL (12), IOLSET (13)... IOLAJOP (19)</td></tr>
+                                            <tr><td>20</td><td><strong>SUMUL</strong> (스물)</td><td>Veinte</td></tr>
+                                            <tr><td>30</td><td><strong>SORUN</strong> (서른)</td><td>Treinta (Decena nativa)</td></tr>
+                                            <tr><td>40</td><td><strong>MAJUN</strong> (마흔)</td><td>Cuarenta (Decena nativa)</td></tr>
+                                            <tr><td>50</td><td><strong>SHUN</strong> (쉬흔 / 쉬un)</td><td>Cincuenta (Decena nativa)</td></tr>
+                                            <tr><td>60</td><td><strong>IESHUN</strong> (예순)</td><td>Sesenta (Decena nativa)</td></tr>
+                                            <tr><td>70</td><td><strong>IRUN</strong> (일흔)</td><td>Setenta (Decena nativa)</td></tr>
+                                            <tr><td>80</td><td><strong>IODUN</strong> (여든)</td><td>Ochenta (Decena nativa)</td></tr>
+                                            <tr><td>90</td><td><strong>AJUN</strong> (아흔)</td><td>Noventa (Decena nativa)</td></tr>
+                                            <tr><td>100</td><td><strong>BEK</strong> (백)</td><td>Cien (Sino-Coreano)</td></tr>
+                                            <tr><td>1000</td><td><strong>CHON</strong> (천)</td><td>Mil (Sino-Coreano)</td></tr>
+                                            <tr><td>10.000</td><td><strong>MAN</strong> (만)</td><td>Diez Mil (Sino-Coreano)</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="principle-card">
+                                    <div class="principle-title">
+                                        <i class="fa-solid fa-palette" style="color: var(--primary);"></i>
+                                        <h4>Colores Tradicionales y de Competición</h4>
+                                    </div>
+                                    <p>Los colores tienen gran importancia práctica en el reglamento marcial y competitivo de Hapkido:</p>
+                                    <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.6;">
+                                        <li><strong style="color: #38bdf8;">CHEONG (청 - Azul):</strong> Identifica oficialmente al competidor del lado Azul en combates y torneos.</li>
+                                        <li><strong style="color: #ef4444;">HONG (홍 - Rojo):</strong> Identifica oficialmente al competidor del lado Rojo en combates y torneos.</li>
+                                        <li><strong>BAEK (백 - Blanco):</strong> Color del uniforme inicial y del cinturón de pureza.</li>
+                                        <li><strong style="color: #fbbf24;">HWANG (황 - Amarillo):</strong> Color del cinturón básico, representando la tierra.</li>
+                                        <li><strong style="color: #e2e8f0;">GEOM-JEONG (검정 - Negro):</strong> Color de la madurez, maestría y la unión de todos los colores.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reglamento Section -->
+                <div id="manual-tab-reglamento" class="manual-tab-content panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-gavel"></i> Reglamento Técnico de Competición FEVEHAPKIDO 2026</h2>
+                    </div>
+                    <div class="panel-body manual-reading-view">
+                        <div class="manual-text-block">
+                            <h3>1. Introducción y Modalidades de Combate</h3>
+                            <p>El reglamento oficial de la <strong>Federación Venezolana de Hapkido (FEVEHAPKIDO)</strong> para el año 2026 regula los combates deportivos de forma semi-continua. La competencia de Hapkido hace especial énfasis en el efecto realista y contundente de las técnicas, premiando la precisión, la potencia visible y la superioridad táctica antes que la mera cantidad de golpes.</p>
+                            
+                            <h3>2. Duración Oficial del Combate y Tiempos</h3>
+                            <table class="data-table mb-20">
+                                <thead>
+                                    <tr>
+                                        <th>Categoría de Edad</th>
+                                        <th>Fase Eliminatoria</th>
+                                        <th>Fase Final</th>
+                                        <th>Descanso</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Junior (12 - 14 años)</strong></td>
+                                        <td>2 Rounds de 1 min 30 s</td>
+                                        <td>2 Rounds de 2 min 00 s</td>
+                                        <td>30 segundos</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Juveniles, Mayores, Senior, Máster (15+ años)</strong></td>
+                                        <td>2 Rounds de 2 min 00 s</td>
+                                        <td>2 Rounds de 2 min 30 s</td>
+                                        <td>30 segundos</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><em>*Nota:* El tiempo de combate es corrido y solo se detiene cuando el juez central lo solicita bajo la voz de <strong>Kalyo</strong> (separarse), reanudándose con <strong>Sichak</strong> (comenzar).</p>
+
+                            <h3>3. Zonas y Técnicas Permitidas (Art. 26 y 27)</h3>
+                            <p>Son válidas las técnicas de golpeo y proyección aplicadas con potencia visible sobre las siguientes zonas permitidas:</p>
+                            <ul>
+                                <li><strong>Tórax (Área Antero-lateral):</strong> Desde la línea clavicular hasta la zona del cinturón, incluyendo los costados (excluyendo la columna vertebral y la nuca). Válido para golpes de puño y patadas.</li>
+                                <li><strong>Cabeza (Zonas Frontal y Lateral):</strong> Válida únicamente para patadas (saltando o de pie) y golpes con la parte dorsal del puño (puño de revés - *Dung Chumok*) bajo estrictas restricciones de combinación.</li>
+                                <li><strong>Brazos y Piernas:</strong> Zonas de agarre y barrido técnico. Está prohibido golpear las piernas del oponente (no se permiten *Low Kicks*).</li>
+                            </ul>
+
+                            <h3>4. Especificación Detallada del Sistema de Puntos</h3>
+                            <div class="scoring-rules-grid">
+                                <div class="scoring-card border-success">
+                                    <div class="scoring-value text-success">1 Punto</div>
+                                    <div class="scoring-desc">
+                                        <ul>
+                                            <li><strong>Golpe de mano al tórax:</strong> Impacto directo de puño cerrado o mano abierta al área permitida del tórax.</li>
+                                            <li><strong>Patada directa al tórax:</strong> Patadas de frente (*Ap chagi*) o circular (*Dollyeo chagi*) directas, sin giro.</li>
+                                            <li><strong>Puño de revés a la cabeza (Art. 31):</strong> Golpe dado con la parte dorsal del puño (*Dung Chumok*) en combinación horizontal o descendente (debe tener retracción). <em>*Restricción:* Prohibido en categoría Junior.</em></li>
+                                            <li><strong>Inferioridad técnica de 1 punto (Art. 34):</strong> Golpe de puño o patada al tórax bloqueado por la guardia que produzca inferioridad física evidente (pérdida de aire o desequilibrio) tras conteo de protección.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="scoring-card border-blue">
+                                    <div class="scoring-value text-blue">2 Puntos</div>
+                                    <div class="scoring-desc">
+                                        <ul>
+                                            <li><strong>Patada al tórax en giro (Art. 35):</strong> Patada que conecte directamente en el tórax realizando rotación de cadera (como patada de atrás *Dwi chagi* o circular con giro).</li>
+                                            <li><strong>Patada directa a la cabeza (Art. 36):</strong> Impacto directo de patada frontal o circular en la cabeza/casco, saltando o sin saltar (sin giro).</li>
+                                            <li><strong>Barrido técnico básico (Art. 39 y 40):</strong> Barrido que haga caer al oponente levantándole un pie, ya sea en posición de pie o sujetando la pierna del rival con el codo.</li>
+                                            <li><strong>Inmovilización en suelo (Art. 41):</strong> Inmovilización técnica sobre 3 o 4 apoyos en el suelo sosteniendo al rival e impidiéndole levantarse por 10 segundos.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="scoring-card border-purple">
+                                    <div class="scoring-value text-purple">3 Puntos</div>
+                                    <div class="scoring-desc">
+                                        <ul>
+                                            <li><strong>Patada a la cabeza con giro (Art. 42):</strong> Patada en giro (*Dora chagi* / ganchos en giro) que haga impacto directo a la cabeza.</li>
+                                            <li><strong>Tijeretas completas (Art. 44):</strong> Técnica de proyección aérea envolviendo la cintura del rival (*Tui chigi*) que resulte en caída efectiva.</li>
+                                            <li><strong>Barrido de gran amplitud (Art. 45 y 46):</strong> Barrido en el que el rival levante ambos pies del suelo al caer.</li>
+                                            <li><strong>Lanzamiento o Proyección (Art. 47 y 48):</strong> Lanzamientos de cadera (*Chigi*) o proyecciones de sacrificio que dejen al contrario en el suelo.</li>
+                                            <li><strong>Sometimiento técnico en suelo (Art. 49):</strong> Llave articular al codo (*Palgup*) o estrangulación (*Mok*) que inmovilice por completo al oponente sin requerir sumisión inmediata por golpeo (tapeo).</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3>5. Combate de Agarre y Lucha en el Suelo (Art. 22 y 23)</h3>
+                            <p>El Hapkido combina combate de pie y en el suelo. Se aplican las siguientes reglas especiales:</p>
+                            <ul>
+                                <li><strong>Agarre de Pie (Art. 22):</strong> Si un competidor entra en agarre con intención de proyectar, el árbitro inicia un conteo. <strong>Está estrictamente prohibido golpear en agarre</strong>; cualquier golpeo se penalizará como falta directa.</li>
+                                <li><strong>Continuidad en el Suelo (Art. 23):</strong> Si uno o ambos competidores caen por una técnica válida, el combate continúa en el suelo siempre que el competidor de pie demuestre intención de seguir atacando.</li>
+                                <li><strong>Abandono del Suelo (Art. 28.5):</strong> Si el competidor que está en el suelo logra ponerse de pie (apoya una o ambas plantas en intento de huir o reanudar de pie), el juez detendrá el combate y los regresará a la posición inicial de pie.</li>
+                            </ul>
+
+                            <h3>6. Faltas, Penalizaciones y Descalificación (Gam-chom y Kyongo)</h3>
+                            <p>Las faltas se acumulan durante todo el combate y restan puntos directamente del marcador:</p>
+                            <ul>
+                                <li><strong>Amonestación (Kyongo):</strong> Advertencia por faltas leves (salirse del área, agarre inactivo, evasión). Cada 2 Kyongos restan 1 punto en el asalto. Las impares sirven como desempate.</li>
+                                <li><strong>Deducción Directa (Gam-chom):</strong> Penalización por faltas graves (golpear las piernas, golpear en el suelo de forma ilegal, agredir después del *Kalyo*). Resta <strong>1 punto neto</strong> de inmediato.</li>
+                                <li><strong>Descalificación Automática:</strong> Si un competidor acumula un saldo neto de <strong>-4 puntos</strong> en penalizaciones (equivalente a 4 Gam-choms o 8 Kyongos), es descalificado y pierde el combate de forma inmediata.</li>
+                            </ul>
+
+                            <h3>7. Desempates y Superioridad Técnica (Art. 8, 29 y 30)</h3>
+                            <p>El combate no tiene límite de puntuación. Si al finalizar el tiempo regular hay empate, se resuelve de la siguiente manera:</p>
+                            <ol>
+                                <li>Gana el competidor con menor número total de faltas (Kyongos + Gam-choms).</li>
+                                <li>Si persiste el empate, se disputa un round extra de 1 minuto (Punto de Oro).</li>
+                                <li>Si el round extra empata, se evalúa la cantidad de técnicas de mayor valor (más técnicas de 3 puntos, luego de 2 puntos).</li>
+                                <li>Por último, el cuerpo arbitral decide al ganador por superioridad técnica mediante banderas.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Programa Técnico Section -->
+                <div id="manual-tab-programa" class="manual-tab-content panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-graduation-cap"></i> Programa Técnico y Requisitos de Exámenes</h2>
+                    </div>
+                    <div class="panel-body">
+                        <p class="mb-20">Consulta las técnicas marciales (golpes, patadas, llaves, proyecciones y armas) correspondientes a cada grado de cinturón. Los alumnos solo tienen acceso a los requisitos de su grado o inferiores para fomentar el enfoque en su nivel actual.</p>
+                        
+                        <div class="search-filters-row">
+                            <div class="filter-box w-100">
+                                <label for="manual-program-belt">Seleccionar Cinturón / Grado:</label>
+                                <select id="manual-program-belt" class="form-control" onchange="app.renderTechnicalSyllabus(this.value)">
+                                    <!-- Dinámico -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-display-panel mt-20 hidden" id="manual-program-content">
+                            <!-- Dinámico en app.js -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ajustes Section -->
+            <section id="section-ajustes" class="app-section">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-floppy-disk"></i> Gestión de Base de Datos y Respaldos</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <h3><i class="fa-solid fa-file-export"></i> Exportar Datos</h3>
+                                <p>Descarga toda la información registrada de tus atletas y mediciones en un archivo JSON.</p>
+                                <button class="primary-btn mt-20" onclick="app.exportData()"><i class="fa-solid fa-download"></i> Descargar Copia de Seguridad</button>
+                            </div>
+                            <div class="settings-card">
+                                <h3><i class="fa-solid fa-file-import"></i> Importar Datos</h3>
+                                <p>Carga un archivo de copia de seguridad en formato JSON para restaurar tus atletas e historial.</p>
+                                <div class="file-upload-wrapper mt-20">
+                                    <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="app.importData(event)">
+                                    <button class="sec-btn" onclick="document.getElementById('import-file-input').click()"><i class="fa-solid fa-upload"></i> Seleccionar Archivo JSON</button>
+                                </div>
+                            </div>
+                            <div class="settings-card border-danger">
+                                <h3 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Borrar Todo</h3>
+                                <p>Elimina permanentemente toda la información y base de datos registrada en el LocalStorage de este navegador.</p>
+                                <button class="danger-btn mt-20" onclick="app.resetData()"><i class="fa-solid fa-trash-can"></i> Restablecer Aplicación</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Escuelas Section -->
+            <section id="section-escuelas" class="app-section">
+                <!-- Sub-tabs for Dojangs and Associations -->
+                <div class="search-filters-row" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="tab-btn active" id="subtab-btn-schools" onclick="app.switchSchoolSubTab('schools')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-school"></i> Dojangs / Escuelas locales
+                        </button>
+                        <button class="tab-btn" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-sitemap"></i> Asociaciones Estatales
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-tab Dojangs Container -->
+                <div id="subtab-schools-container">
+                    <div class="section-actions">
+                        <button class="primary-btn" id="btn-new-school" onclick="app.openNewSchoolModal()"><i class="fa-solid fa-plus"></i> Nueva Escuela</button>
+                    </div>
+                    <div class="panel-card mt-20">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-school"></i> Listado de Escuelas y Dojangs</h2>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="data-table" id="schools-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre de la Escuela</th>
+                                        <th>Asociación Estatal</th>
+                                        <th>Ubicación / Sede</th>
+                                        <th>Instructor Encargado</th>
+                                        <th>Rol del Instructor</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dinámico -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-tab Associations Container -->
+                <div id="subtab-associations-container" style="display: none;">
+                    <div class="section-actions">
+                        <button class="primary-btn" id="btn-new-association" onclick="app.openNewAssociationModal()"><i class="fa-solid fa-plus"></i> Nueva Asociación Estatal</button>
+                    </div>
+                    <div class="panel-card mt-20">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-sitemap"></i> Listado de Asociaciones o Federaciones Estatales</h2>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="data-table" id="associations-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre de la Asociación</th>
+                                        <th>Estado</th>
+                                        <th>Federación Superior</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dinámico -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal para Escuela / Dojang -->
+                <div class="modal" id="school-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="school-modal-title">Agregar Nueva Escuela</h2>
+                            <span class="close-modal" onclick="document.getElementById('school-modal').classList.remove('active')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="school-form" onsubmit="app.saveSchool(event)">
+                                <input type="hidden" id="school-id">
+                                <div class="form-group">
+                                    <label for="school-name">Nombre de la Escuela / Dojang</label>
+                                    <input type="text" id="school-name" required placeholder="Ej: Dojang Tigres Celestes">
+                                </div>
+                                <div class="form-group">
+                                    <label for="school-association">Asociación Estatal Vinculada</label>
+                                    <select id="school-association" required>
+                                        <!-- Dinámico -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="school-location">Ubicación / Sede</label>
+                                    <input type="text" id="school-location" required placeholder="Ej: Valencia, Edo. Carabobo">
+                                </div>
+                                <div class="form-group">
+                                    <label for="school-instructor">Instructor Encargado</label>
+                                    <select id="school-instructor" required>
+                                        <!-- Dinámico -->
+                                    </select>
+                                </div>
+                                <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                    <button type="button" class="btn-cancel" onclick="document.getElementById('school-modal').classList.remove('active')">Cancelar</button>
+                                    <button type="submit" class="primary-btn">Guardar Escuela</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para Asociación Estatal -->
+                <div class="modal" id="association-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="association-modal-title">Agregar Nueva Asociación</h2>
+                            <span class="close-modal" onclick="document.getElementById('association-modal').classList.remove('active')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="association-form" onsubmit="app.saveAssociation(event)">
+                                <input type="hidden" id="association-id">
+                                <div class="form-group">
+                                    <label for="association-name">Nombre de la Asociación o Federación Estatal</label>
+                                    <input type="text" id="association-name" required placeholder="Ej: Asociación de Hapkido del Estado Miranda">
+                                </div>
+                                <div class="form-group">
+                                    <label for="association-state">Estado</label>
+                                    <input type="text" id="association-state" required placeholder="Ej: Miranda">
+                                </div>
+                                <div class="form-group">
+                                    <label for="association-federation">Federación Superior (Nivel Nacional)</label>
+                                    <input type="text" id="association-federation" value="Federación Venezolana de Hapkido" readonly class="form-control" style="background-color: var(--card-bg-light); color: var(--text-muted); cursor: not-allowed;">
+                                </div>
+                                <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                    <button type="button" class="btn-cancel" onclick="document.getElementById('association-modal').classList.remove('active')">Cancelar</button>
+                                    <button type="submit" class="primary-btn">Guardar Asociación</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Usuarios Section -->
+            <section id="section-usuarios" class="app-section">
+                <div class="section-actions">
+                    <button class="primary-btn" id="btn-new-user" onclick="app.openNewUserModal()"><i class="fa-solid fa-user-plus"></i> Nuevo Usuario</button>
+                </div>
+                <div class="panel-card mt-20">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-users-gear"></i> Gestión de Cuentas de Usuario y Contraseñas</h2>
+                    </div>
+                    <div class="panel-body table-responsive">
+                        <table class="data-table" id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Nombre Completo</th>
+                                    <th>Rol / Permiso</th>
+                                    <th>Escuela Vinculada</th>
+                                    <th>Atleta Vinculado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal" id="user-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="user-modal-title">Registrar Nuevo Usuario</h2>
+                            <span class="close-modal" onclick="document.getElementById('user-modal').classList.remove('active')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="user-form" onsubmit="app.saveUser(event)">
+                                <input type="hidden" id="user-id">
+                                <div class="form-group">
+                                    <label for="user-username">Nombre de Usuario</label>
+                                    <input type="text" id="user-username" required placeholder="Ej: kwanjang1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-fullname">Nombre Completo</label>
+                                    <input type="text" id="user-fullname" required placeholder="Ej: Maestro Juan Pérez">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-password">Contraseña</label>
+                                    <input type="password" id="user-password" placeholder="Ingresa contraseña o deja vacío para mantener actual">
+                                    <small class="form-text text-muted" id="user-password-help">Para nuevos usuarios la contraseña es obligatoria.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-role">Rol del Usuario</label>
+                                    <select id="user-role" required onchange="app.onUserRoleChange()">
+                                        <option value="admin">Administrador (Acceso total)</option>
+                                        <option value="instructor">Maestro / Instructor (Dojang)</option>
+                                        <option value="ayudante">Instructor en Ent. / Ayudante</option>
+                                        <option value="athlete">Atleta (Consulta personal)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="user-rank-group">
+                                    <label for="user-rank">Rango / Cinturón</label>
+                                    <input type="text" id="user-rank" placeholder="Ej: Cinturón Negro 4to Dan / Administrador Central">
+                                    <small class="form-text text-muted">Aplica principalmente para Administradores e Instructores. Para Atletas y Ayudantes se usará el cinturón de su ficha.</small>
+                                </div>
+                                <div class="form-group" id="user-school-group">
+                                    <label for="user-school">Escuela / Dojang Asociado</label>
+                                    <select id="user-school">
+                                        <!-- Dinámico -->
+                                    </select>
+                                    <small class="form-text text-muted">Aplica para Maestro, Ayudante y Atleta.</small>
+                                </div>
+                                <div class="form-group" id="user-athlete-group" style="display: none;">
+                                    <label for="user-athlete-select">Perfil de Atleta Vinculado</label>
+                                    <select id="user-athlete-select" onchange="app.onUserAthleteChange()">
+                                        <!-- Dinámico -->
+                                    </select>
+                                    <small class="form-text text-muted">Obligatorio para que los atletas visualicen su información personal.</small>
+                                </div>
+                                <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                    <button type="button" class="btn-cancel" onclick="document.getElementById('user-modal').classList.remove('active')">Cancelar</button>
+                                    <button type="submit" class="primary-btn">Guardar Usuario</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Torneos y Topes Section -->
+            <section id="section-torneos" class="app-section">
+                <div class="section-actions" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="section-title-desc">
+                        <h2><i class="fa-solid fa-trophy"></i> Calendario de Competencias, Topes y Fogueos</h2>
+                        <p class="section-subtitle" style="color: var(--text-muted); font-size: 13px;">Intercambios técnicos inter-dojang e inter-estados autorizados por FEVEHAPKIDO</p>
+                    </div>
+                    <button class="primary-btn" id="btn-new-torneo" onclick="app.openNewTorneoModal()"><i class="fa-solid fa-trophy"></i> Solicitar Tope / Torneo</button>
+                </div>
+
+                <div class="grid-stats mt-20">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Eventos Solicitados</h3>
+                            <p class="stat-value" id="stat-torneos-solicitados">0</p>
+                        </div>
+                        <div class="stat-icon bg-cyan">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Eventos Aprobados</h3>
+                            <p class="stat-value" id="stat-torneos-aprobados">0</p>
+                        </div>
+                        <div class="stat-icon bg-green">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Programados</h3>
+                            <p class="stat-value" id="stat-torneos-total">0</p>
+                        </div>
+                        <div class="stat-icon bg-gold">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid mt-20">
+                    <!-- Event Requests Table -->
+                    <div class="panel-card" style="grid-column: span 8;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-list-check"></i> Solicitudes de Torneos y Topes Inter-Escuelas</h2>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="data-table" id="torneos-table">
+                                <thead>
+                                    <tr>
+                                        <th>Evento / Torneo</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Organizador</th>
+                                        <th>Estado Sede</th>
+                                        <th>Modalidades</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dinámico -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Federation Guidelines & Rules -->
+                    <div class="panel-card" style="grid-column: span 4;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-gavel"></i> Directrices de la Federación (FEVEHAPKIDO)</h2>
+                        </div>
+                        <div class="panel-body">
+                            <div class="guidelines-list">
+                                <div class="guideline-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+                                    <h4 style="color: var(--primary); margin-bottom: 6px; font-size: 14px;"><i class="fa-solid fa-shield-halved"></i> Seguridad y Baremos</h4>
+                                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.4; margin: 0;">Todo tope amistoso o torneo oficial debe contar con equipo de protección homologado (peto, casco, espinilleras y protector bucal).</p>
+                                </div>
+                                <div class="guideline-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+                                    <h4 style="color: var(--cyan); margin-bottom: 6px; font-size: 14px;"><i class="fa-solid fa-circle-exclamation"></i> Categoría Infantil (6 a 12 años)</h4>
+                                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.4; margin: 0;">En categorías infantiles, queda estrictamente prohibido el contacto pleno en el rostro y proyecciones de alto impacto mecánico.</p>
+                                </div>
+                                <div class="guideline-item" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+                                    <h4 style="color: var(--gold); margin-bottom: 6px; font-size: 14px;"><i class="fa-solid fa-scale-balanced"></i> Arbitraje y Jueces Oficiales</h4>
+                                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.4; margin: 0;">Los miembros del equipo de arbitraje nacional deben poseer credenciales activas del Comité Técnico Central de FEVEHAPKIDO.</p>
+                                </div>
+                                <div class="guideline-item">
+                                    <h4 style="color: var(--success); margin-bottom: 6px; font-size: 14px;"><i class="fa-solid fa-file-signature"></i> Autorización de Eventos</h4>
+                                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.4; margin: 0;">Las solicitudes de topes inter-dojangs deben ser enviadas con un mínimo de 15 días de anticipación para su aprobación federativa.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Atletas Inscritos en Torneo Panel Card (Full Width) -->
+                <div class="panel-card mt-20" id="torneo-inscritos-card" style="display: none; width: 100%;">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2><i class="fa-solid fa-users"></i> Atletas Inscritos en el Evento: <span id="inscritos-torneo-name" style="color: var(--primary);">--</span></h2>
+                        <button class="primary-btn btn-sm" onclick="app.openTorneoInscripcionModal()"><i class="fa-solid fa-user-plus"></i> Inscribir Competidor</button>
+                    </div>
+                    <div class="panel-body table-responsive">
+                        <table class="data-table" id="torneo-inscritos-table">
+                            <thead>
+                                <tr>
+                                    <th>Competidor</th>
+                                    <th>Cinturón / Rango</th>
+                                    <th>Edad / Sexo</th>
+                                    <th>Peso / División</th>
+                                    <th>Categorías Inscritas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal para Inscripción de Atleta en Torneo -->
+                <div class="modal" id="torneo-inscripcion-modal">
+                    <div class="modal-content" style="width: 550px; max-width: 95%;">
+                        <div class="modal-header">
+                            <h2 id="torneo-inscripcion-modal-title"><i class="fa-solid fa-user-plus"></i> Inscribir Atleta en Torneo</h2>
+                            <span class="close-modal" onclick="document.getElementById('torneo-inscripcion-modal').classList.remove('active')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="torneo-inscripcion-form" onsubmit="app.saveTorneoInscripcion(event)">
+                                <div class="form-group">
+                                    <label for="inscripcion-athlete-select">Seleccionar Atleta (Con medición física registrada)</label>
+                                    <select id="inscripcion-athlete-select" required>
+                                        <option value="">-- Seleccionar Practicante --</option>
+                                    </select>
+                                    <small style="color: var(--text-muted); font-size: 11px; display: block; margin-top: 4px;">Solo se listan atletas que cuentan con al menos una medición física registrada para poder extraer su peso corporal actual.</small>
+                                </div>
+
+                                <!-- Información dinámica del practicante seleccionado -->
+                                <div id="inscripcion-athlete-info" class="panel-card" style="display: none; background: rgba(255,255,255,0.02); margin-top: 15px; padding: 12px; border: 1px dashed var(--border-color);">
+                                    <h4 style="color: var(--cyan); margin-top: 0; margin-bottom: 8px;"><i class="fa-solid fa-circle-info"></i> Información del Competidor</h4>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                                        <p style="margin: 0;"><strong>Edad:</strong> <span id="ins-info-age">--</span> años</p>
+                                        <p style="margin: 0;"><strong>Rama (Sexo):</strong> <span id="ins-info-gender">--</span></p>
+                                        <p style="margin: 0;"><strong>Grado (Cinturón):</strong> <span id="ins-info-belt">--</span></p>
+                                        <p style="margin: 0;"><strong>Último Peso:</strong> <span id="ins-info-weight">--</span> kg</p>
+                                        <p style="margin: 0; grid-column: span 2;"><strong>División:</strong> <span id="ins-info-division" style="color: var(--primary); font-weight: bold;">--</span></p>
+                                    </div>
+                                </div>
+
+                                <!-- Selección de categorías para el torneo -->
+                                <div class="form-group mt-20">
+                                    <label>Categorías Competitivas para el Evento</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;" id="inscripcion-categories-container">
+                                        <label id="lbl-ins-combate"><input type="checkbox" id="ins-cat-combate"> Combate Continuo</label>
+                                        <label id="lbl-ins-salto-largo"><input type="checkbox" id="ins-cat-salto-largo"> Salto Largo</label>
+                                        <label id="lbl-ins-salto-alto"><input type="checkbox" id="ins-cat-salto-alto"> Salto Alto</label>
+                                        <label id="lbl-ins-figuras-sin"><input type="checkbox" id="ins-cat-figuras-sin"> Figuras sin Armas</label>
+                                        <label id="lbl-ins-figuras-con"><input type="checkbox" id="ins-cat-figuras-con"> Figuras con Armas</label>
+                                        <label id="lbl-ins-demos"><input type="checkbox" id="ins-cat-demos"> Demostraciones de DP</label>
+                                    </div>
+                                    <small style="color: var(--text-muted); font-size: 11px; display: block; margin-top: 6px;">Solo se muestran las categorías correspondientes a las modalidades aprobadas para este evento.</small>
+                                </div>
+
+                                <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                    <button type="button" class="btn-cancel" onclick="document.getElementById('torneo-inscripcion-modal').classList.remove('active')">Cancelar</button>
+                                    <button type="submit" class="primary-btn">Inscribir Competidor</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Torneo Request Modal -->
+                <div class="modal" id="torneo-modal">
+                    <div class="modal-content" style="width: 650px; max-width: 95%;">
+                        <div class="modal-header">
+                            <h2 id="torneo-modal-title">Solicitar Tope / Torneo</h2>
+                            <span class="close-modal" onclick="document.getElementById('torneo-modal').classList.remove('active')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="torneo-form" onsubmit="app.saveTorneo(event)">
+                                <input type="hidden" id="torneo-id">
+                                
+                                <div class="form-group">
+                                    <label for="torneo-name">Nombre del Evento</label>
+                                    <input type="text" id="torneo-name" required placeholder="Ej: Copa Amistad Tigres vs Halcones">
+                                </div>
+
+                                <div class="form-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                        <label for="torneo-type">Tipo de Evento</label>
+                                        <select id="torneo-type" required>
+                                            <option value="Tope Inter-escuelas">Tope Inter-escuelas (Fogueo)</option>
+                                            <option value="Tope Inter-estados">Tope Inter-estados (Fogueo Regional)</option>
+                                            <option value="Torneo Estatal">Torneo Estatal</option>
+                                            <option value="Torneo Nacional">Torneo Nacional / Selectivo</option>
+                                            <option value="Tope Amistoso">Tope Amistoso General</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                        <label for="torneo-date">Fecha del Evento</label>
+                                        <input type="date" id="torneo-date" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                        <label for="torneo-school">Escuela Organizadora</label>
+                                        <select id="torneo-school" required>
+                                            <!-- Dinámico -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                        <label for="torneo-state">Estado Sede / Asociación</label>
+                                        <select id="torneo-state" required>
+                                            <!-- Dinámico -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="torneo-guests">Escuelas Invitadas / Delegaciones</label>
+                                    <input type="text" id="torneo-guests" required placeholder="Ej: Dojang Halcones, Academia Hapkido Sur">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Modalidades Competitivas</label>
+                                    <div style="display: flex; gap: 20px; margin-top: 5px;">
+                                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; color: var(--text-primary);">
+                                            <input type="checkbox" id="torneo-mod-combate" checked> Combate (Kyorugi)
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; color: var(--text-primary);">
+                                            <input type="checkbox" id="torneo-mod-saltos" checked> Saltos (Largo / Alto)
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; color: var(--text-primary);">
+                                            <input type="checkbox" id="torneo-mod-exhibicion" checked> Exhibición / Figuras
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="torneo-referee-group">
+                                    <label for="torneo-referee">Árbitro Principal / Juez Federativo</label>
+                                    <input type="text" id="torneo-referee" placeholder="Ej: Maestro Juan Pérez (Árbitro Nacional)">
+                                    <small class="form-text text-muted">Requerido para torneos estadales/nacionales y topes inter-estados.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="torneo-notes">Notas / Requisitos de Fogueo</label>
+                                    <textarea id="torneo-notes" rows="3" placeholder="Indicar categorías de peso, edad, reglamentos o directrices especiales para el fogueo..."></textarea>
+                                </div>
+
+                                <div class="form-group admin-only-field" id="torneo-status-group" style="display: none;">
+                                    <label for="torneo-status">Estado de la Solicitud (Federación)</label>
+                                    <select id="torneo-status">
+                                        <option value="Solicitado">Solicitado (Pendiente por FEVEHAPKIDO)</option>
+                                        <option value="Aprobado">Aprobado / Programado</option>
+                                        <option value="Rechazado">Rechazado / Cancelado</option>
+                                    </select>
+                                    <small class="form-text text-muted">Sólo la Junta Directiva de la Federación Venezolana de Hapkido puede modificar el estado.</small>
+                                </div>
+
+                                <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                    <button type="button" class="btn-cancel" onclick="document.getElementById('torneo-modal').classList.remove('active')">Cancelar</button>
+                                    <button type="submit" class="primary-btn">Enviar Solicitud</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Plan de Entrenamiento Generado -->
+    <div class="modal" id="plan-modal">
+        <div class="modal-content" style="width: 800px; max-width: 95%;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-circle-check" style="color: var(--success);"></i> ¡Plan de Entrenamiento Generado Exitosamente!</h2>
+                <span class="close-modal" id="close-plan-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="plan-modal-body" style="max-height: 60vh; overflow-y: auto;">
+                <!-- Dinámico -->
+            </div>
+            <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background-color: #121620; border-bottom-left-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg);">
+                <button class="primary-btn" onclick="document.getElementById('plan-modal').classList.remove('active')">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal de Login Overlay -->
+    <div id="login-overlay" class="login-overlay active">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo-icon"><i class="fa-solid fa-yin-yang fa-spin"></i></div>
+                <h2>HAPKIDO</h2>
+                <p>MEDICIÓN DEL ATLETA</p>
+            </div>
+            <form id="login-form" onsubmit="app.login(event)">
+                <div class="form-group">
+                    <label for="login-username">Usuario</label>
+                    <input type="text" id="login-username" required placeholder="Ingresa tu usuario">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" required placeholder="Ingresa tu contraseña">
+                </div>
+                <div id="login-error-msg" class="login-error hidden">Usuario o contraseña incorrectos.</div>
+                <button type="submit" class="primary-btn w-100 mt-10">Ingresar al Tatami</button>
+            </form>
+            
+            <div class="login-demo-accounts">
+                <h3>Cuentas de Demostración</h3>
+                <div class="demo-acc-list">
+                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='admin'; document.getElementById('login-password').value='123';">
+                        <strong>Administrador:</strong> admin / 123 <small>(Acceso total)</small>
+                    </div>
+                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='maestro1'; document.getElementById('login-password').value='123';">
+                        <strong>Maestro (Tigres):</strong> maestro1 / 123 <small>(Dojang Tigres)</small>
+                    </div>
+                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='maestro2'; document.getElementById('login-password').value='123';">
+                        <strong>Maestro (Hapkido Sur):</strong> maestro2 / 123 <small>(Hapkido Sur)</small>
+                    </div>
+                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='atleta1'; document.getElementById('login-password').value='123';">
+                        <strong>Atleta (Carlos - Azul):</strong> atleta1 / 123 <small>(Carlos Gómez - Tigres)</small>
+                    </div>
+                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='atleta2'; document.getElementById('login-password').value='123';">
+                        <strong>Atleta (María - Rojo):</strong> atleta2 / 123 <small>(María Rodríguez - Sur)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Universal App Modal (Replaces browser alert/confirm) -->
+    <div id="app-modal-overlay" class="app-modal-overlay">
+        <div class="app-modal-card" id="app-modal-card">
+            <div class="app-modal-icon" id="app-modal-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <h3 class="app-modal-title" id="app-modal-title">Mensaje</h3>
+            <div class="app-modal-body" id="app-modal-body"></div>
+            <div class="app-modal-actions" id="app-modal-actions">
+                <button type="button" class="btn btn-secondary" id="app-modal-cancel-btn" style="display:none;">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="app-modal-confirm-btn">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hapkido App Modules -->
+    <script src="app.js?v=20260828-1"></script>
+    <script src="hapkido-data.js?v=20260828-1"></script>
+    <script src="hapkido-auth.js?v=20260828-1"></script>
+    <script src="hapkido-athletes.js?v=20260828-1"></script>
+    <script src="hapkido-physical.js?v=20260828-1"></script>
+    <script src="hapkido-exams.js?v=20260828-1"></script>
+    <script src="hapkido-combat.js?v=20260828-1"></script>
+    <script src="hapkido-schools.js?v=20260828-1"></script>
+    <script src="hapkido-torneos.js?v=20260828-1"></script>
+    <script src="hapkido-vocab.js?v=20260828-1"></script>
+    <script src="hapkido-init.js?v=20260828-1"></script>
+</body>
+</html>
