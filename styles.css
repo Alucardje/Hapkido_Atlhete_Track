@@ -330,7 +330,15 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    position: sticky;
+    top: 0;
+    background: rgba(15, 19, 26, 0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 900;
+    padding: 16px 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
     gap: 16px;
 }
 
@@ -342,7 +350,7 @@ body {
 }
 
 .main-header h1 {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 800;
     background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-secondary));
     -webkit-background-clip: text;
@@ -2687,18 +2695,18 @@ body.role-athlete .actions-cell {
 }
 
 /* ==========================================================================
-   HAMBURGER MENU TOGGLE BUTTON (Mobile only — hidden on desktop)
+   HAMBURGER / SIDEBAR TOGGLE BUTTON (Universal — Desktop & Mobile)
    ========================================================================== */
 .menu-toggle-btn {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 5px;
-    width: 44px;
-    height: 44px;
-    padding: 10px;
-    background: none;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     cursor: pointer;
@@ -2708,8 +2716,13 @@ body.role-athlete .actions-cell {
 }
 
 .menu-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--border-hover);
+    background: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.35);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.menu-toggle-btn:hover .hamburger-line {
+    background: var(--primary);
 }
 
 .hamburger-line {
@@ -2738,29 +2751,30 @@ body.role-athlete .actions-cell {
 }
 
 /* ==========================================================================
-   SIDEBAR COLLAPSE BUTTON (Desktop only)
+   SIDEBAR COLLAPSE BUTTON (Inside Sidebar Header)
    ========================================================================== */
 .sidebar-collapse-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    background: rgba(255, 255, 255, 0.04);
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    color: var(--text-muted);
+    color: var(--text-secondary);
     cursor: pointer;
     transition: var(--transition-fast);
     margin-left: auto;
     flex-shrink: 0;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .sidebar-collapse-btn:hover {
-    background: rgba(56, 189, 248, 0.1);
+    background: rgba(56, 189, 248, 0.15);
     color: var(--primary);
-    border-color: rgba(56, 189, 248, 0.3);
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
 }
 
 /* ==========================================================================
@@ -2792,7 +2806,8 @@ body.role-athlete .actions-cell {
    DESKTOP COLLAPSED SIDEBAR STATE (76px mini-sidebar)
    ========================================================================== */
 .sidebar-collapsed .sidebar {
-    padding: 24px 10px;
+    width: 76px;
+    padding: 24px 8px;
 }
 
 .sidebar-collapsed .sidebar .logo-text,
@@ -2807,13 +2822,17 @@ body.role-athlete .actions-cell {
 
 .sidebar-collapsed .sidebar .sidebar-header {
     justify-content: center;
+    padding: 0;
+    margin-bottom: 24px;
     gap: 0;
 }
 
+.sidebar-collapsed .sidebar .logo-icon {
+    font-size: 26px;
+}
+
 .sidebar-collapsed .sidebar .sidebar-collapse-btn {
-    position: absolute;
-    right: 8px;
-    top: 24px;
+    display: none;
 }
 
 .sidebar-collapsed .sidebar .nav-item,

@@ -222,17 +222,21 @@ class HapkidoApp {
     }
 
     /**
-     * Sidebar Responsive Controls
+     * Sidebar Responsive Controls (Unified Desktop Collapse & Mobile Drawer)
      */
 
     toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-        const btn = document.getElementById('menu-toggle-btn');
-        if (!sidebar) return;
-        const isOpen = sidebar.classList.toggle('mobile-open');
-        if (backdrop) backdrop.classList.toggle('active', isOpen);
-        if (btn) btn.classList.toggle('active', isOpen);
+        if (window.innerWidth > 992) {
+            this.toggleDesktopCollapse();
+        } else {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const btn = document.getElementById('menu-toggle-btn');
+            if (!sidebar) return;
+            const isOpen = sidebar.classList.toggle('mobile-open');
+            if (backdrop) backdrop.classList.toggle('active', isOpen);
+            if (btn) btn.classList.toggle('active', isOpen);
+        }
     }
 
     closeSidebarMobile() {
@@ -249,19 +253,27 @@ class HapkidoApp {
         if (!container) return;
         const isCollapsed = container.classList.toggle('sidebar-collapsed');
         localStorage.setItem('hapkido_sidebar_collapsed', isCollapsed ? '1' : '0');
-        const icon = document.querySelector('#desktop-collapse-btn i');
-        if (icon) {
-            icon.className = isCollapsed ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left';
+        
+        const collapseBtnIcon = document.querySelector('#desktop-collapse-btn i');
+        if (collapseBtnIcon) {
+            collapseBtnIcon.className = isCollapsed ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left';
+        }
+
+        const menuToggleBtn = document.getElementById('menu-toggle-btn');
+        if (menuToggleBtn) {
+            menuToggleBtn.classList.toggle('active', isCollapsed);
         }
     }
 
     restoreSidebarState() {
         const collapsed = localStorage.getItem('hapkido_sidebar_collapsed') === '1';
-        if (collapsed) {
+        if (collapsed && window.innerWidth > 992) {
             const container = document.querySelector('.app-container');
             if (container) container.classList.add('sidebar-collapsed');
-            const icon = document.querySelector('#desktop-collapse-btn i');
-            if (icon) icon.className = 'fa-solid fa-angles-right';
+            const collapseBtnIcon = document.querySelector('#desktop-collapse-btn i');
+            if (collapseBtnIcon) collapseBtnIcon.className = 'fa-solid fa-angles-right';
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            if (menuToggleBtn) menuToggleBtn.classList.add('active');
         }
     }
 
