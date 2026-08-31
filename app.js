@@ -62,6 +62,9 @@ class HapkidoApp {
 
         // Event Listeners setup
         this.setupEventListeners();
+
+        // Restore sidebar collapsed state from localStorage
+        this.restoreSidebarState();
         
         // Load initial lists
         this.updateDashboardStats();
@@ -208,11 +211,58 @@ class HapkidoApp {
         if (hash !== '#combate' && this.isTimerRunning) {
             this.pauseTimer();
         }
+
+        // Auto-close sidebar on mobile after navigation
+        this.closeSidebarMobile();
     }
 
 
     navigateTo(hash) {
         window.location.hash = hash;
+    }
+
+    /**
+     * Sidebar Responsive Controls
+     */
+
+    toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const btn = document.getElementById('menu-toggle-btn');
+        if (!sidebar) return;
+        const isOpen = sidebar.classList.toggle('mobile-open');
+        if (backdrop) backdrop.classList.toggle('active', isOpen);
+        if (btn) btn.classList.toggle('active', isOpen);
+    }
+
+    closeSidebarMobile() {
+        const sidebar = document.querySelector('.sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const btn = document.getElementById('menu-toggle-btn');
+        if (sidebar) sidebar.classList.remove('mobile-open');
+        if (backdrop) backdrop.classList.remove('active');
+        if (btn) btn.classList.remove('active');
+    }
+
+    toggleDesktopCollapse() {
+        const container = document.querySelector('.app-container');
+        if (!container) return;
+        const isCollapsed = container.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('hapkido_sidebar_collapsed', isCollapsed ? '1' : '0');
+        const icon = document.querySelector('#desktop-collapse-btn i');
+        if (icon) {
+            icon.className = isCollapsed ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left';
+        }
+    }
+
+    restoreSidebarState() {
+        const collapsed = localStorage.getItem('hapkido_sidebar_collapsed') === '1';
+        if (collapsed) {
+            const container = document.querySelector('.app-container');
+            if (container) container.classList.add('sidebar-collapsed');
+            const icon = document.querySelector('#desktop-collapse-btn i');
+            if (icon) icon.className = 'fa-solid fa-angles-right';
+        }
     }
 
     /**
@@ -561,9 +611,15 @@ class HapkidoApp {
             }
         });
 
-        // Android Back Button / Escape key handling for Modals
+        // Android Back Button / Escape key handling for Sidebar & Modals
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                // Close sidebar first if open on mobile
+                const sidebar = document.querySelector('.sidebar.mobile-open');
+                if (sidebar) {
+                    this.closeSidebarMobile();
+                    return;
+                }
                 const activeOverlay = document.querySelector('.app-modal-overlay.active, .modal.active');
                 if (activeOverlay && activeOverlay.id !== 'login-overlay') {
                     activeOverlay.classList.remove('active');

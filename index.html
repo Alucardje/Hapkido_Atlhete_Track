@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <!-- Local Chart.js for interactive analytics -->
     <script src="vendor/chartjs/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260828-1">
+    <link rel="stylesheet" href="styles.css?v=20260831-1">
 </head>
 <body>
     <div class="app-container">
@@ -33,6 +33,9 @@
                     <h2>HAPKIDO</h2>
                     <p>MEDICIÓN DEL ATLETA</p>
                 </div>
+                <button type="button" class="sidebar-collapse-btn" id="desktop-collapse-btn" onclick="app.toggleDesktopCollapse()" title="Colapsar menú">
+                    <i class="fa-solid fa-angles-left"></i>
+                </button>
             </div>
             
             <nav class="sidebar-nav">
@@ -136,10 +139,20 @@
             </div>
         </aside>
 
+        <!-- Mobile Backdrop Overlay -->
+        <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="app.closeSidebarMobile()"></div>
+
         <!-- Main Content Panel -->
         <main class="main-content">
             <header class="main-header">
-                <h1 id="page-title">Dashboard</h1>
+                <div class="header-left">
+                    <button type="button" class="menu-toggle-btn" id="menu-toggle-btn" onclick="app.toggleSidebar()" aria-label="Abrir menú">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
                 <div class="header-actions">
                     <div class="user-active-badge" id="header-user-badge" style="display: none;">
                         <i class="fa-solid fa-user-ninja" id="header-user-icon"></i>
@@ -2208,16 +2221,16 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260828-1"></script>
-    <script src="hapkido-data.js?v=20260828-1"></script>
-    <script src="hapkido-auth.js?v=20260828-1"></script>
-    <script src="hapkido-athletes.js?v=20260828-1"></script>
-    <script src="hapkido-physical.js?v=20260828-1"></script>
-    <script src="hapkido-exams.js?v=20260828-1"></script>
-    <script src="hapkido-combat.js?v=20260828-1"></script>
-    <script src="hapkido-schools.js?v=20260828-1"></script>
-    <script src="hapkido-torneos.js?v=20260828-1"></script>
-    <script src="hapkido-vocab.js?v=20260828-1"></script>
-    <script src="hapkido-init.js?v=20260828-1"></script>
+    <script src="app.js?v=20260831-1"></script>
+    <script src="hapkido-data.js?v=20260831-1"></script>
+    <script src="hapkido-auth.js?v=20260831-1"></script>
+    <script src="hapkido-athletes.js?v=20260831-1"></script>
+    <script src="hapkido-physical.js?v=20260831-1"></script>
+    <script src="hapkido-exams.js?v=20260831-1"></script>
+    <script src="hapkido-combat.js?v=20260831-1"></script>
+    <script src="hapkido-schools.js?v=20260831-1"></script>
+    <script src="hapkido-torneos.js?v=20260831-1"></script>
+    <script src="hapkido-vocab.js?v=20260831-1"></script>
+    <script src="hapkido-init.js?v=20260831-1"></script>
 </body>
 </html>
