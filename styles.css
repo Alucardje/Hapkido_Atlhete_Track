@@ -2632,13 +2632,16 @@ body.role-athlete .actions-cell {
     border: 1px solid #30363d;
     border-radius: 18px;
     padding: 28px 24px 22px;
-    max-width: 440px;
+    max-width: 560px;
     width: 100%;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
     text-align: center;
     transform: scale(0.92) translateY(10px);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     font-family: 'Outfit', sans-serif;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .app-modal-overlay.active .app-modal-card {
@@ -2655,6 +2658,7 @@ body.role-athlete .actions-cell {
     justify-content: center;
     font-size: 26px;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
 .app-modal-icon.type-info {
@@ -2693,6 +2697,7 @@ body.role-athlete .actions-cell {
     color: #f0f6fc;
     margin: 0 0 10px;
     line-height: 1.3;
+    flex-shrink: 0;
 }
 
 .app-modal-body {
@@ -2700,12 +2705,40 @@ body.role-athlete .actions-cell {
     line-height: 1.6;
     color: #c9d1d9;
     margin-bottom: 24px;
-    white-space: pre-line;
-    max-height: 50vh;
     overflow-y: auto;
     text-align: left;
     padding: 0 4px;
+    flex: 1;
+    min-height: 0;
 }
+
+/* Protocol help guide specific styles inside modal */
+.app-modal-body .protocol-guide { white-space: normal; }
+.app-modal-body .protocol-guide ol { padding-left: 20px; margin: 6px 0 10px; }
+.app-modal-body .protocol-guide ol li { margin-bottom: 4px; }
+.app-modal-body .protocol-guide ul { padding-left: 18px; margin: 4px 0 8px; list-style: disc; }
+.app-modal-body .protocol-guide ul li { margin-bottom: 3px; }
+.app-modal-body .protocol-guide .warn-box {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 8px; padding: 8px 10px; margin-top: 8px;
+    font-size: 12.5px; color: #f5c77e;
+}
+.app-modal-body .protocol-guide .equip-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 10px; margin-top: 8px;
+}
+.app-modal-body .protocol-guide .video-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 10px; padding: 8px 14px;
+    background: rgba(0, 180, 216, 0.1);
+    border: 1px solid rgba(0, 180, 216, 0.3);
+    border-radius: 8px; color: #00b4d8;
+    text-decoration: none; font-size: 12.5px; font-weight: 600;
+    transition: background 0.2s;
+}
+.app-modal-body .protocol-guide .video-link:hover { background: rgba(0, 180, 216, 0.2); }
 
 .app-modal-actions {
     display: flex;
