@@ -3073,77 +3073,240 @@ body.role-athlete .actions-cell {
 }
 
 /* ==========================================================================
-   RESPONSIVE — SMALL MOBILE (<= 640px)
+   MOBILE BOTTOM NAVIGATION BAR (Screens <= 768px)
    ========================================================================== */
-@media (max-width: 640px) {
+.mobile-bottom-nav {
+    display: none;
+}
+
+.app-modal-drag-handle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Main Layout with Bottom Nav clearance */
     .main-content {
-        padding: 14px;
+        padding: 14px 14px 88px 14px !important;
     }
 
+    /* Fixed Bottom Nav Bar */
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        height: 62px;
+        background: rgba(13, 17, 23, 0.96);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+        z-index: 950;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        box-sizing: border-box;
+    }
+
+    .mobile-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #8b949e;
+        text-decoration: none;
+        padding: 6px 0;
+        gap: 3px;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+    }
+
+    .mobile-nav-icon {
+        font-size: 18px;
+        line-height: 1;
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .mobile-nav-label {
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: -0.2px;
+    }
+
+    .mobile-nav-item:active {
+        transform: scale(0.92);
+    }
+
+    .mobile-nav-item.active {
+        color: var(--primary);
+    }
+
+    .mobile-nav-item.active .mobile-nav-icon {
+        transform: translateY(-2px);
+        color: #00b4d8;
+        text-shadow: 0 0 10px rgba(0, 180, 216, 0.45);
+    }
+
+    .mobile-nav-item.active .mobile-nav-label {
+        font-weight: 700;
+        color: #f0f6fc;
+    }
+
+    /* Structured 2-column mobile form grid */
+    .form-row {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .form-row .form-group {
+        width: 100% !important;
+        margin-bottom: 0 !important;
+    }
+
+    .form-row .form-group.full-width,
+    .form-group.full-width {
+        grid-column: 1 / -1 !important;
+    }
+
+    /* Touch-optimized inputs */
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    input[type="date"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Prevents auto-zoom in iOS Safari */
+        min-height: 44px;
+        border-radius: 10px;
+    }
+
+    /* Compact panel card headers */
+    .panel-header {
+        padding: 12px 14px;
+    }
+
+    .panel-body {
+        padding: 14px;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE — SMALL MOBILE (<= 640px) & BOTTOM-SHEET MODALS
+   ========================================================================== */
+@media (max-width: 640px) {
     .main-header {
         flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
+        gap: 8px;
+        padding: 10px 14px;
+        margin-bottom: 14px;
     }
 
     .main-header h1 {
-        font-size: 18px;
+        font-size: 16px;
+        letter-spacing: -0.3px;
     }
 
     .header-actions {
-        width: 100%;
-        justify-content: flex-end;
+        width: auto;
+        gap: 6px;
     }
 
     .datetime {
-        font-size: 11px;
-        padding: 6px 12px;
+        font-size: 10.5px;
+        padding: 4px 8px;
     }
 
     .user-active-badge {
         display: none !important;
     }
 
-    /* Stats grid single column */
+    /* Single column for full-width components */
     .grid-stats {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 
     .stat-card {
-        padding: 14px;
+        padding: 10px 12px;
     }
 
     .stat-value {
+        font-size: 19px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+
+    /* Bottom Sheet Modal Presentation on Small Devices */
+    .app-modal-overlay {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+
+    .app-modal-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 22px 22px 0 0 !important;
+        max-height: 84vh !important;
+        padding: 12px 18px 24px !important;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.7) !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .app-modal-overlay.active .app-modal-card {
+        transform: translateY(0) !important;
+    }
+
+    .app-modal-drag-handle {
+        display: block;
+        width: 42px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 4px;
+        margin: 0 auto 12px;
+    }
+
+    .app-modal-icon {
+        width: 48px;
+        height: 48px;
         font-size: 22px;
+        margin: 0 auto 10px;
     }
 
-    /* Panel cards */
-    .panel-card {
-        border-radius: var(--radius-sm);
+    .app-modal-title {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
     }
 
-    .panel-header h3 {
-        font-size: 14px;
+    .app-modal-actions button {
+        flex: 1;
+        min-height: 44px;
     }
 
-    /* Scoring buttons touch-friendly */
+    /* Combat scoring screen touch optimization */
     .icon-btn, .timer-btn {
-        min-width: 50px;
-        min-height: 50px;
+        min-width: 48px;
+        min-height: 48px;
     }
 
-    /* Combat timer */
     .timer-display {
-        font-size: 36px;
+        font-size: 34px;
     }
 
     /* Login box */
     .login-box {
-        padding: 24px 18px;
+        padding: 22px 16px;
+        max-width: 90vw;
     }
 
     .login-header h2 {
-        font-size: 22px;
+        font-size: 20px;
     }
 }
+

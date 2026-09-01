@@ -2203,9 +2203,34 @@
         </div>
     </div>
 
+    <!-- Mobile Bottom Navigation Bar (Active on screens <= 768px) -->
+    <nav id="mobile-bottom-nav" class="mobile-bottom-nav" aria-label="Navegación Móvil">
+        <a href="#dashboard" class="mobile-nav-item active" data-nav="dashboard">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-gauge-high"></i></div>
+            <span class="mobile-nav-label">Inicio</span>
+        </a>
+        <a href="#atletas" class="mobile-nav-item" data-nav="atletas">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-users"></i></div>
+            <span class="mobile-nav-label">Atletas</span>
+        </a>
+        <a href="#fisica" class="mobile-nav-item" data-nav="fisica">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <span class="mobile-nav-label">Física</span>
+        </a>
+        <a href="#combate" class="mobile-nav-item" data-nav="combate">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-hand-fist"></i></div>
+            <span class="mobile-nav-label">Combate</span>
+        </a>
+        <a href="javascript:void(0)" class="mobile-nav-item" id="mobile-more-btn" onclick="app.toggleSidebar()">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-bars"></i></div>
+            <span class="mobile-nav-label">Menú</span>
+        </a>
+    </nav>
+
     <!-- Universal App Modal (Replaces browser alert/confirm) -->
     <div id="app-modal-overlay" class="app-modal-overlay">
         <div class="app-modal-card" id="app-modal-card">
+            <div class="app-modal-drag-handle"></div>
             <div class="app-modal-icon" id="app-modal-icon">
                 <i class="fa-solid fa-circle-info"></i>
             </div>
@@ -2213,22 +2238,22 @@
             <div class="app-modal-body" id="app-modal-body"></div>
             <div class="app-modal-actions" id="app-modal-actions">
                 <button type="button" class="btn btn-secondary" id="app-modal-cancel-btn" style="display:none;">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="app-modal-confirm-btn">Aceptar</button>
+                <button type="button" class="btn btn-primary" id="app-modal-confirm-btn">Entendido</button>
             </div>
         </div>
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-4"></script>
-    <script src="hapkido-data.js?v=20260901-4"></script>
-    <script src="hapkido-auth.js?v=20260901-4"></script>
-    <script src="hapkido-athletes.js?v=20260901-4"></script>
-    <script src="hapkido-physical.js?v=20260901-4"></script>
-    <script src="hapkido-exams.js?v=20260901-4"></script>
-    <script src="hapkido-combat.js?v=20260901-4"></script>
-    <script src="hapkido-schools.js?v=20260901-4"></script>
-    <script src="hapkido-torneos.js?v=20260901-4"></script>
-    <script src="hapkido-vocab.js?v=20260901-4"></script>
-    <script src="hapkido-init.js?v=20260901-4"></script>
+    <script src="app.js?v=20260901-5"></script>
+    <script src="hapkido-data.js?v=20260901-5"></script>
+    <script src="hapkido-auth.js?v=20260901-5"></script>
+    <script src="hapkido-athletes.js?v=20260901-5"></script>
+    <script src="hapkido-physical.js?v=20260901-5"></script>
+    <script src="hapkido-exams.js?v=20260901-5"></script>
+    <script src="hapkido-combat.js?v=20260901-5"></script>
+    <script src="hapkido-schools.js?v=20260901-5"></script>
+    <script src="hapkido-torneos.js?v=20260901-5"></script>
+    <script src="hapkido-vocab.js?v=20260901-5"></script>
+    <script src="hapkido-init.js?v=20260901-5"></script>
 </body>
 </html>

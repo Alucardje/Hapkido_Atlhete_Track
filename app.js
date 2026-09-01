@@ -143,6 +143,17 @@ class HapkidoApp {
             }
         });
 
+        // Update Mobile Bottom Nav Active State
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            const itemTarget = item.getAttribute('data-nav');
+            const targetHash = '#' + itemTarget;
+            if (itemTarget && (hash === targetHash || (hash === '' && itemTarget === 'dashboard'))) {
+                item.classList.add('active');
+            } else if (item.getAttribute('id') !== 'mobile-more-btn') {
+                item.classList.remove('active');
+            }
+        });
+
         // Update Page Title
         const pageTitle = document.getElementById('page-title');
         if (pageTitle) {
