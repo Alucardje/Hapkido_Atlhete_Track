@@ -954,6 +954,7 @@
                                     <th>Calificación Promedio</th>
                                     <th>Estado</th>
                                     <th>Detalles</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2159,6 +2160,40 @@
         </div>
     </div>
 
+    <!-- Modal para Diploma / Certificado de Cinturón -->
+    <div class="modal" id="certificate-modal">
+        <div class="modal-content certificate-modal-content" style="width: 960px; max-width: 96vw;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-award" style="color: #f59e0b;"></i> Certificado Oficial de Grado Técnico</h2>
+                <span class="close-modal" onclick="document.getElementById('certificate-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body" id="certificate-modal-body" style="padding: 10px; max-height: 75vh; overflow-y: auto;">
+                <!-- Dinámico -->
+            </div>
+            <div class="modal-footer" style="padding: 14px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: #121620;">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('certificate-modal').classList.remove('active')">Cerrar</button>
+                <button type="button" class="primary-btn" onclick="window.print()" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fa-solid fa-print"></i> Imprimir / Guardar en PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Ficha de Evaluación Física Imprimible -->
+    <div class="modal" id="report-print-modal">
+        <div class="modal-content report-print-modal-content" style="width: 900px; max-width: 96vw;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-file-pdf" style="color: var(--primary);"></i> Ficha Oficial de Evaluación y Plan Correctivo</h2>
+                <span class="close-modal" onclick="document.getElementById('report-print-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body" id="report-print-modal-body" style="padding: 10px; max-height: 75vh; overflow-y: auto;">
+                <!-- Dinámico -->
+            </div>
+            <div class="modal-footer" style="padding: 14px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: #121620;">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('report-print-modal').classList.remove('active')">Cerrar</button>
+                <button type="button" class="primary-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir / Guardar en PDF</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Portal de Login Overlay -->
     <div id="login-overlay" class="login-overlay active">
         <div class="login-box">
@@ -2244,16 +2279,16 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-5"></script>
-    <script src="hapkido-data.js?v=20260901-5"></script>
-    <script src="hapkido-auth.js?v=20260901-5"></script>
-    <script src="hapkido-athletes.js?v=20260901-5"></script>
-    <script src="hapkido-physical.js?v=20260901-5"></script>
-    <script src="hapkido-exams.js?v=20260901-5"></script>
-    <script src="hapkido-combat.js?v=20260901-5"></script>
-    <script src="hapkido-schools.js?v=20260901-5"></script>
-    <script src="hapkido-torneos.js?v=20260901-5"></script>
-    <script src="hapkido-vocab.js?v=20260901-5"></script>
-    <script src="hapkido-init.js?v=20260901-5"></script>
+    <script src="app.js?v=20260901-6"></script>
+    <script src="hapkido-data.js?v=20260901-6"></script>
+    <script src="hapkido-auth.js?v=20260901-6"></script>
+    <script src="hapkido-athletes.js?v=20260901-6"></script>
+    <script src="hapkido-physical.js?v=20260901-6"></script>
+    <script src="hapkido-exams.js?v=20260901-6"></script>
+    <script src="hapkido-combat.js?v=20260901-6"></script>
+    <script src="hapkido-schools.js?v=20260901-6"></script>
+    <script src="hapkido-torneos.js?v=20260901-6"></script>
+    <script src="hapkido-vocab.js?v=20260901-6"></script>
+    <script src="hapkido-init.js?v=20260901-6"></script>
 </body>
 </html>

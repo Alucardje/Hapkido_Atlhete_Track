@@ -391,10 +391,116 @@ HapkidoApp.prototype.renderExamHistoryTable = function() {
                 <td><strong>${rec.examDetails.avgScore.toFixed(1)}/10</strong></td>
                 <td><span class="badge success">Aprobado</span></td>
                 <td><small>${rec.examDetails.notes || "-"}</small></td>
+                <td>
+                    <button type="button" class="btn-action-primary" onclick="app.showBeltCertificateModal('${rec.id}')" title="Generar Diploma Oficial de Cinturón" style="padding: 5px 10px; font-size: 11.5px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <i class="fa-solid fa-award" style="color: #f59e0b;"></i> Diploma
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
     }
+
+    /**
+     * Visualización y Generación del Diploma Oficial de Cinta para Impresión / PDF
+     */
+    HapkidoApp.prototype.showBeltCertificateModal = function(examId) {
+        const record = this.data.records.find(r => r.id === examId && r.type === 'EXAMEN');
+        if (!record) {
+            this.showAlert('No se encontró el registro de examen seleccionado.', 'error', 'Error');
+            return;
+        }
+
+        const athlete = this.data.athletes.find(a => a.id === record.athleteId) || {
+            name: 'Atleta Registrado',
+            school: 'Dojang Central',
+            gender: 'M'
+        };
+
+        const details = record.examDetails;
+        const targetBelt = details.targetBelt;
+        const beltColorLower = targetBelt.toLowerCase().replace(/ /g, '-');
+        
+        // Distinction text based on score
+        let distinction = "Aprobado Satisfactoriamente";
+        if (details.avgScore >= 9.5) distinction = "Aprobado con Máximos Honores (Summa Cum Laude)";
+        else if (details.avgScore >= 9.0) distinction = "Aprobado con Mención de Honor";
+        else if (details.avgScore >= 8.0) distinction = "Aprobado con Distinción Técnica";
+
+        const modalBody = document.getElementById('certificate-modal-body');
+        if (!modalBody) return;
+
+        modalBody.innerHTML = `
+            <div class="certificate-container" id="printable-certificate">
+                <div class="certificate-inner-border">
+                    <div class="cert-corner cert-corner-tl"></div>
+                    <div class="cert-corner cert-corner-tr"></div>
+                    <div class="cert-corner cert-corner-bl"></div>
+                    <div class="cert-corner cert-corner-br"></div>
+
+                    <div class="cert-header">
+                        <div class="cert-korean-title">대한 합기도 협회</div>
+                        <div class="cert-fed-logo"><i class="fa-solid fa-yin-yang fa-spin-pulse"></i></div>
+                        <h1 class="cert-fed-name">FEDERACIÓN VENEZOLANA DE HAPKIDO</h1>
+                        <h2 class="cert-doc-title">DIPLOMA OFICIAL DE GRADO TÉCNICO</h2>
+                        <div class="cert-divider"></div>
+                    </div>
+
+                    <div class="cert-body">
+                        <p class="cert-text-intro">Por cuanto el practicante de Hapkido</p>
+                        <h2 class="cert-athlete-name">${athlete.name.toUpperCase()}</h2>
+                        <p class="cert-text-desc">
+                            ha demostrado disciplina marcial, perseverancia, ética y dominio sobresaliente del programa técnico oficial en la evaluación técnica y física federativa, se le confiere con plenos derechos el grado de:
+                        </p>
+                        
+                        <div class="cert-belt-display">
+                            <span class="cert-belt-title belt-${beltColorLower}">CINTURÓN ${targetBelt.toUpperCase()}</span>
+                        </div>
+
+                        <p class="cert-distinction"><i class="fa-solid fa-star"></i> Promedio de Evaluación: <strong>${details.avgScore.toFixed(1)} / 10.0</strong> — <em>${distinction}</em> <i class="fa-solid fa-star"></i></p>
+
+                        <div class="cert-meta-grid">
+                            <div class="cert-meta-item">
+                                <span class="cert-meta-label">Dojang / Escuela:</span>
+                                <span class="cert-meta-val">${athlete.school || 'Dojang Oficial'}</span>
+                            </div>
+                            <div class="cert-meta-item">
+                                <span class="cert-meta-label">Fecha de Otorgamiento:</span>
+                                <span class="cert-meta-val">${record.date}</span>
+                            </div>
+                            <div class="cert-meta-item">
+                                <span class="cert-meta-label">Registro Nacional:</span>
+                                <span class="cert-meta-val">FEVE-${record.id.replace('rec_', '').substring(0, 8).toUpperCase()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cert-footer">
+                        <div class="cert-signature-box">
+                            <div class="cert-sig-line"></div>
+                            <span class="cert-sig-name">Maestro Evaluador</span>
+                            <span class="cert-sig-rank">Director Técnico Nacional</span>
+                        </div>
+                        <div class="cert-seal-box">
+                            <div class="cert-official-seal">
+                                <i class="fa-solid fa-stamp"></i>
+                                <span>SELLO OFICIAL</span>
+                                <span>FEVEHAPKIDO</span>
+                            </div>
+                        </div>
+                        <div class="cert-signature-box">
+                            <div class="cert-sig-line"></div>
+                            <span class="cert-sig-name">${this.currentUser?.name || 'Comisión Técnica'}</span>
+                            <span class="cert-sig-rank">Presidente de Dojang / Escuela</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const modal = document.getElementById('certificate-modal');
+        if (modal) modal.classList.add('active');
+    };
 
     /**
      * Metodología de Entrenamiento - Generación Dinámica del Plan Personalizado

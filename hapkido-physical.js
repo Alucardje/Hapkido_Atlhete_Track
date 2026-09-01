@@ -836,6 +836,11 @@ HapkidoApp.prototype.generatePhysicalReportHTML = function(athlete, rec) {
                     ` : ''}
                 </div>
             </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 14px; gap: 10px;">
+                <button type="button" class="primary-btn" onclick="app.showPhysicalReportPrintModal('${rec.id}')" style="background: linear-gradient(135deg, #00b4d8, #0077b6); display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-file-pdf"></i> Imprimir / Guardar Ficha Oficial en PDF
+                </button>
+            </div>
         `;
     }
 
@@ -2173,3 +2178,180 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
 
         this.showAlert(htmlContent, 'info', p.title);
     };
+
+    /**
+     * Generador de Filas de la Tabla de Impresión Oficial (28 Pruebas y Baremos)
+     */
+    HapkidoApp.prototype.generatePrintTableRows = function(details, evalResults) {
+        const rows = [
+            // Antropometría & Composición
+            { name: "Índice de Masa Corporal (IMC)", val: details.weight && details.height ? `${details.weight.toFixed(1)} kg / ${details.height} cm` : "--", score: evalResults.imc ? evalResults.imc.toFixed(2) : "--", level: evalResults.imcLevel, cls: evalResults.imcClass },
+            { name: "Relación Cintura-Estatura (WHtR)", val: details.waist ? `${details.waist} cm` : "--", score: evalResults.whtr ? evalResults.whtr.toFixed(3) : "--", level: evalResults.whtrLevel, cls: evalResults.whtrClass },
+            { name: "Grasa Corporal (YMCA / RFM)", val: details.fat ? `${details.fat.toFixed(1)}%` : "--", score: evalResults.fat ? evalResults.fat.score.toFixed(1) : "--", level: evalResults.fat?.level, cls: evalResults.fat?.cls },
+            { name: "Envergadura / Ape Index", val: details.wingspan ? `${details.wingspan} cm` : "--", score: evalResults.apeIndex ? evalResults.apeIndex.toFixed(3) : "--", level: evalResults.wingspan?.level, cls: evalResults.wingspan?.cls },
+            { name: "Perímetro de Cuello", val: details.neck ? `${details.neck} cm` : "--", score: evalResults.neck ? evalResults.neck.score.toFixed(1) : "--", level: evalResults.neck?.level, cls: evalResults.neck?.cls },
+            { name: "Perímetro de Muslo", val: details.thigh ? `${details.thigh} cm` : "--", score: evalResults.thigh ? evalResults.thigh.score.toFixed(1) : "--", level: evalResults.thigh?.level, cls: evalResults.thigh?.cls },
+            { name: "Pliegues Cutáneos (Tríceps/Abd)", val: details.skinfoldTri ? `${details.skinfoldTri} mm / ${details.skinfoldAbd || '--'} mm` : "--", score: "--", level: details.skinfoldTri ? "Registrado" : "N/A", cls: "primary" },
+            
+            // Cardiovascular & Resistencia
+            { name: "FC en Reposo Basal", val: details.rhr ? `${details.rhr} lpm` : "--", score: evalResults.rhr ? evalResults.rhr.score.toFixed(1) : "--", level: evalResults.rhr?.level, cls: evalResults.rhr?.cls },
+            { name: "Test de Ruffier-Dickson", val: details.ruffierIndex !== undefined ? `P1:${details.p1 || '--'} P2:${details.p2 || '--'} P3:${details.p3 || '--'} (Índice: ${details.ruffierIndex.toFixed(1)})` : "--", score: evalResults.ruffier ? evalResults.ruffier.score.toFixed(1) : "--", level: details.ruffierLevel, cls: details.ruffierIndex > 10 ? "danger" : (details.ruffierIndex > 5 ? "warning" : "success") },
+            { name: "Test de Cooper (Resistencia)", val: details.cooper ? `${details.cooper} m` : "--", score: evalResults.cooper ? evalResults.cooper.score.toFixed(1) : "--", level: evalResults.cooper?.level, cls: evalResults.cooper?.cls },
+            
+            // Fuerza & Core
+            { name: "Flexiones de Pecho (1 min)", val: details.pushups !== undefined ? `${details.pushups} reps` : "--", score: evalResults.pushups ? evalResults.pushups.score.toFixed(1) : "--", level: evalResults.pushups?.level, cls: evalResults.pushups?.cls },
+            { name: "Abdominales (1 min)", val: details.situps !== undefined ? `${details.situps} reps` : "--", score: evalResults.situps ? evalResults.situps.score.toFixed(1) : "--", level: evalResults.situps?.level, cls: evalResults.situps?.cls },
+            { name: "Plancha Prona Isométrica", val: details.plank !== undefined ? `${details.plank} seg` : "--", score: evalResults.plank ? evalResults.plank.score.toFixed(1) : "--", level: evalResults.plank?.level, cls: evalResults.plank?.cls },
+            { name: "Fuerza de Agarre / Barra", val: details.grip !== undefined ? `${details.grip} seg` : "--", score: evalResults.grip ? evalResults.grip.score.toFixed(1) : "--", level: evalResults.grip?.level, cls: evalResults.grip?.cls },
+            
+            // Potencia & Saltabilidad
+            { name: "Salto Vertical (Sargent)", val: details.jumpVertical !== undefined ? `${details.jumpVertical} cm` : "--", score: evalResults.jumpVertical ? evalResults.jumpVertical.score.toFixed(1) : "--", level: evalResults.jumpVertical?.level, cls: evalResults.jumpVertical?.cls },
+            { name: "Salto Horizontal a Pies Juntos", val: details.jumpHorizontal !== undefined ? `${details.jumpHorizontal} cm` : "--", score: evalResults.jumpHorizontal ? evalResults.jumpHorizontal.score.toFixed(1) : "--", level: evalResults.jumpHorizontal?.level, cls: evalResults.jumpHorizontal?.cls },
+            
+            // Flexibilidad & Equilibrio
+            { name: "Flexibilidad Sit & Reach", val: details.flexibility !== undefined ? `${details.flexibility} cm` : "--", score: evalResults.flexibility ? evalResults.flexibility.score.toFixed(1) : "--", level: evalResults.flexibility?.level, cls: evalResults.flexibility?.cls },
+            { name: "Apertura Split al Suelo", val: details.split !== undefined ? `${details.split} cm` : "--", score: evalResults.split ? evalResults.split.score.toFixed(1) : "--", level: evalResults.split?.level, cls: evalResults.split?.cls },
+            { name: "Flexibilidad Activa de Patada", val: details.kickFlex !== undefined ? `${details.kickFlex}%` : "--", score: evalResults.kickFlex ? evalResults.kickFlex.score.toFixed(1) : "--", level: evalResults.kickFlex?.level, cls: evalResults.kickFlex?.cls },
+            { name: "Equilibrio Flamenco", val: details.balance !== undefined ? `${details.balance} seg` : "--", score: evalResults.balance ? evalResults.balance.score.toFixed(1) : "--", level: evalResults.balance?.level, cls: evalResults.balance?.cls },
+            
+            // Velocidad, Agilidad & Reflejos
+            { name: "Sprint 10m Planos", val: details.agility !== undefined ? `${details.agility} seg` : "--", score: evalResults.agility ? evalResults.agility.score.toFixed(1) : "--", level: evalResults.agility?.level, cls: evalResults.agility?.cls },
+            { name: "Shuttle Run 4×10m", val: details.shuttle !== undefined ? `${details.shuttle} seg` : "--", score: evalResults.shuttle ? evalResults.shuttle.score.toFixed(1) : "--", level: evalResults.shuttle?.level, cls: evalResults.shuttle?.cls },
+            { name: "Tiempo de Reacción Técnica", val: details.reaction !== undefined ? `${details.reaction} seg` : "--", score: evalResults.reaction ? evalResults.reaction.score.toFixed(1) : "--", level: evalResults.reaction?.level, cls: evalResults.reaction?.cls },
+            
+            // Rendimiento Específico de Combate
+            { name: "Velocidad de Patada FSKT (10s)", val: details.kickSpeed !== undefined ? `${details.kickSpeed} reps` : "--", score: evalResults.kickSpeed ? evalResults.kickSpeed.score.toFixed(1) : "--", level: evalResults.kickSpeed?.level, cls: evalResults.kickSpeed?.cls },
+            { name: "Ráfaga de Golpeo 30s", val: details.anaerobic !== undefined ? `${details.anaerobic} reps` : "--", score: evalResults.anaerobic ? evalResults.anaerobic.score.toFixed(1) : "--", level: evalResults.anaerobic?.level, cls: evalResults.anaerobic?.cls }
+        ];
+
+        return rows.map(r => `
+            <tr>
+                <td><strong>${r.name}</strong></td>
+                <td>${r.val}</td>
+                <td><strong>${r.score !== '--' ? r.score + '/10' : '--'}</strong></td>
+                <td><span class="badge ${r.cls || 'primary'}" style="font-size: 11px; padding: 2px 8px;">${r.level || 'Registrado'}</span></td>
+            </tr>
+        `).join('');
+    };
+
+    /**
+     * Modal de Vista Previa e Impresión Oficial de la Ficha Física & Plan Correctivo
+     */
+    HapkidoApp.prototype.showPhysicalReportPrintModal = function(recordId) {
+        const record = this.data.records.find(r => r.id === recordId && r.type === 'FISICA');
+        if (!record) {
+            this.showAlert('No se encontró el registro de evaluación física seleccionado.', 'error', 'Error');
+            return;
+        }
+
+        const athlete = this.data.athletes.find(a => a.id === record.athleteId) || {
+            name: 'Atleta Registrado',
+            school: 'Dojang Central',
+            belt: 'Blanco',
+            gender: 'M',
+            birthdate: '2000-01-01'
+        };
+
+        const details = record.physicalDetails || {};
+        const evalResults = details.evalResults || {};
+        const age = this.calculateAge(athlete.birthdate);
+        const ageCat = this.calculateAgeCategory(athlete.birthdate);
+
+        // Build the training plan content
+        const planHTML = this.generateTrainingPlanHTML(athlete, record);
+
+        const modalBody = document.getElementById('report-print-modal-body');
+        if (!modalBody) return;
+
+        modalBody.innerHTML = `
+            <div class="printable-report-container" id="printable-physical-report">
+                <div class="report-print-header">
+                    <div class="report-header-brand">
+                        <div class="report-brand-logo"><i class="fa-solid fa-yin-yang"></i></div>
+                        <div class="report-brand-text">
+                            <h2>FEDERACIÓN VENEZOLANA DE HAPKIDO</h2>
+                            <h3>FICHA OFICIAL DE EVALUACIÓN FÍSICA Y PLAN CORRECTIVO</h3>
+                            <p>COMISIÓN TÉCNICA Y DE CIENCIAS APLICADAS AL DEPORTE</p>
+                        </div>
+                    </div>
+                    <div class="report-header-meta">
+                        <div><strong>Fecha:</strong> ${record.date}</div>
+                        <div><strong>Registro:</strong> ${record.id.toUpperCase()}</div>
+                        <div><strong>Dojang:</strong> ${athlete.school || 'Dojang Central'}</div>
+                    </div>
+                </div>
+
+                <div class="report-athlete-card">
+                    <div class="athlete-id-header">
+                        <h3 class="ath-name">${athlete.name.toUpperCase()}</h3>
+                        <span class="badge belt-${athlete.belt.toLowerCase().replace(/ /g, '-')}">Cinturón ${athlete.belt}</span>
+                    </div>
+                    <div class="athlete-id-grid">
+                        <div><strong>Edad:</strong> ${age} años (${ageCat})</div>
+                        <div><strong>Género:</strong> ${athlete.gender === 'M' ? 'Masculino' : 'Femenino'}</div>
+                        <div><strong>Estatura:</strong> ${details.height ? details.height + ' cm' : '--'}</div>
+                        <div><strong>Peso:</strong> ${details.weight ? details.weight.toFixed(1) + ' kg' : '--'}</div>
+                        <div><strong>% Grasa:</strong> ${details.fat ? details.fat.toFixed(1) + '%' : '--'}</div>
+                        <div><strong>IMC:</strong> ${evalResults.imc ? evalResults.imc.toFixed(2) + ' (' + (evalResults.imcLevel || 'N/A') + ')' : '--'}</div>
+                        <div><strong>Ape Index:</strong> ${evalResults.apeIndex ? evalResults.apeIndex.toFixed(3) : '--'}</div>
+                        <div><strong>Índice Ruffier:</strong> ${details.ruffierIndex !== undefined ? details.ruffierIndex.toFixed(1) + ' (' + (details.ruffierLevel || 'N/A') + ')' : '--'}</div>
+                    </div>
+                </div>
+
+                <div class="report-global-banner">
+                    <div class="global-banner-title">Calificación Global de Rendimiento Atlético</div>
+                    <div class="global-banner-score">
+                        <span class="score-num">${evalResults.globalScore ? evalResults.globalScore.toFixed(1) : '--'}/10</span>
+                        <span class="score-badge badge ${evalResults.globalCls || 'primary'}">${evalResults.globalLevel || 'Normal'}</span>
+                    </div>
+                </div>
+
+                <h4 class="report-section-heading"><i class="fa-solid fa-list-check"></i> Desglose Detallado de Baremos y Aptitud Física (28 Pruebas)</h4>
+                <div class="report-metrics-table-container">
+                    <table class="report-metrics-table">
+                        <thead>
+                            <tr>
+                                <th>Prueba / Métrica</th>
+                                <th>Registro Obtenido</th>
+                                <th>Puntaje</th>
+                                <th>Nivel / Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${this.generatePrintTableRows(details, evalResults)}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="report-plan-section">
+                    <h4 class="report-section-heading"><i class="fa-solid fa-dumbbell"></i> Plan de Entrenamiento Correctivo & Metodología</h4>
+                    <div class="report-plan-content">
+                        ${planHTML}
+                    </div>
+                </div>
+
+                <div class="report-signatures-grid">
+                    <div class="report-sig-box">
+                        <div class="sig-line"></div>
+                        <span class="sig-name">Maestro / Entrenador Evaluador</span>
+                        <span class="sig-title">Comisión Técnica Dojang</span>
+                    </div>
+                    <div class="report-sig-box">
+                        <div class="sig-seal-placeholder">
+                            <i class="fa-solid fa-stamp"></i>
+                            <span>SELLO OFICIAL</span>
+                        </div>
+                    </div>
+                    <div class="report-sig-box">
+                        <div class="sig-line"></div>
+                        <span class="sig-name">${athlete.name}</span>
+                        <span class="sig-title">Firma del Atleta / Representante</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const modal = document.getElementById('report-print-modal');
+        if (modal) modal.classList.add('active');
+    };
+

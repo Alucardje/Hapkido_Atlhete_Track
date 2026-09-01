@@ -3310,3 +3310,573 @@ body.role-athlete .actions-cell {
     }
 }
 
+/* ==========================================================================
+   DIPLOMA & CERTIFICADO OFICIAL DE CINTURÓN (FEVEHAPKIDO)
+   ========================================================================== */
+.certificate-container {
+    background: #0d1117;
+    color: #f0f6fc;
+    padding: 16px;
+    border-radius: 12px;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    box-sizing: border-box;
+}
+
+.certificate-inner-border {
+    border: 3px double #d4af37;
+    padding: 24px 28px;
+    position: relative;
+    border-radius: 8px;
+    background: radial-gradient(circle at center, rgba(22, 27, 34, 0.9) 0%, rgba(13, 17, 23, 0.98) 100%);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.cert-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: #d4af37;
+    border-style: solid;
+}
+.cert-corner-tl { top: 6px; left: 6px; border-width: 3px 0 0 3px; }
+.cert-corner-tr { top: 6px; right: 6px; border-width: 3px 3px 0 0; }
+.cert-corner-bl { bottom: 6px; left: 6px; border-width: 0 0 3px 3px; }
+.cert-corner-br { bottom: 6px; right: 6px; border-width: 0 3px 3px 0; }
+
+.cert-header {
+    margin-bottom: 16px;
+}
+
+.cert-korean-title {
+    font-size: 15px;
+    color: #d4af37;
+    letter-spacing: 6px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.cert-fed-logo {
+    font-size: 34px;
+    color: #f59e0b;
+    margin-bottom: 6px;
+}
+
+.cert-fed-name {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.cert-doc-title {
+    font-size: 14px;
+    color: #d4af37;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.cert-divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    margin: 10px auto;
+}
+
+.cert-body {
+    margin: 14px 0;
+}
+
+.cert-text-intro {
+    font-size: 13px;
+    color: #8b949e;
+    margin-bottom: 6px;
+    font-style: italic;
+}
+
+.cert-athlete-name {
+    font-size: 26px;
+    font-weight: 800;
+    color: #38bdf8;
+    text-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    margin: 6px 0 10px;
+    border-bottom: 2px solid #d4af37;
+    display: inline-block;
+    padding: 0 24px 6px;
+    letter-spacing: 1px;
+}
+
+.cert-text-desc {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #c9d1d9;
+    max-width: 720px;
+    margin: 0 auto 12px;
+}
+
+.cert-belt-display {
+    margin: 12px 0;
+}
+
+.cert-belt-title {
+    font-size: 18px;
+    font-weight: 800;
+    padding: 8px 24px;
+    border-radius: 30px;
+    display: inline-block;
+    letter-spacing: 1.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.cert-distinction {
+    font-size: 12.5px;
+    color: #f59e0b;
+    margin: 10px 0;
+}
+
+.cert-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px auto;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 720px;
+}
+
+.cert-meta-label {
+    display: block;
+    font-size: 10.5px;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cert-meta-val {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #f0f6fc;
+}
+
+.cert-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(212, 175, 55, 0.25);
+}
+
+.cert-signature-box {
+    flex: 1;
+    text-align: center;
+}
+
+.cert-sig-line {
+    width: 140px;
+    height: 1.5px;
+    background: #d4af37;
+    margin: 0 auto 6px;
+}
+
+.cert-sig-name {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #f0f6fc;
+}
+
+.cert-sig-rank {
+    display: block;
+    font-size: 10px;
+    color: #8b949e;
+}
+
+.cert-seal-box {
+    flex: 0 0 100px;
+    text-align: center;
+}
+
+.cert-official-seal {
+    width: 64px;
+    height: 64px;
+    border: 2px dashed #ef4444;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+    font-size: 8px;
+    font-weight: 800;
+    transform: rotate(-8deg);
+    margin: 0 auto;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   FICHA OFICIAL DE EVALUACIÓN FÍSICA IMPRIMIBLE
+   ========================================================================== */
+.printable-report-container {
+    background: #0d1117;
+    color: #f0f6fc;
+    padding: 18px;
+    border-radius: 12px;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    box-sizing: border-box;
+}
+
+.report-print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.report-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.report-brand-logo {
+    font-size: 32px;
+    color: var(--primary);
+}
+
+.report-brand-text h2 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.report-brand-text h3 {
+    font-size: 13px;
+    color: var(--primary);
+    margin: 2px 0 0;
+    font-weight: 600;
+}
+
+.report-brand-text p {
+    font-size: 10px;
+    color: #8b949e;
+    margin: 2px 0 0;
+    letter-spacing: 0.5px;
+}
+
+.report-header-meta {
+    text-align: right;
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.5;
+}
+
+.report-header-meta strong {
+    color: #f0f6fc;
+}
+
+.report-athlete-card {
+    background: rgba(22, 27, 34, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+}
+
+.athlete-id-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.athlete-id-header .ath-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin: 0;
+}
+
+.athlete-id-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px 14px;
+    font-size: 11.5px;
+    color: #c9d1d9;
+}
+
+.athlete-id-grid strong {
+    color: #8b949e;
+}
+
+.report-global-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(14, 165, 233, 0.04));
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 14px;
+}
+
+.global-banner-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #38bdf8;
+}
+
+.global-banner-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.global-banner-score .score-num {
+    font-size: 18px;
+    font-weight: 800;
+    color: #f0f6fc;
+}
+
+.report-section-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: #38bdf8;
+    margin: 14px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.report-metrics-table-container {
+    overflow-x: auto;
+    margin-bottom: 14px;
+}
+
+.report-metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+}
+
+.report-metrics-table th {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    padding: 7px 10px;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+}
+
+.report-metrics-table td {
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #c9d1d9;
+}
+
+.report-plan-content {
+    background: rgba(22, 27, 34, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+}
+
+.report-signatures-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.report-sig-box {
+    text-align: center;
+}
+
+.sig-line {
+    width: 140px;
+    height: 1.5px;
+    background: rgba(255, 255, 255, 0.4);
+    margin: 0 auto 6px;
+}
+
+.sig-name {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #f0f6fc;
+}
+
+.sig-title {
+    display: block;
+    font-size: 9.5px;
+    color: #8b949e;
+}
+
+.sig-seal-placeholder {
+    width: 54px;
+    height: 54px;
+    border: 1.5px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #8b949e;
+    font-size: 7.5px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   PRINT STYLESHEET (@media print)
+   ========================================================================== */
+@media print {
+    /* Hide all application chrome, navigation, toolbars, and background modals */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Make active print container visible */
+    #certificate-modal.active #printable-certificate,
+    #certificate-modal.active #printable-certificate *,
+    #report-print-modal.active #printable-physical-report,
+    #report-print-modal.active #printable-physical-report * {
+        visibility: visible !important;
+    }
+
+    #certificate-modal.active #printable-certificate {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        box-shadow: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    #certificate-modal.active .certificate-inner-border {
+        border: 3px double #b45309 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        color: #111827 !important;
+        padding: 20px !important;
+        height: 94% !important;
+        box-sizing: border-box !important;
+    }
+
+    #certificate-modal.active .cert-fed-name {
+        color: #111827 !important;
+    }
+
+    #certificate-modal.active .cert-athlete-name {
+        color: #0369a1 !important;
+        text-shadow: none !important;
+        border-bottom-color: #b45309 !important;
+    }
+
+    #certificate-modal.active .cert-text-desc,
+    #certificate-modal.active .cert-meta-val {
+        color: #374151 !important;
+    }
+
+    #certificate-modal.active .cert-meta-grid {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    #certificate-modal.active .cert-sig-name {
+        color: #111827 !important;
+    }
+
+    #report-print-modal.active #printable-physical-report {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        box-shadow: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    #report-print-modal.active .report-brand-text h2,
+    #report-print-modal.active .athlete-id-header .ath-name,
+    #report-print-modal.active .global-banner-score .score-num,
+    #report-print-modal.active .report-header-meta strong {
+        color: #0f172a !important;
+    }
+
+    #report-print-modal.active .report-athlete-card,
+    #report-print-modal.active .report-plan-content {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #334155 !important;
+    }
+
+    #report-print-modal.active .report-metrics-table th {
+        background: #e0f2fe !important;
+        color: #0369a1 !important;
+        border-color: #cbd5e1 !important;
+    }
+
+    #report-print-modal.active .report-metrics-table td {
+        border-color: #e2e8f0 !important;
+        color: #334155 !important;
+    }
+
+    #report-print-modal.active .sig-line {
+        background: #64748b !important;
+    }
+
+    #report-print-modal.active .sig-name {
+        color: #0f172a !important;
+    }
+
+    .modal {
+        position: static !important;
+        background: none !important;
+        padding: 0 !important;
+    }
+
+    .modal-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: none !important;
+        padding: 0 !important;
+    }
+
+    .modal-header, .modal-footer, .close-modal {
+        display: none !important;
+    }
+
+    @page {
+        margin: 10mm;
+        size: auto;
+    }
+}
+
+

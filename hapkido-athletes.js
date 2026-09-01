@@ -1098,12 +1098,18 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
                 detailCell = details;
             }
 
+            let actionBtn = '';
+            if (rec.type === 'FISICA') {
+                actionBtn = `<button type="button" class="btn btn-sm btn-secondary" onclick="app.showPhysicalReportPrintModal('${rec.id}')" title="Imprimir / Exportar Ficha Oficial en PDF" style="margin-right: 6px; padding: 4px 8px; font-size: 11px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;"><i class="fa-solid fa-file-pdf" style="color: var(--primary);"></i> Ficha</button>`;
+            }
+
             tr.innerHTML = `
                 <td>${rec.date}</td>
                 <td>${typeCell}</td>
                 <td>${valCell}</td>
                 <td><small>${detailCell}</small></td>
                 <td>
+                    ${actionBtn}
                     <button class="icon-btn delete" onclick="app.deleteRecord('${rec.id}', '${athleteId}')"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
