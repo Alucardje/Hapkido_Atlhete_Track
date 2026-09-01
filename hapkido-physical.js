@@ -1367,7 +1367,12 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
      * Guía paso a paso para entrenadores y atletas con enlaces a videos
      * ═══════════════════════════════════════════════════════════════════════
      */
-    HapkidoApp.prototype.showMetricHelp = function(metricKey) {
+    HapkidoApp.prototype.showMetricHelp = function(metricKey, e) {
+        var evt = e || window.event;
+        if (evt) {
+            if (typeof evt.preventDefault === 'function') evt.preventDefault();
+            if (typeof evt.stopPropagation === 'function') evt.stopPropagation();
+        }
         var protocols = {
             'height': {
                 title: 'Estatura (cm)',

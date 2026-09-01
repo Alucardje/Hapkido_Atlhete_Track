@@ -715,13 +715,25 @@ class HapkidoApp {
             cancelBtn.style.display = 'none';
             confirmBtn.textContent = 'Entendido';
 
-            const handleConfirm = () => {
+            const cleanup = () => {
                 overlay.classList.remove('active');
                 confirmBtn.removeEventListener('click', handleConfirm);
+                overlay.removeEventListener('click', handleOverlayClick);
                 resolve();
             };
 
+            const handleConfirm = () => {
+                cleanup();
+            };
+
+            const handleOverlayClick = (e) => {
+                if (e.target === overlay) {
+                    cleanup();
+                }
+            };
+
             confirmBtn.addEventListener('click', handleConfirm);
+            overlay.addEventListener('click', handleOverlayClick);
             overlay.classList.add('active');
         });
     }
