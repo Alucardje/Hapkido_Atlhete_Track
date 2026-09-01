@@ -19,27 +19,27 @@ HapkidoApp.prototype.updatePhysicalFormLabels = function(isInfantil) {
         const groupGrip = gripInput ? gripInput.closest('.form-group') : null;
 
         if (isInfantil) {
-            if (lblPushups) lblPushups.textContent = "Flexiones adaptadas (1 min - reps)";
+            if (lblPushups) lblPushups.innerHTML = 'Flexiones adaptadas (1 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'pushups\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputPushups) inputPushups.placeholder = "Ej: 15";
-            if (lblSitups) lblSitups.textContent = "Abdominales adaptados (1 min - reps)";
+            if (lblSitups) lblSitups.innerHTML = 'Abdominales adaptados (1 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'situps\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputSitups) inputSitups.placeholder = "Ej: 20";
-            if (lblCooper) lblCooper.textContent = "Resistencia / Navette o Carrera (metros)";
+            if (lblCooper) lblCooper.innerHTML = 'Resistencia / Navette (m) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'cooper\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputCooper) inputCooper.placeholder = "Ej: 1200";
-            if (lblJumpVertical) lblJumpVertical.textContent = "Salto Vertical (cm)";
+            if (lblJumpVertical) lblJumpVertical.innerHTML = 'Salto Vertical (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'jump-vertical\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputJumpVertical) inputJumpVertical.placeholder = "Ej: 25";
-            if (lblAgility) lblAgility.textContent = "Velocidad 10m (segundos)";
+            if (lblAgility) lblAgility.innerHTML = 'Velocidad 10m (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'agility\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputAgility) inputAgility.placeholder = "Ej: 3.5";
             if (groupGrip) groupGrip.style.opacity = '1';
         } else {
-            if (lblPushups) lblPushups.textContent = "Flexiones de pecho (1 min - reps)";
+            if (lblPushups) lblPushups.innerHTML = 'Flexiones de pecho (1 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'pushups\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputPushups) inputPushups.placeholder = "Ej: 35";
-            if (lblSitups) lblSitups.textContent = "Abdominales (1 min - reps)";
+            if (lblSitups) lblSitups.innerHTML = 'Abdominales (1 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'situps\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputSitups) inputSitups.placeholder = "Ej: 40";
-            if (lblCooper) lblCooper.textContent = "Test de Cooper (Distancia recorrida en metros)";
+            if (lblCooper) lblCooper.innerHTML = 'Test de Cooper (Metros en 12 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'cooper\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputCooper) inputCooper.placeholder = "Ej: 2400";
-            if (lblJumpVertical) lblJumpVertical.textContent = "Salto Vertical / Sargent Jump (cm)";
+            if (lblJumpVertical) lblJumpVertical.innerHTML = 'Salto Vertical / Sargent (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'jump-vertical\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputJumpVertical) inputJumpVertical.placeholder = "Ej: 45";
-            if (lblAgility) lblAgility.textContent = "Test de Velocidad/Agilidad 10m (segundos)";
+            if (lblAgility) lblAgility.innerHTML = 'Velocidad 10m Planos (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp(\'agility\')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button>';
             if (inputAgility) inputAgility.placeholder = "Ej: 2.85";
             if (groupGrip) groupGrip.style.opacity = '1';
         }
@@ -1360,6 +1360,340 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
             ${overweightJointWarningHTML}
         `;
     }
+
+    /**
+     * Protocolos Oficiales de Medición Física y Combate (Guía Interactiva para Entrenadores)
+     */
+    HapkidoApp.prototype.showMetricHelp = function(metricKey) {
+        const protocols = {
+            'height': {
+                title: 'Estatura de Evaluación (cm)',
+                icon: 'fa-ruler-vertical',
+                category: 'Antropometría',
+                objective: 'Conocer la talla del atleta para el cálculo de IMC, Masa Grasa Relativa (RFM), Índice Ape y alcance biomecánico.',
+                protocol: 'El atleta se sitúa descalzo, con los talones juntos y la espalda recta contra la pared o tallímetro. La cabeza en plano de Frankfort (mirada al frente paralela al suelo). Tomar la lectura al final de una inspiración profunda.',
+                equipment: 'Tallímetro o cinta métrica vertical rígida.',
+                rules: 'Descalzo, talones, glúteos y parte superior de la espalda en contacto con el plano vertical.'
+            },
+            'weight': {
+                title: 'Peso Corporal de Evaluación (kg)',
+                icon: 'fa-weight-scale',
+                category: 'Composición Corporal',
+                objective: 'Monitorear la masa corporal total, encuadre en categorías de peso para torneos y cálculo de potencia relativa.',
+                protocol: 'El atleta se pesa en ayunas o antes de la sesión de entrenamiento, descalzo y en ropa deportiva ligera (Dobok o pantalón corto).',
+                equipment: 'Báscula digital calibrada.',
+                rules: 'Sin calzado, bolsillos vacíos, posición erguida y quieta sobre la báscula.'
+            },
+            'waist': {
+                title: 'Circunferencia de Cintura (cm)',
+                icon: 'fa-tape',
+                category: 'Composición Corporal',
+                objective: 'Evaluar la distribución de grasa abdominal, riesgo cardiometabólico e Índice Cintura-Estatura (WHtR).',
+                protocol: 'Colocar la cinta métrica horizontal en el punto medio entre el borde inferior de la última costilla y la cresta ilíaca. Medir al final de una espiración normal sin comprimir la piel.',
+                equipment: 'Cinta métrica antropométrica flexible.',
+                rules: 'Abdomen relajado (sin contraer ni contener la respiración), cinta paralela al suelo.'
+            },
+            'fat': {
+                title: 'Porcentaje de Grasa Corporal (%)',
+                icon: 'fa-percent',
+                category: 'Composición Corporal',
+                objective: 'Determinar la proporción de masa grasa vs masa libre de grasa para optimizar potencia y agilidad en combate.',
+                protocol: 'El sistema calcula este valor de forma automática combinando las fórmulas validadas YMCA y Masa Grasa Relativa (RFM) a partir de la estatura, peso y cintura. Si introduces los pliegues cutáneos (tríceps y abdomen), se integrará la estimación de plicometría.',
+                equipment: 'Cálculo automático integrado en el sistema.',
+                rules: 'Mantener actualizadas las medidas antropométricas.'
+            },
+            'wingspan': {
+                title: 'Envergadura de Brazos / Ape Index (cm)',
+                icon: 'fa-arrows-left-right',
+                category: 'Antropometría Marcial',
+                objective: 'Medir el alcance biomecánico de extremidades superiores para determinar ventajas de distancia en golpeo (Jireugi/Chigi) y agarre (Sonmok).',
+                protocol: 'El atleta se coloca de pie con la espalda contra la pared y los brazos extendidos horizontalmente a 90° respecto al torso. Medir la distancia desde la punta del dedo medio de una mano hasta la punta del dedo medio de la otra.',
+                equipment: 'Cinta métrica fija en la pared.',
+                rules: 'Brazos totalmente rectos a la altura de los hombros, palmas hacia adelante, espalda y hombros en contacto con la pared.'
+            },
+            'neck': {
+                title: 'Circunferencia de Cuello (cm)',
+                icon: 'fa-user',
+                category: 'Antropometría Marcial',
+                objective: 'Evaluar el desarrollo muscular del trapecio y esternocleidomastoideo, clave para absorción de impactos a la cabeza y resistencia a estrangulaciones (Mok-kkeokgi).',
+                protocol: 'Colocar la cinta métrica alrededor del cuello, justo por debajo de la nuez de Adán (cartílago tiroides) en hombres y en el punto medio en mujeres.',
+                equipment: 'Cinta métrica flexible.',
+                rules: 'Cuello relajado, mirada al frente, sin tensar los músculos cervicales.'
+            },
+            'thigh': {
+                title: 'Perímetro de Muslo (cm)',
+                icon: 'fa-person',
+                category: 'Antropometría Marcial',
+                objective: 'Determinar el volumen y masa muscular del cuádriceps e isquiotibiales, generadores primarios de potencia en patadas (Chagi) y estabilidad en posiciones de combate (Gubi).',
+                protocol: 'Atleta de pie con el peso distribuido en ambas piernas. Medir el perímetro del muslo dominante a 15 cm por encima del borde superior de la rótula.',
+                equipment: 'Cinta métrica antropométrica.',
+                rules: 'Piernas relajadas con pies separados al ancho de hombros.'
+            },
+            'skinfold-tri': {
+                title: 'Pliegue Cutáneo Tricipital (mm)',
+                icon: 'fa-hand-dots',
+                category: 'Plicometría',
+                objective: 'Estimar el tejido adiposo subcutáneo en la región posterior del brazo para el cálculo fino de grasa corporal.',
+                protocol: 'Localizar el punto medio entre el acromion (hombro) y el olécranon (codo). Pellizcar el pliegue verticalmente con los dedos pulgar e índice y aplicar las ramas del plicómetro a 1 cm de distancia. Leer a los 2 segundos.',
+                equipment: 'Plicómetro o cáliper calibrado.',
+                rules: 'Brazo relajado colgando al lado del cuerpo. Realizar 2 tomas y promediar.'
+            },
+            'skinfold-abd': {
+                title: 'Pliegue Cutáneo Abdominal (mm)',
+                icon: 'fa-hand-dots',
+                category: 'Plicometría',
+                objective: 'Evaluar el panículo adiposo en el core y pared abdominal.',
+                protocol: 'Pellizcar un pliegue vertical a 2 cm a la derecha del ombligo. Aplicar el plicómetro de forma perpendicular al pliegue y registrar la lectura en milímetros.',
+                equipment: 'Plicómetro o cáliper.',
+                rules: 'Abdomen relajado sin contracción muscular.'
+            },
+            'rhr': {
+                title: 'Frecuencia Cardíaca en Reposo (lpm)',
+                icon: 'fa-heart-pulse',
+                category: 'Cardiovascular',
+                objective: 'Evaluar la eficiencia del miocardio y la base aeróbica. Valores bajos (< 60 lpm) reflejan excelente adaptación cardiovascular en atletas de combate.',
+                protocol: 'Medir las pulsaciones por minuto al despertar por la mañana, o tras 5 minutos de reposo absoluto sentado en una silla en ambiente silencioso.',
+                equipment: 'Pulsioxímetro, pulsómetro de banda o conteo manual en arteria radial/carótida durante 60 segundos.',
+                rules: 'Sin haber consumido cafeína, bebidas energéticas ni tabaco en las últimas 3 horas.'
+            },
+            'ruffier': {
+                title: 'Test de Ruffier-Dickson (P1, P2, P3)',
+                icon: 'fa-heart-pulse',
+                category: 'Cardiovascular',
+                objective: 'Medir la adaptación cardíaca y velocidad de recuperación cardiovascular ante un esfuerzo anaeróbico láctico estandarizado.',
+                protocol: '1. P1: Medir el pulso en reposo sentado durante 15s (multiplicar x4).\n2. Realizar 30 sentadillas completas (muslos paralelos al suelo a 90°) a ritmo constante en exactamente 45 segundos.\n3. P2: Medir el pulso inmediatamente al terminar (15s x4).\n4. P3: El atleta descansa sentado exactamente 1 minuto y se mide nuevamente el pulso (15s x4).\nFórmula: (P1 + P2 + P3 - 200) / 10.',
+                equipment: 'Cronómetro y pulsómetro o conteo de pulso.',
+                rules: 'Ritmo estricto (1 sentadilla cada 1.5s), espalda recta, flexión a 90° en cada repetición.'
+            },
+            'pushups': {
+                title: 'Flexiones de Pecho en 1 Minuto (reps)',
+                icon: 'fa-dumbbell',
+                category: 'Fuerza & Resistencia',
+                objective: 'Evaluar la fuerza-resistencia de la musculatura extensora del tren superior (pectorales, tríceps, deltoides anterior), fundamental para puñetazos (Jireugi) y bloqueos (Makgi).',
+                protocol: 'Posición de plancha con manos al ancho de hombros y cuerpo en línea recta. Flexionar codos hasta que el pecho toque el suelo o el puño del evaluador (90° de codo) y extender totalmente. Contar repeticiones válidas en 60 segundos.',
+                equipment: 'Cronómetro y colchoneta/tatami.',
+                rules: 'Cuerpo alineado sin arquear la zona lumbar ni levantar los glúteos. No se cuentan repeticiones con extensión incompleta.'
+            },
+            'situps': {
+                title: 'Abdominales en 1 Minuto (reps)',
+                icon: 'fa-dumbbell',
+                category: 'Fuerza & Core',
+                objective: 'Medir la fuerza-resistencia de la pared abdominal y flexores de cadera, esenciales para la transferencia de fuerza en patadas y protección de órganos internos.',
+                protocol: 'Tumbado boca arriba, rodillas flexionadas a 90°, pies fijados en el suelo por un compañero. Manos cruzadas en el pecho o a los lados de la cabeza. Elevar el tronco hasta tocar las rodillas con los codos y descender hasta que las escápulas toquen el suelo.',
+                equipment: 'Cronómetro y tatami/colchoneta.',
+                rules: 'No tirar del cuello. Los glúteos deben permanecer en contacto con el suelo en todo momento.'
+            },
+            'plank': {
+                title: 'Plancha Prona Isométrica (segundos)',
+                icon: 'fa-stopwatch',
+                category: 'Fuerza & Core',
+                objective: 'Evaluar la estabilidad anti-extensión y resistencia del core profundo (transverso abdominal, multífidos y glúteos), crucial para resistir proyecciones (Deonjigi) y forcejeos.',
+                protocol: 'Apoyo en antebrazos (codos debajo de los hombros) y puntas de los pies. Mantener el cuerpo perfectamente alineado en línea recta desde la cabeza hasta los talones. Detener el cronómetro cuando la cadera caiga o se eleve perdiendo la postura.',
+                equipment: 'Cronómetro y colchoneta.',
+                rules: 'Columna neutra, abdomen contraído. Se detiene el test si el atleta rompe la postura por más de 2 segundos tras el primer aviso.'
+            },
+            'grip': {
+                title: 'Suspensión en Barra / Fuerza de Agarre (segundos)',
+                icon: 'fa-hand-back-fist',
+                category: 'Fuerza Específica',
+                objective: 'Medir la fuerza-resistencia isométrica de los flexores de los dedos y antebrazo, determinante para agarres de Dobok, solapa y muñeca (Sonmok) en Hapkido tradicional.',
+                protocol: 'Colgarse de una barra fija con agarre en pronación (palmas hacia el frente) al ancho de hombros, con brazos completamente extendidos y pies suspendidos sin tocar el suelo. El test finaliza cuando el atleta suelta la barra.',
+                equipment: 'Barra de dominadas fija y cronómetro.',
+                rules: 'Sin balanceo, sin apoyarse en estructuras laterales.'
+            },
+            'jump-vertical': {
+                title: 'Salto Vertical / Sargent Jump (cm)',
+                icon: 'fa-arrow-up',
+                category: 'Potencia Explosiva',
+                objective: 'Evaluar la potencia anaeróbica aláctica de miembros inferiores y la capacidad de despegue vertical para patadas en salto (Twieo Chagi).',
+                protocol: '1. Alcance estático: De pie lateral a la pared, extender el brazo dominante hacia arriba y marcar la altura máxima con tiza o cinta.\n2. Salto con contramovimiento (CMJ): Flexionar rodillas y saltar verticalmente con impulso de brazos, tocando la pared en el punto más alto.\n3. Resultado: Diferencia en cm entre la marca de salto y el alcance estático. Registrar el mejor de 2 intentos.',
+                equipment: 'Pared graduada o cinta métrica y tiza de marcar.',
+                rules: 'Sin dar pasos previos de carrera; el despegue se realiza con ambos pies juntos.'
+            },
+            'jump-horizontal': {
+                title: 'Salto Horizontal a Pies Juntos (cm)',
+                icon: 'fa-arrow-right',
+                category: 'Potencia Explosiva',
+                objective: 'Medir la fuerza explosiva horizontal y reactividad de piernas para desplazamientos y entradas de ataque explosivas.',
+                protocol: 'Situarse detrás de una línea de batida con pies separados al ancho de hombros. Flexionar rodillas, balancear brazos y saltar hacia adelante lo más lejos posible aterrizando con ambos pies. Medir la distancia desde la línea hasta el talón del pie más retrasado.',
+                equipment: 'Cinta métrica fijada en el tatami.',
+                rules: 'Despegue simultáneo con ambos pies sin paso previo. Si el atleta cae hacia atrás con las manos, el salto es nulo y se repite.'
+            },
+            'cooper': {
+                title: 'Test de Cooper 12 Minutos (metros)',
+                icon: 'fa-person-running',
+                category: 'Resistencia Aeróbica',
+                objective: 'Estimar el consumo máximo de oxígeno (VO2 Máx) y la capacidad de resistencia cardiovascular para soportar múltiples combates en torneos.',
+                protocol: 'El atleta debe recorrer la mayor distancia posible corriendo o trotando a ritmo constante durante 12 minutos continuos sobre una pista o circuito medido.',
+                equipment: 'Pista de 400m o conos medidos a distancias exactas y cronómetro.',
+                rules: 'Ritmo libre (se puede alternar trote y caminata, pero no detenerse). Al sonar el silbato de los 12 minutos, el atleta se detiene para anotar la distancia exacta.'
+            },
+            'flexibility': {
+                title: 'Flexibilidad Sit & Reach (cm)',
+                icon: 'fa-child-reaching',
+                category: 'Flexibilidad & Movilidad',
+                objective: 'Evaluar la elasticidad de los músculos isquiotibiales y la flexión lumbopélvica para prevenir lesiones y permitir fluidez en técnicas de defensa.',
+                protocol: 'Sentado en el suelo con piernas completamente estiradas y pies apoyados contra el cajón o escala graduada. Flexionar el tronco hacia adelante con brazos extendidos empujando la regla con las yemas de los dedos de ambas manos superpuestas. Mantener la posición 2 segundos.',
+                equipment: 'Cajón Sit & Reach o regla métrica sobre tatami (el punto 0 se fija a la altura de los pies).',
+                rules: 'Rodillas totalmente extendidas sin flexión en ningún momento.'
+            },
+            'split': {
+                title: 'Apertura de Piernas / Split (cm al suelo)',
+                icon: 'fa-arrows-split-up-and-left',
+                category: 'Flexibilidad Articular',
+                objective: 'Medir la flexibilidad de los aductores y movilidad de la articulación coxofemoral, esencial para patadas de altura a la cabeza (Dollyo, Yeop, Dwit Chagi).',
+                protocol: 'Realizar una apertura lateral máxima de piernas (Split frontal o lateral) sobre el tatami. Medir con cinta métrica la distancia en centímetros desde el pubis (sínfisis púbica) hasta el suelo.',
+                equipment: 'Cinta métrica o regla graduada.',
+                rules: 'Rodillas extendidas y torso erguido. Cuanto menor sea la distancia al suelo (0 cm = split completo), mayor es el puntaje.'
+            },
+            'kick-flex': {
+                title: 'Flexibilidad Activa de Patada (% Estatura)',
+                icon: 'fa-person-walking',
+                category: 'Flexibilidad Dinámica',
+                objective: 'Evaluar el rango de movimiento dinámico activo y fuerza de los flexores de cadera para elevar una patada sin apoyo ni asistencia.',
+                protocol: 'El atleta ejecuta una elevación de pierna estirada (Naeryo Chagi o Ap Chagi) de forma lenta y controlada a la máxima altura posible. Se mide la altura alcanzada por el talón respecto a la estatura del atleta (% de su talla).',
+                equipment: 'Pared graduada o escala de altura.',
+                rules: 'Pierna de apoyo recta y pierna de pateo sin flexionar la rodilla.'
+            },
+            'balance': {
+                title: 'Test del Flamenco / Equilibrio Unipodal (segundos)',
+                icon: 'fa-person-praying',
+                category: 'Equilibrio Marcial',
+                objective: 'Evaluar la estabilidad propioceptiva y control postural en apoyo monopedal, fundamental para encadenamientos de patadas en combate sin perder el centro (Chungshim).',
+                protocol: 'De pie sobre la pierna dominante descalza sobre el tatami. Flexionar la otra pierna hacia atrás apoyando el empeine en la mano contraria o suspendida, con la otra mano en la cadera. Ojos abiertos fijando un punto al frente. Cronometrar los segundos hasta que pierda el equilibrio o baje el pie.',
+                equipment: 'Cronómetro.',
+                rules: 'El test finaliza si el pie de apoyo se desplaza, salta o el pie suspendido toca el suelo.'
+            },
+            'agility': {
+                title: 'Velocidad 10 Metros Planos (segundos)',
+                icon: 'fa-bolt-lightning',
+                category: 'Velocidad & Aceleración',
+                objective: 'Medir la capacidad de aceleración explosiva en distancias cortas para entradas rápidas de ataque y esquives reactivos.',
+                protocol: 'Salida en posición de guardia de combate detrás de la línea. A la señal sonora o visual, esprintar a máxima velocidad hasta cruzar la línea de los 10 metros.',
+                equipment: 'Fotocélulas o cronómetro digital y conos de señalización.',
+                rules: 'El tiempo se detiene cuando el torso cruza la línea final. Se toman 2 intentos y se registra el mejor tiempo.'
+            },
+            'shuttle': {
+                title: 'Agilidad Shuttle Run 4×10m (segundos)',
+                icon: 'fa-person-running',
+                category: 'Agilidad & Desaceleración',
+                objective: 'Evaluar la agilidad, coordinación dinámica y capacidad de frenado y cambio de dirección brusco en el tatami.',
+                protocol: 'Dos líneas paralelas separadas por 10 metros. A la señal, el atleta corre 10m, toca la línea con la mano, regresa al inicio (20m), vuelve a cruzar (30m) y finaliza cruzando la línea de salida (40m totales).',
+                equipment: 'Cronómetro, cinta de marcado y conos.',
+                rules: 'Es obligatorio tocar el suelo detrás de la línea en cada viraje con la mano.'
+            },
+            'reaction': {
+                title: 'Tiempo de Reacción Técnica (segundos)',
+                icon: 'fa-stopwatch-20',
+                category: 'Reflejos de Combate',
+                objective: 'Medir el tiempo de latencia neuro-motriz desde la aparición de un estímulo visual/auditivo de ataque hasta la iniciación del bloqueo o contraataque.',
+                protocol: 'El evaluador presenta un estímulo sorpresivo (caída de regla, encendido de luz o movimiento de palmeta de golpeo) y el atleta reacciona con un bloqueo o golpe. Se registra el tiempo en milisegundos / centésimas de segundo.',
+                equipment: 'Dispositivo de reacción técnica o Test de la Regla de Nelson graduada en tiempo.',
+                rules: 'Registrar el promedio de 3 repeticiones descartando falsas salidas.'
+            },
+            'kick-speed': {
+                title: 'Velocidad de Patada FSKT (reps en 10s)',
+                icon: 'fa-shield-halved',
+                category: 'Rendimiento de Combate',
+                objective: 'Evaluar la frecuencia y velocidad de impacto continuo de patadas circulares (Bandal Chagi) a potencia real en combate.',
+                protocol: 'El atleta se sitúa frente a un escudo de golpeo o saco sostenido a la altura del abdomen. A la señal, ejecuta la mayor cantidad posible de patadas Bandal Chagi alternadas (derecha-izquierda) con impacto pleno durante exactamente 10 segundos.',
+                equipment: 'Escudo de golpeo / pao y cronómetro.',
+                rules: 'Solo se cuentan los impactos válidos que demuestren potencia sonora y técnica correcta de recogida de rodilla.'
+            },
+            'anaerobic': {
+                title: 'Ráfaga de Golpeo 30 Segundos (reps)',
+                icon: 'fa-hand-fist',
+                category: 'Potencia Anaeróbica',
+                objective: 'Medir la potencia y capacidad anaeróbica láctica específica de combate para sostener intercambios de alta intensidad sin fatiga.',
+                protocol: 'Durante 30 segundos continuos, el atleta ejecuta combinaciones libres y continuas de puño y patada sobre saco o escudo a máxima cadencia e intensidad.',
+                equipment: 'Saco de boxeo/Hapkido o escudos y cronómetro.',
+                rules: 'Mantener la guardia y la potencia en cada golpe. Contar el número total de impactos contundentes realizados.'
+            },
+            'jump-long': {
+                title: 'Salto Largo Deportivo (metros)',
+                icon: 'fa-person-running',
+                category: 'Hapkido Deportivo',
+                objective: 'Evaluar el salto de longitud con carrera previa para modalidades competitivas de exhibición y saltos deportivos de Hapkido.',
+                protocol: 'Carrera de aproximación de 10 a 15 metros, batida sobre un pie antes de la tabla/línea y caída sobre colchoneta de protección. Se mide la distancia en metros.',
+                equipment: 'Pista de salto con colchonetas de caída y cinta métrica.',
+                rules: 'Sin sobrepasar la línea de batida.'
+            },
+            'jump-high': {
+                title: 'Salto Alto Deportivo (metros)',
+                icon: 'fa-arrow-up-right-dots',
+                category: 'Hapkido Deportivo',
+                objective: 'Evaluar la altura alcanzada en saltos con técnica tijera o salto frontal sobre listón o colchonetas elevadas.',
+                protocol: 'Aproximación en carrera y salto para superar el listón de altura reglamentario sin derribarlo.',
+                equipment: 'Postes de salto alto con listón elástico y zona de caída reglamentaria.',
+                rules: 'Superar la altura limpiamente.'
+            },
+            'score-figures-sin': {
+                title: 'Figuras Sin Armas (1.0 - 10.0)',
+                icon: 'fa-medal',
+                category: 'Técnica Tradicional',
+                objective: 'Evaluar la perfección técnica, potencia, equilibrio, ritmo y espíritu marcial en la ejecución de Formas (Hyungs) tradicionales.',
+                protocol: 'El atleta ejecuta la forma oficial de su grado. El panel de jueces califica de 1 a 10 considerando postura (Gubi), mirada (Shiseon), respiración (Ki) y contundencia.',
+                equipment: 'Tatami oficial de competencia.',
+                rules: 'Escala oficial FEVEHAPKIDO de 1.0 a 10.0.'
+            },
+            'score-figures-con': {
+                title: 'Figuras Con Armas (1.0 - 10.0)',
+                icon: 'fa-award',
+                category: 'Técnica Tradicional',
+                objective: 'Evaluar la destreza y control en el manejo de armas tradicionales de Hapkido (Bong, Danbong, Ssangjeolbong).',
+                protocol: 'Ejecución del esquema técnico con el arma reglamentaria evaluando trayectorias de corte, retención y balance corporal.',
+                equipment: 'Arma reglamentaria y tatami.',
+                rules: 'Escala oficial FEVEHAPKIDO de 1.0 a 10.0.'
+            },
+            'score-demo': {
+                title: 'Demostración de Defensa Personal (1.0 - 10.0)',
+                icon: 'fa-user-shield',
+                category: 'Defensa Personal (Hosinsul)',
+                objective: 'Evaluar la efectividad, realismo, control de luxación (Kkeokgi) y proyección (Deonjigi) ante agresiones simuladas.',
+                protocol: 'El atleta ejecuta una serie de defensas técnicas ante agarres y ataques de puño/arma con su compañero.',
+                equipment: 'Tatami reglamentario.',
+                rules: 'Escala oficial FEVEHAPKIDO de 1.0 a 10.0.'
+            }
+        };
+
+        const p = protocols[metricKey];
+        if (!p) {
+            this.showAlert('No hay información detallada disponible para esta prueba.', 'info', 'Guía de Medición');
+            return;
+        }
+
+        const htmlContent = `
+            <div style="text-align: left; font-size: 13.5px; line-height: 1.55;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span class="badge primary" style="font-size: 11px;"><i class="fa-solid ${p.icon}"></i> ${p.category}</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">Protocolo Oficial FEVEHAPKIDO</span>
+                </div>
+
+                <p style="margin-bottom: 10px;">
+                    <strong style="color: var(--primary);"><i class="fa-solid fa-bullseye"></i> Objetivo:</strong><br>
+                    ${p.objective}
+                </p>
+
+                <p style="margin-bottom: 10px;">
+                    <strong style="color: var(--accent);"><i class="fa-solid fa-clipboard-list"></i> Protocolo de Toma de Medida:</strong><br>
+                    ${p.protocol.replace(/\n/g, '<br>')}
+                </p>
+
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px; margin-top: 8px;">
+                    <p style="margin-bottom: 6px;">
+                        <strong style="color: #38bdf8;"><i class="fa-solid fa-toolbox"></i> Equipamiento Necesario:</strong><br>
+                        ${p.equipment}
+                    </p>
+                    <p style="margin: 0;">
+                        <strong style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Criterio de Validez:</strong><br>
+                        ${p.rules}
+                    </p>
+                </div>
+            </div>
+        `;
+
+        this.showAlert(htmlContent, 'info', p.title);
+    };
 
 
 

@@ -706,10 +706,14 @@ class HapkidoApp {
                 question: 'Confirmación'
             };
             titleEl.textContent = title || defaultTitles[type] || 'Mensaje';
-            bodyEl.textContent = message;
+            if (message && message.includes('<') && message.includes('>')) {
+                bodyEl.innerHTML = message;
+            } else {
+                bodyEl.textContent = message;
+            }
 
             cancelBtn.style.display = 'none';
-            confirmBtn.textContent = 'Aceptar';
+            confirmBtn.textContent = 'Entendido';
 
             const handleConfirm = () => {
                 overlay.classList.remove('active');

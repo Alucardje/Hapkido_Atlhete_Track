@@ -1718,14 +1718,71 @@ button {
 }
 
 /* ==========================================================================
-   MANUAL DE ESTUDIO SECTION STYLES
+   STICKY SUB-NAVIGATION TABS (Manual, Escuelas, etc.)
    ========================================================================== */
-.manual-tabs {
-    display: flex;
-    gap: 12px;
+.sticky-subnav,
+.tab-nav,
+.manual-tabs,
+.subtab-sticky-bar {
+    position: sticky;
+    top: 68px; /* Positioned directly beneath sticky main-header */
+    z-index: 850;
+    background: rgba(15, 19, 26, 0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 10px 4px 14px 4px;
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.sticky-subnav::-webkit-scrollbar,
+.tab-nav::-webkit-scrollbar,
+.manual-tabs::-webkit-scrollbar {
+    height: 4px;
+}
+.sticky-subnav::-webkit-scrollbar-thumb,
+.tab-nav::-webkit-scrollbar-thumb,
+.manual-tabs::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.3);
+    border-radius: 4px;
+}
+
+/* Metric Protocol Help Button */
+.metric-help-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 5px;
+    margin-left: 6px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    opacity: 0.85;
+}
+
+.metric-help-btn:hover {
+    opacity: 1;
+    color: #fff;
+    background: rgba(56, 189, 248, 0.25);
+    transform: scale(1.2);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .manual-tab-btn {

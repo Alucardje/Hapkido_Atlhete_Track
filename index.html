@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <!-- Local Chart.js for interactive analytics -->
     <script src="vendor/chartjs/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260831-2">
+    <link rel="stylesheet" href="styles.css?v=20260901-1">
 </head>
 <body>
     <div class="app-container">
@@ -624,46 +624,46 @@
                             <div class="sub-section-title"><i class="fa-solid fa-ruler-combined"></i> Composición Corporal y Antropometría Marcial</div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-height">Estatura de Evaluación (cm)</label>
+                                    <label for="fit-height">Estatura (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('height')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-height" min="50" max="250" placeholder="Ej: 171">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-weight">Peso de Evaluación (kg)</label>
+                                    <label for="fit-weight">Peso (kg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('weight')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-weight" min="10" max="250" step="0.1" placeholder="Ej: 83.0">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-waist">Circunferencia de Cintura (cm)</label>
+                                    <label for="fit-waist">Cintura (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('waist')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-waist" min="30" max="200" step="0.1" placeholder="Ej: 85">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-fat">Grasa Corporal (%)</label>
+                                    <label for="fit-fat">Grasa (%) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('fat')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-fat" min="1" max="60" step="0.1" placeholder="Auto" readonly>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-wingspan">Envergadura de Brazos (cm)</label>
+                                    <label for="fit-wingspan">Envergadura (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('wingspan')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-wingspan" min="50" max="260" step="0.1" placeholder="Ej: 176">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Punta a punta con brazos extendidos (Alcance de combate).</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-neck">Circunferencia de Cuello (cm)</label>
+                                    <label for="fit-neck">Perímetro Cuello (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('neck')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-neck" min="20" max="70" step="0.1" placeholder="Ej: 39.5">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Protección cervical ante impactos y estrangulamientos.</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-thigh">Perímetro de Muslo (cm)</label>
+                                    <label for="fit-thigh">Perímetro Muslo (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('thigh')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-thigh" min="25" max="100" step="0.1" placeholder="Ej: 56.0">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Medido a 15 cm sobre la rótula (Potencia de pateo).</small>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-skinfold-tri">Pliegue Tríceps (mm) <small>(Opcional)</small></label>
+                                    <label for="fit-skinfold-tri">Pliegue Tríceps (mm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('skinfold-tri')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-skinfold-tri" min="2" max="60" step="0.5" placeholder="Ej: 12.0">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-skinfold-abd">Pliegue Abdominal (mm) <small>(Opcional)</small></label>
+                                    <label for="fit-skinfold-abd">Pliegue Abdominal (mm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('skinfold-abd')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-skinfold-abd" min="2" max="70" step="0.5" placeholder="Ej: 18.5">
                                 </div>
                             </div>
@@ -676,19 +676,19 @@
                             </div>
                             <div class="form-row mt-10">
                                 <div class="form-group">
-                                    <label for="fit-rhr">FC en Reposo Basal (lpm)</label>
+                                    <label for="fit-rhr">FC en Reposo Basal (lpm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('rhr')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-rhr" min="30" max="120" placeholder="Ej: 58">
                                 </div>
                                 <div class="form-group">
-                                    <label for="pulse-p1">P1: Pulso previo al test (lpm)</label>
+                                    <label for="pulse-p1">P1: Pulso previo al test <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('ruffier')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="pulse-p1" min="30" max="220" required placeholder="Ej: 62">
                                 </div>
                                 <div class="form-group">
-                                    <label for="pulse-p2">P2: Pulso post-esfuerzo (lpm)</label>
+                                    <label for="pulse-p2">P2: Pulso post-esfuerzo <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('ruffier')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="pulse-p2" min="30" max="220" required placeholder="Ej: 115">
                                 </div>
                                 <div class="form-group">
-                                    <label for="pulse-p3">P3: Pulso recuperación 1 min (lpm)</label>
+                                    <label for="pulse-p3">P3: Pulso recuperación 1 min <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('ruffier')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="pulse-p3" min="30" max="220" required placeholder="Ej: 72">
                                 </div>
                             </div>
@@ -701,19 +701,19 @@
                             <div class="sub-section-title"><i class="fa-solid fa-dumbbell"></i> Fuerza, Core y Resistencia Muscular</div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-pushups">Flexiones de pecho (1 min - reps)</label>
+                                    <label for="fit-pushups">Flexiones de pecho (1 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('pushups')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-pushups" min="0" placeholder="Ej: 35">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-situps">Abdominales (1 min - reps)</label>
+                                    <label for="fit-situps">Abdominales (1 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('situps')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-situps" min="0" placeholder="Ej: 40">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-plank">Plancha Prona Isométrica (segundos)</label>
+                                    <label for="fit-plank">Plancha Prona Isométrica (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('plank')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-plank" min="0" max="600" placeholder="Ej: 75">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-grip">Fuerza de Agarre / Suspensión en Barra (seg)</label>
+                                    <label for="fit-grip">Fuerza de Agarre / Barra (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('grip')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-grip" min="0" placeholder="Ej: 60">
                                 </div>
                             </div>
@@ -722,16 +722,16 @@
                             <div class="sub-section-title"><i class="fa-solid fa-bolt"></i> Potencia Explosiva y Saltabilidad</div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-jump-vertical">Salto Vertical / Sargent Jump (cm)</label>
+                                    <label for="fit-jump-vertical">Salto Vertical / Sargent (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('jump-vertical')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-jump-vertical" min="0" placeholder="Ej: 45">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-jump-horizontal">Salto Horizontal a Pies Juntos (cm)</label>
+                                    <label for="fit-jump-horizontal">Salto Horizontal (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('jump-horizontal')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-jump-horizontal" min="0" max="400" placeholder="Ej: 210">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Potencia horizontal de piernas desde parado.</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-cooper">Test de Cooper (Metros en 12 min)</label>
+                                    <label for="fit-cooper">Test de Cooper (Metros en 12 min) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('cooper')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-cooper" min="0" placeholder="Ej: 2400">
                                 </div>
                             </div>
@@ -740,20 +740,20 @@
                             <div class="sub-section-title"><i class="fa-solid fa-person-walking"></i> Flexibilidad, Movilidad y Equilibrio</div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-flexibility">Flexibilidad Sit & Reach (cm)</label>
+                                    <label for="fit-flexibility">Flexibilidad Sit & Reach (cm) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('flexibility')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-flexibility" placeholder="Ej: 12">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-split">Flexibilidad Abductora / Split (cm al suelo)</label>
+                                    <label for="fit-split">Apertura Split (cm al suelo) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('split')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-split" min="0" placeholder="Ej: 15">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-kick-flex">Flexibilidad Activa de Patada (% Estatura)</label>
+                                    <label for="fit-kick-flex">Flex. Activa Patada (%) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('kick-flex')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-kick-flex" min="30" max="180" step="0.5" placeholder="Ej: 110">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Altura máxima alcanzada con Naeryo/Ap Chagi sin asistencia.</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-balance">Test del Flamenco / Equilibrio Unipodal (seg)</label>
+                                    <label for="fit-balance">Equilibrio Flamenco (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('balance')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-balance" min="0" max="300" placeholder="Ej: 35">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Estabilidad en un solo pie para precisión de patadas.</small>
                                 </div>
@@ -763,16 +763,16 @@
                             <div class="sub-section-title"><i class="fa-solid fa-gauge-high"></i> Velocidad, Agilidad y Reflejos</div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-agility">Velocidad 10m Planos (segundos)</label>
+                                    <label for="fit-agility">Velocidad 10m Planos (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('agility')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-agility" step="0.01" min="0" placeholder="Ej: 2.85">
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-shuttle">Agilidad Shuttle Run 4×10m (segundos)</label>
+                                    <label for="fit-shuttle">Shuttle Run 4×10m (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('shuttle')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-shuttle" step="0.01" min="0" placeholder="Ej: 10.40">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Desplazamientos y cambios bruscos de dirección.</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-reaction">Tiempo de Reacción Técnica (segundos)</label>
+                                    <label for="fit-reaction">Tiempo Reacción Técnica (seg) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('reaction')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-reaction" step="0.01" min="0" placeholder="Ej: 0.35">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Tiempo de respuesta motriz ante estímulo de ataque.</small>
                                 </div>
@@ -782,45 +782,43 @@
                             <div class="sub-section-title"><i class="fa-solid fa-hand-fist"></i> Rendimiento Específico de Combate</div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="fit-kick-speed">Velocidad de Patada FSKT (reps en 10 seg)</label>
+                                    <label for="fit-kick-speed">Pateo Continuo FSKT (reps/10s) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('kick-speed')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-kick-speed" min="0" max="60" placeholder="Ej: 22">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Frecuencia e impacto continuo de Bandal Chagi al escudo.</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="fit-anaerobic">Potencia Anaeróbica / Ráfaga 30s (reps)</label>
+                                    <label for="fit-anaerobic">Ráfaga de Golpeo 30s (reps) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('anaerobic')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                     <input type="number" id="fit-anaerobic" min="0" max="150" placeholder="Ej: 42">
                                     <small class="form-text text-muted" style="color: var(--text-muted); font-size: 11px;">Capacidad aláctica/láctica de encadenamiento técnico.</small>
                                 </div>
                             </div>
-
-
 
                             <!-- Specific Competitive Physical Tests (Sport Hapkido) -->
                             <div class="deportivo-tests-block" id="deportivo-tests-block" style="display: none;">
                                 <div class="sub-section-title">Pruebas Competitivas Deportivas</div>
                                 <div class="form-row">
                                     <div class="form-group" id="group-jump-long" style="display: none;">
-                                        <label for="jump-long">Salto Largo (metros)</label>
+                                        <label for="jump-long">Salto Largo (m) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('jump-long')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                         <input type="number" id="jump-long" step="0.01" min="0" placeholder="Ej: 2.10">
                                     </div>
                                     <div class="form-group" id="group-jump-high" style="display: none;">
-                                        <label for="jump-high">Salto Alto (metros)</label>
+                                        <label for="jump-high">Salto Alto (m) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('jump-high')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                         <input type="number" id="jump-high" step="0.01" min="0" placeholder="Ej: 1.25">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group" id="group-score-figures-sin" style="display: none;">
-                                        <label for="score-figures-sin">Figuras Sin Armas (Puntuación 1-10)</label>
+                                        <label for="score-figures-sin">Figuras Sin Armas (1-10) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('score-figures-sin')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                         <input type="number" id="score-figures-sin" step="0.1" min="0" max="10" placeholder="Ej: 8.5">
                                     </div>
                                     <div class="form-group" id="group-score-figures-con" style="display: none;">
-                                        <label for="score-figures-con">Figuras Con Armas (Puntuación 1-10)</label>
+                                        <label for="score-figures-con">Figuras Con Armas (1-10) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('score-figures-con')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                         <input type="number" id="score-figures-con" step="0.1" min="0" max="10" placeholder="Ej: 8.0">
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group" id="group-score-demo" style="display: none;">
-                                        <label for="score-demo">Demostraciones de Defensa Personal (Puntuación 1-10)</label>
+                                        <label for="score-demo">Demostraciones DP (1-10) <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('score-demo')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
                                         <input type="number" id="score-demo" step="0.1" min="0" max="10" placeholder="Ej: 9.0">
                                     </div>
                                 </div>
@@ -1648,15 +1646,13 @@
             <!-- Escuelas Section -->
             <section id="section-escuelas" class="app-section">
                 <!-- Sub-tabs for Dojangs and Associations -->
-                <div class="search-filters-row" style="margin-bottom: 20px;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="tab-btn active" id="subtab-btn-schools" onclick="app.switchSchoolSubTab('schools')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-school"></i> Dojangs / Escuelas locales
-                        </button>
-                        <button class="tab-btn" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                            <i class="fa-solid fa-sitemap"></i> Asociaciones Estatales
-                        </button>
-                    </div>
+                <div class="sticky-subnav">
+                    <button class="tab-btn active" id="subtab-btn-schools" onclick="app.switchSchoolSubTab('schools')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-school"></i> Dojangs / Escuelas locales
+                    </button>
+                    <button class="tab-btn" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-sitemap"></i> Asociaciones Estatales
+                    </button>
                 </div>
 
                 <!-- Sub-tab Dojangs Container -->
@@ -2221,16 +2217,16 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260831-2"></script>
-    <script src="hapkido-data.js?v=20260831-2"></script>
-    <script src="hapkido-auth.js?v=20260831-2"></script>
-    <script src="hapkido-athletes.js?v=20260831-2"></script>
-    <script src="hapkido-physical.js?v=20260831-2"></script>
-    <script src="hapkido-exams.js?v=20260831-2"></script>
-    <script src="hapkido-combat.js?v=20260831-2"></script>
-    <script src="hapkido-schools.js?v=20260831-2"></script>
-    <script src="hapkido-torneos.js?v=20260831-2"></script>
-    <script src="hapkido-vocab.js?v=20260831-2"></script>
-    <script src="hapkido-init.js?v=20260831-2"></script>
+    <script src="app.js?v=20260901-1"></script>
+    <script src="hapkido-data.js?v=20260901-1"></script>
+    <script src="hapkido-auth.js?v=20260901-1"></script>
+    <script src="hapkido-athletes.js?v=20260901-1"></script>
+    <script src="hapkido-physical.js?v=20260901-1"></script>
+    <script src="hapkido-exams.js?v=20260901-1"></script>
+    <script src="hapkido-combat.js?v=20260901-1"></script>
+    <script src="hapkido-schools.js?v=20260901-1"></script>
+    <script src="hapkido-torneos.js?v=20260901-1"></script>
+    <script src="hapkido-vocab.js?v=20260901-1"></script>
+    <script src="hapkido-init.js?v=20260901-1"></script>
 </body>
 </html>
