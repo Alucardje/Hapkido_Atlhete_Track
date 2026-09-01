@@ -1,10 +1,10 @@
 /**
  * Service Worker: Hapkido Athlete Tracker PWA
- * Version: 20260901-2
- * Strategy: Cache-First with Network Fallback (100% Offline Capable)
+ * Version: 20260901-3
+ * Strategy: Network-First for Application Code (Instant Updates), Cache-First for Static Assets (100% Offline Capable)
  */
 
-const CACHE_NAME = 'hapkido-tracker-v20260901-2';
+const CACHE_NAME = 'hapkido-tracker-v20260901-3';
 
 const CORE_ASSETS = [
   './',
@@ -54,20 +54,20 @@ const CORE_ASSETS = [
   './vendor/fonts/font_14.woff2'
 ];
 
-// Install Event: Precaches the entire application shell
+// Install Event: Precaches the application shell
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('[SW] Pre-caching offline app shell...');
         return cache.addAll(CORE_ASSETS);
       })
-      .then(() => self.skipWaiting())
       .catch(err => console.warn('[SW] Pre-cache warning:', err))
   );
 });
 
-// Activate Event: Clears previous cache versions
+// Activate Event: Clears previous cache versions immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
@@ -83,30 +83,49 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch Event: Cache-First strategy with dynamic runtime caching
+// Fetch Event: Network-First for JS/HTML/CSS (instant update), Cache-First for static assets
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then(networkResponse => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+  const url = new URL(event.request.url);
+  const isAppCode = url.pathname.endsWith('.js') || 
+                    url.pathname.endsWith('.html') || 
+                    url.pathname.endsWith('.css') || 
+                    url.pathname.endsWith('/') || 
+                    event.request.mode === 'navigate';
+
+  if (isAppCode) {
+    // Network-First: Always attempt fresh network fetch when online
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+          }
           return networkResponse;
-        }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseToCache);
+        })
+        .catch(() => {
+          // Offline fallback
+          return caches.match(event.request, { ignoreSearch: true }).then(cached => {
+            if (cached) return cached;
+            if (event.request.mode === 'navigate') return caches.match('./index.html');
+          });
+        })
+    );
+  } else {
+    // Cache-First for static fonts/icons/libraries
+    event.respondWith(
+      caches.match(event.request, { ignoreSearch: true }).then(cachedResponse => {
+        if (cachedResponse) return cachedResponse;
+        return fetch(event.request).then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+          }
+          return networkResponse;
         });
-        return networkResponse;
-      }).catch(() => {
-        // Fallback to cached index.html for navigation requests
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
-  );
+      })
+    );
+  }
 });
