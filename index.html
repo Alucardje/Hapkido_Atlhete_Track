@@ -2511,45 +2511,105 @@
         </div>
     </div>
 
-    <!-- Portal de Login Overlay -->
+    <!-- Pantalla de Bienvenida y Selección Rápida de Rol para Evaluadores (Beta Testing) -->
     <div id="login-overlay" class="login-overlay active">
-        <div class="login-box">
-            <div class="login-header">
-                <div class="logo-icon"><i class="fa-solid fa-yin-yang fa-spin"></i></div>
-                <h2>HAPKIDO</h2>
-                <p>MEDICIÓN DEL ATLETA</p>
+        <div class="welcome-box">
+            <div class="welcome-header">
+                <div class="welcome-logo-badge">
+                    <i class="fa-solid fa-yin-yang fa-spin"></i>
+                </div>
+                <h2>FEVEHAPKIDO 2026</h2>
+                <p class="welcome-sub">Sistema Oficial de Evaluación y Seguimiento del Atleta</p>
+                <div class="welcome-pill">Versión de Demostración y Validación Técnica</div>
             </div>
-            <form id="login-form" onsubmit="app.login(event)">
-                <div class="form-group">
-                    <label for="login-username">Usuario</label>
-                    <input type="text" id="login-username" required placeholder="Ingresa tu usuario">
+
+            <div class="welcome-body">
+                <div class="welcome-trainer-input-card">
+                    <label for="welcome-trainer-name">
+                        <i class="fa-solid fa-user-pen" style="color: var(--primary);"></i> Tu Nombre o Dojang (Opcional):
+                    </label>
+                    <input type="text" id="welcome-trainer-name" placeholder="Ej: Maestro Carlos Mendoza / Dojang Tigres">
+                    <small>Aparecerá en los diplomas oficiales y fichas técnicas que generes durante tu prueba.</small>
                 </div>
-                <div class="form-group">
-                    <label for="login-password">Contraseña</label>
-                    <input type="password" id="login-password" required placeholder="Ingresa tu contraseña">
+
+                <div class="welcome-roles-prompt">
+                    <span>Selecciona tu rol para ingresar inmediatamente sin contraseña:</span>
                 </div>
-                <div id="login-error-msg" class="login-error hidden">Usuario o contraseña incorrectos.</div>
-                <button type="submit" class="primary-btn w-100 mt-10">Ingresar al Tatami</button>
-            </form>
-            
-            <div class="login-demo-accounts">
-                <h3>Cuentas de Demostración</h3>
-                <div class="demo-acc-list">
-                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='admin'; document.getElementById('login-password').value='123';">
-                        <strong>Administrador:</strong> admin / 123 <small>(Acceso total)</small>
+
+                <div class="welcome-roles-grid">
+                    <!-- Tarjeta Maestro / Administrador -->
+                    <div class="role-access-card card-admin" onclick="app.selectPresentationRole('admin')">
+                        <div class="role-icon-box"><i class="fa-solid fa-crown"></i></div>
+                        <div class="role-info-box">
+                            <div class="role-title">Maestro / Administrador</div>
+                            <div class="role-desc">Acceso total: gestión de atletas, evaluaciones físicas, combates, torneos, brackets y respaldos.</div>
+                            <span class="role-tag">Control Total</span>
+                        </div>
+                        <div class="role-enter-btn"><i class="fa-solid fa-arrow-right"></i></div>
                     </div>
-                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='maestro1'; document.getElementById('login-password').value='123';">
-                        <strong>Maestro (Tigres):</strong> maestro1 / 123 <small>(Dojang Tigres)</small>
+
+                    <!-- Tarjeta Entrenador / Instructor -->
+                    <div class="role-access-card card-instructor" onclick="app.selectPresentationRole('instructor')">
+                        <div class="role-icon-box"><i class="fa-solid fa-user-ninja"></i></div>
+                        <div class="role-info-box">
+                            <div class="role-title">Instructor / Entrenador</div>
+                            <div class="role-desc">Registro y baremos físicos, exámenes de pase de cinta, plan correctivo y temporizador de tatami.</div>
+                            <span class="role-tag">Gestión de Alumnos</span>
+                        </div>
+                        <div class="role-enter-btn"><i class="fa-solid fa-arrow-right"></i></div>
                     </div>
-                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='maestro2'; document.getElementById('login-password').value='123';">
-                        <strong>Maestro (Hapkido Sur):</strong> maestro2 / 123 <small>(Hapkido Sur)</small>
+
+                    <!-- Tarjeta Mesa Técnica / Juez -->
+                    <div class="role-access-card card-referee" onclick="app.selectPresentationRole('ayudante')">
+                        <div class="role-icon-box"><i class="fa-solid fa-stopwatch-20"></i></div>
+                        <div class="role-info-box">
+                            <div class="role-title">Mesa Técnica / Juez de Tatami</div>
+                            <div class="role-desc">Planilla de arbitraje electrónico en vivo, campanero marcial y visualizador de llaves eliminatorias.</div>
+                            <span class="role-tag">Arbitraje y Tiempo</span>
+                        </div>
+                        <div class="role-enter-btn"><i class="fa-solid fa-arrow-right"></i></div>
                     </div>
-                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='atleta1'; document.getElementById('login-password').value='123';">
-                        <strong>Atleta (Carlos - Azul):</strong> atleta1 / 123 <small>(Carlos Gómez - Tigres)</small>
+
+                    <!-- Tarjeta Atleta / Alumno -->
+                    <div class="role-access-card card-athlete" onclick="app.selectPresentationRole('athlete')">
+                        <div class="role-icon-box"><i class="fa-solid fa-medal"></i></div>
+                        <div class="role-info-box">
+                            <div class="role-title">Atleta / Alumno</div>
+                            <div class="role-desc">Portal personal: ficha biométrica, radar de 11 capacidades, historial de progreso y diplomas.</div>
+                            <span class="role-tag">Portal del Practicante</span>
+                        </div>
+                        <div class="role-enter-btn"><i class="fa-solid fa-arrow-right"></i></div>
                     </div>
-                    <div class="demo-acc-item" onclick="document.getElementById('login-username').value='atleta2'; document.getElementById('login-password').value='123';">
-                        <strong>Atleta (María - Rojo):</strong> atleta2 / 123 <small>(María Rodríguez - Sur)</small>
+                </div>
+
+                <!-- Formulario Clásico Opcional (Colapsable) -->
+                <div class="classic-login-toggle-row">
+                    <button type="button" class="classic-toggle-btn" onclick="document.getElementById('classic-login-accordion').classList.toggle('open')">
+                        <i class="fa-solid fa-key"></i> ¿Deseas iniciar con usuario y contraseña clásicos?
+                    </button>
+                    <div id="classic-login-accordion" class="classic-login-accordion">
+                        <form id="login-form" onsubmit="app.login(event)" style="margin-top: 12px;">
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <label for="login-username" style="font-size: 11px;">Usuario</label>
+                                    <input type="text" id="login-username" placeholder="admin">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <label for="login-password" style="font-size: 11px;">Contraseña</label>
+                                    <input type="password" id="login-password" placeholder="123">
+                                </div>
+                            </div>
+                            <div id="login-error-msg" class="login-error hidden">Credenciales inválidas.</div>
+                            <button type="submit" class="sec-btn btn-sm w-100 mt-5">Entrar con Credenciales</button>
+                        </form>
                     </div>
+                </div>
+
+                <div class="welcome-bottom-note">
+                    <p><i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> <strong>Privacidad Total:</strong> Tus datos se almacenan de forma segura e independiente en este dispositivo (PWA Offline-First).</p>
+                    <a href="https://wa.me/?text=Hola,%20estoy%20probando%20la%20App%20de%20Hapkido%20y%20tengo%20estas%20sugerencias:" target="_blank" class="welcome-whatsapp-feedback">
+                        <i class="fa-brands fa-whatsapp"></i> Enviar Comentarios o Reportar Mejoras
+                    </a>
                 </div>
             </div>
         </div>
@@ -2751,18 +2811,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-11"></script>
-    <script src="hapkido-data.js?v=20260901-11"></script>
-    <script src="hapkido-auth.js?v=20260901-11"></script>
-    <script src="hapkido-athletes.js?v=20260901-11"></script>
-    <script src="hapkido-physical.js?v=20260901-11"></script>
-    <script src="hapkido-exams.js?v=20260901-11"></script>
-    <script src="hapkido-combat.js?v=20260901-11"></script>
-    <script src="hapkido-schools.js?v=20260901-11"></script>
-    <script src="hapkido-torneos.js?v=20260901-11"></script>
-    <script src="hapkido-vocab.js?v=20260901-11"></script>
-    <script src="hapkido-timer.js?v=20260901-11"></script>
-    <script src="hapkido-sync.js?v=20260901-11"></script>
-    <script src="hapkido-init.js?v=20260901-11"></script>
+    <script src="app.js?v=20260901-12"></script>
+    <script src="hapkido-data.js?v=20260901-12"></script>
+    <script src="hapkido-auth.js?v=20260901-12"></script>
+    <script src="hapkido-athletes.js?v=20260901-12"></script>
+    <script src="hapkido-physical.js?v=20260901-12"></script>
+    <script src="hapkido-exams.js?v=20260901-12"></script>
+    <script src="hapkido-combat.js?v=20260901-12"></script>
+    <script src="hapkido-schools.js?v=20260901-12"></script>
+    <script src="hapkido-torneos.js?v=20260901-12"></script>
+    <script src="hapkido-vocab.js?v=20260901-12"></script>
+    <script src="hapkido-timer.js?v=20260901-12"></script>
+    <script src="hapkido-sync.js?v=20260901-12"></script>
+    <script src="hapkido-init.js?v=20260901-12"></script>
 </body>
 </html>

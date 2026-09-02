@@ -80,7 +80,74 @@ HapkidoApp.prototype.login = function(event) {
             const errorMsg = document.getElementById('login-error-msg');
             if (errorMsg) errorMsg.classList.remove('hidden');
         }
-    }
+    };
+
+    /**
+     * Acceso Rápido por Rol para Evaluadores y Maestros (Sin Clave / Beta Testing)
+     */
+    HapkidoApp.prototype.selectPresentationRole = function(role) {
+        const customName = document.getElementById('welcome-trainer-name')?.value?.trim();
+        let user = null;
+
+        if (role === 'admin') {
+            user = {
+                username: 'maestro_director',
+                role: 'admin',
+                name: customName || 'Maestro Evaluador',
+                school: null,
+                athleteId: null,
+                rank: 'Comisión Técnica / Maestro'
+            };
+        } else if (role === 'instructor') {
+            user = {
+                username: 'instructor_tatami',
+                role: 'instructor',
+                name: customName || 'Instructor Principal',
+                school: (this.data.schools && this.data.schools[0]) ? this.data.schools[0].name : 'Dojang Central',
+                athleteId: null,
+                rank: 'Instructor de Dojang'
+            };
+        } else if (role === 'ayudante') {
+            user = {
+                username: 'mesa_tecnica',
+                role: 'ayudante',
+                name: customName || 'Mesa Técnica / Juez',
+                school: null,
+                athleteId: null,
+                rank: 'Árbitro / Cronometrador'
+            };
+        } else if (role === 'athlete') {
+            const sampleAthlete = (this.data.athletes && this.data.athletes[0]) ? this.data.athletes[0] : null;
+            user = {
+                username: 'atleta_demo',
+                role: 'athlete',
+                name: sampleAthlete ? sampleAthlete.name : (customName || 'Atleta en Evaluación'),
+                school: sampleAthlete ? sampleAthlete.school : 'Dojang Central',
+                athleteId: sampleAthlete ? sampleAthlete.id : null,
+                belt: sampleAthlete ? sampleAthlete.belt : 'Cinturón Azul',
+                rank: sampleAthlete ? sampleAthlete.belt : 'Cinturón Azul'
+            };
+        }
+
+        if (user) {
+            this.currentUser = user;
+            localStorage.setItem('hapkido_current_user', JSON.stringify(user));
+            document.body.className = 'role-' + user.role;
+
+            const overlay = document.getElementById('login-overlay');
+            if (overlay) overlay.classList.remove('active');
+
+            this.updateDashboardStats();
+            this.renderAthletesList();
+            this.populateAthleteDropdowns();
+            this.populateManualBeltsDropdown();
+            this.renderSchoolsList();
+            this.updateUserSessionHeader();
+
+            window.location.hash = '#dashboard';
+            this.handleRouting();
+        }
+    };
 
 
 HapkidoApp.prototype.logout = function() {
