@@ -4836,6 +4836,70 @@ body.role-athlete .actions-cell {
     }
 }
 
+/* ==========================================================================
+   FASE 6: SINCRONIZACIÓN EN LA NUBE & STATUS HEADER WIDGET
+   ========================================================================== */
+.header-sync-widget {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px;
+    background: rgba(22, 27, 34, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.header-sync-widget:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+.header-sync-widget.status-synced {
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.header-sync-widget.status-syncing {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.4);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.header-sync-widget.status-pending {
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.header-sync-widget.status-offline {
+    color: #8b949e;
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.header-sync-widget.status-idle {
+    color: #06b6d4;
+    border-color: rgba(6, 182, 212, 0.3);
+    background: rgba(6, 182, 212, 0.08);
+}
+
+@media (max-width: 640px) {
+    .header-sync-widget span {
+        display: none;
+    }
+    .header-sync-widget {
+        padding: 8px 10px;
+    }
+}
+
+
 
 
 

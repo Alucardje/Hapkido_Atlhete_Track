@@ -316,6 +316,9 @@ HapkidoApp.prototype.saveData = function() {
         try {
             localStorage.setItem('hapkido_athlete_tracker_data', JSON.stringify(this.data));
             this.updateDashboardStats();
+            if (this.notifyDataChanged) {
+                this.notifyDataChanged();
+            }
         } catch (e) {
             alert("Error al guardar los datos localmente: " + e.message);
         }

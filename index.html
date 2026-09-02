@@ -167,6 +167,10 @@
                             <span class="user-active-meta" id="header-user-meta">--</span>
                         </div>
                     </div>
+                    <div class="header-sync-widget" id="header-sync-widget" onclick="app.syncWithCloud(true)" title="Clic para sincronizar con la nube">
+                        <i class="fa-solid fa-cloud" id="header-sync-icon"></i>
+                        <span id="header-sync-text">Sincronizado</span>
+                    </div>
                     <div class="datetime">
                         <i class="fa-regular fa-calendar"></i>
                         <span id="current-date">--/--/----</span>
@@ -1730,19 +1734,80 @@
 
             <!-- Ajustes Section -->
             <section id="section-ajustes" class="app-section">
+                <!-- Panel de Sincronización en la Nube Federativa -->
                 <div class="panel-card">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h2><i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Sincronización en la Nube Federativa (Multi-Dispositivo)</h2>
+                        <button type="button" class="primary-btn btn-sm" onclick="app.syncWithCloud(true)"><i class="fa-solid fa-rotate"></i> Sincronizar Ahora</button>
+                    </div>
+                    <div class="panel-body">
+                        <form id="cloud-sync-settings-form" onsubmit="app.saveCloudSyncSettings(event)">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                                <div class="form-group">
+                                    <label for="sync-provider-select">Proveedor de Nube / Backend</label>
+                                    <select id="sync-provider-select">
+                                        <option value="fevehapkido_api">🛡️ FEVEHAPKIDO Cloud Hub (Oficial)</option>
+                                        <option value="supabase">⚡ Supabase / PostgreSQL Cloud</option>
+                                        <option value="custom_rest">🔗 API REST Personalizada</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="sync-endpoint-url">URL del Servidor / Endpoint</label>
+                                    <input type="url" id="sync-endpoint-url" placeholder="https://api.fevehapkido.org/v1/sync">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="sync-api-key">Token de Acceso / API Key</label>
+                                    <input type="password" id="sync-api-key" placeholder="Bearer Token o Clave de Dojang">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="sync-conflict-strategy">Resolución de Conflictos</label>
+                                    <select id="sync-conflict-strategy">
+                                        <option value="latest_timestamp">Último Timestamp (Conservar edición más reciente)</option>
+                                        <option value="keep_local">Prioridad Local (No sobrescribir cambios locales)</option>
+                                        <option value="overwrite_remote">Prioridad Servidor (Descargar datos maestros)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--text-primary);">
+                                    <input type="checkbox" id="sync-autosync-toggle" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+                                    <span><strong>Sincronización Automática en Segundo Plano</strong> (Al detectar conexión a internet)</span>
+                                </label>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 12px; color: var(--text-muted);">Última sincronización: <strong id="sync-last-timestamp" style="color: var(--cyan);">--</strong></span>
+                                    <button type="submit" class="sec-btn btn-sm"><i class="fa-solid fa-floppy-disk"></i> Guardar Ajustes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Panel de Transferencia Directa P2P y Copias de Seguridad -->
+                <div class="panel-card mt-20">
                     <div class="panel-header">
-                        <h2><i class="fa-solid fa-floppy-disk"></i> Gestión de Base de Datos y Respaldos</h2>
+                        <h2><i class="fa-solid fa-floppy-disk"></i> Copias de Seguridad y Transferencia Directa (P2P)</h2>
                     </div>
                     <div class="panel-body">
                         <div class="settings-grid">
                             <div class="settings-card">
-                                <h3><i class="fa-solid fa-file-export"></i> Exportar Datos</h3>
-                                <p>Descarga toda la información registrada de tus atletas y mediciones en un archivo JSON.</p>
-                                <button class="primary-btn mt-20" onclick="app.exportData()"><i class="fa-solid fa-download"></i> Descargar Copia de Seguridad</button>
+                                <h3><i class="fa-solid fa-qrcode"></i> Traspaso Directo P2P</h3>
+                                <p>Genera un token seguro para transferir atletas y evaluaciones entre tablets o teléfonos sin necesidad de servidor.</p>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="mt-20">
+                                    <button class="primary-btn btn-sm" onclick="app.generateP2PShareToken()"><i class="fa-solid fa-arrow-up-right-from-square"></i> Generar Token</button>
+                                    <button class="sec-btn btn-sm" onclick="document.getElementById('sync-token-import-modal').classList.add('active')"><i class="fa-solid fa-arrow-down-to-bracket"></i> Importar Token</button>
+                                </div>
                             </div>
                             <div class="settings-card">
-                                <h3><i class="fa-solid fa-file-import"></i> Importar Datos</h3>
+                                <h3><i class="fa-solid fa-file-export"></i> Exportar Datos (JSON)</h3>
+                                <p>Descarga toda la información registrada de tus atletas y mediciones en un archivo JSON.</p>
+                                <button class="sec-btn mt-20" onclick="app.exportData()"><i class="fa-solid fa-download"></i> Descargar Copia de Seguridad</button>
+                            </div>
+                            <div class="settings-card">
+                                <h3><i class="fa-solid fa-file-import"></i> Importar Datos (JSON)</h3>
                                 <p>Carga un archivo de copia de seguridad en formato JSON para restaurar tus atletas e historial.</p>
                                 <div class="file-upload-wrapper mt-20">
                                     <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="app.importData(event)">
@@ -2624,6 +2689,51 @@
         </div>
     </div>
 
+    <!-- Modal para Visualizar y Copiar Token Seguro P2P -->
+    <div class="modal" id="sync-token-modal">
+        <div class="modal-content" style="width: 550px; max-width: 95%;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-qrcode" style="color: var(--primary);"></i> Token Seguro de Traspaso P2P</h2>
+                <span class="close-modal" onclick="document.getElementById('sync-token-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                    Este token contiene una instantánea cifrada de todos tus atletas, evaluaciones y dojangs. Cópialo y pégalo en la opción "Importar Token" en tu otro dispositivo o tablet.
+                </p>
+                <div class="form-group">
+                    <textarea id="sync-token-display" rows="7" readonly style="font-family: monospace; font-size: 11px; word-break: break-all; background: #0d1117; color: #38bdf8;"></textarea>
+                </div>
+                <div class="form-actions mt-15" style="display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" class="btn-cancel" onclick="document.getElementById('sync-token-modal').classList.remove('active')">Cerrar</button>
+                    <button type="button" class="primary-btn" onclick="app.copySyncTokenToClipboard()"><i class="fa-solid fa-copy"></i> Copiar Token al Portapapeles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Importar Token Seguro P2P -->
+    <div class="modal" id="sync-token-import-modal">
+        <div class="modal-content" style="width: 550px; max-width: 95%;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-arrow-down-to-bracket" style="color: var(--primary);"></i> Importar y Fusionar desde Token P2P</h2>
+                <span class="close-modal" onclick="document.getElementById('sync-token-import-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                    Pega el código de token generado desde la otra tablet o teléfono. La aplicación realizará una fusión inteligente sin borrar tus atletas locales.
+                </p>
+                <div class="form-group">
+                    <label for="sync-token-import-input">Código de Token P2P</label>
+                    <textarea id="sync-token-import-input" rows="6" placeholder="Pega el código del token aquí..." style="font-family: monospace; font-size: 11px; word-break: break-all;"></textarea>
+                </div>
+                <div class="form-actions mt-15" style="display: flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" class="btn-cancel" onclick="document.getElementById('sync-token-import-modal').classList.remove('active')">Cancelar</button>
+                    <button type="button" class="primary-btn" onclick="app.importP2PShareToken()"><i class="fa-solid fa-code-merge"></i> Procesar y Fusionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Universal App Modal (Replaces browser alert/confirm) -->
     <div id="app-modal-overlay" class="app-modal-overlay">
         <div class="app-modal-card" id="app-modal-card">
@@ -2641,17 +2751,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-9"></script>
-    <script src="hapkido-data.js?v=20260901-9"></script>
-    <script src="hapkido-auth.js?v=20260901-9"></script>
-    <script src="hapkido-athletes.js?v=20260901-9"></script>
-    <script src="hapkido-physical.js?v=20260901-9"></script>
-    <script src="hapkido-exams.js?v=20260901-9"></script>
-    <script src="hapkido-combat.js?v=20260901-9"></script>
-    <script src="hapkido-schools.js?v=20260901-9"></script>
-    <script src="hapkido-torneos.js?v=20260901-9"></script>
-    <script src="hapkido-vocab.js?v=20260901-9"></script>
-    <script src="hapkido-timer.js?v=20260901-9"></script>
-    <script src="hapkido-init.js?v=20260901-9"></script>
+    <script src="app.js?v=20260901-10"></script>
+    <script src="hapkido-data.js?v=20260901-10"></script>
+    <script src="hapkido-auth.js?v=20260901-10"></script>
+    <script src="hapkido-athletes.js?v=20260901-10"></script>
+    <script src="hapkido-physical.js?v=20260901-10"></script>
+    <script src="hapkido-exams.js?v=20260901-10"></script>
+    <script src="hapkido-combat.js?v=20260901-10"></script>
+    <script src="hapkido-schools.js?v=20260901-10"></script>
+    <script src="hapkido-torneos.js?v=20260901-10"></script>
+    <script src="hapkido-vocab.js?v=20260901-10"></script>
+    <script src="hapkido-timer.js?v=20260901-10"></script>
+    <script src="hapkido-sync.js?v=20260901-10"></script>
+    <script src="hapkido-init.js?v=20260901-10"></script>
 </body>
 </html>

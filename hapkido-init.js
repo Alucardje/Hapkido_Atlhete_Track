@@ -23,6 +23,9 @@ requiredMethods.forEach(m => {
 });
 
 window.app = new HapkidoApp();
+if (window.app.initCloudSync) {
+    window.app.initCloudSync();
+}
 
 // Register Service Worker for PWA 100% Offline Capability with auto-update
 if ('serviceWorker' in navigator) {
