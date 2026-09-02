@@ -29,6 +29,7 @@ HapkidoApp.prototype.initTatamiTimer = function() {
 };
 
 HapkidoApp.prototype.setTimerMode = function(mode) {
+    if (!this.timerState) this.initTatamiTimer();
     this.pauseTatamiTimer();
     this.timerState.mode = mode;
     this.timerState.status = 'IDLE';
@@ -70,6 +71,7 @@ HapkidoApp.prototype.setTimerMode = function(mode) {
 };
 
 HapkidoApp.prototype.applyTimerCustomSettings = function() {
+    if (!this.timerState) this.initTatamiTimer();
     if (this.timerState.status === 'RUNNING') return;
 
     if (this.timerState.mode === 'combat') {
@@ -94,6 +96,7 @@ HapkidoApp.prototype.applyTimerCustomSettings = function() {
 };
 
 HapkidoApp.prototype.toggleTatamiTimer = function() {
+    if (!this.timerState) this.initTatamiTimer();
     if (this.timerState.status === 'RUNNING' || this.timerState.status === 'RESTING') {
         this.pauseTatamiTimer();
     } else {
@@ -102,6 +105,7 @@ HapkidoApp.prototype.toggleTatamiTimer = function() {
 };
 
 HapkidoApp.prototype.startTatamiTimer = function() {
+    if (!this.timerState) this.initTatamiTimer();
     if (this.timerState.intervalId) clearInterval(this.timerState.intervalId);
 
     const isResume = (this.timerState.status === 'PAUSED');
@@ -123,6 +127,7 @@ HapkidoApp.prototype.startTatamiTimer = function() {
 };
 
 HapkidoApp.prototype.pauseTatamiTimer = function() {
+    if (!this.timerState) this.initTatamiTimer();
     if (this.timerState.intervalId) {
         clearInterval(this.timerState.intervalId);
         this.timerState.intervalId = null;
@@ -137,6 +142,7 @@ HapkidoApp.prototype.pauseTatamiTimer = function() {
 };
 
 HapkidoApp.prototype.resetTatamiTimer = function() {
+    if (!this.timerState) this.initTatamiTimer();
     this.pauseTatamiTimer();
     this.timerState.status = 'IDLE';
     this.timerState.currentRound = 1;
@@ -146,6 +152,7 @@ HapkidoApp.prototype.resetTatamiTimer = function() {
 };
 
 HapkidoApp.prototype.skipToNextTimerPhase = function() {
+    if (!this.timerState) this.initTatamiTimer();
     this.pauseTatamiTimer();
 
     if (this.timerState.status === 'RESTING') {

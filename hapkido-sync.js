@@ -177,7 +177,7 @@ HapkidoApp.prototype.syncWithCloud = function(isManual = true) {
                 }).then(serverData => {
                     if (serverData && serverData.mergedData) {
                         this.data = serverData.mergedData;
-                        this.saveData();
+                        this.saveData(true);
                     }
                     this.finishSyncSuccess(isManual, nowIso);
                 }).catch(err => {

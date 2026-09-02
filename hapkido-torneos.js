@@ -780,6 +780,8 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
                 bronze = bracket.bronzeMatch.winner === 'blue' ? bracket.bronzeMatch.blue : bracket.bronzeMatch.red;
             }
 
+            const esc = (s) => (s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
+
             if (podiumEl) {
                 podiumEl.style.display = 'block';
                 podiumEl.innerHTML = `
@@ -788,20 +790,20 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
                         <div class="podium-step step-silver">
                             <div class="podium-medal">🥈</div>
                             <div class="podium-rank">2do Lugar (Plata)</div>
-                            <div class="podium-athlete">${silver ? silver.name : '--'}</div>
-                            <div class="podium-school">${silver ? silver.school || 'Dojang' : ''}</div>
+                            <div class="podium-athlete">${silver ? esc(silver.name) : '--'}</div>
+                            <div class="podium-school">${silver ? esc(silver.school || 'Dojang') : ''}</div>
                         </div>
                         <div class="podium-step step-gold">
                             <div class="podium-medal">🥇</div>
                             <div class="podium-rank">¡CAMPEÓN ORO!</div>
-                            <div class="podium-athlete">${gold ? gold.name : '--'}</div>
-                            <div class="podium-school">${gold ? gold.school || 'Dojang' : ''}</div>
+                            <div class="podium-athlete">${gold ? esc(gold.name) : '--'}</div>
+                            <div class="podium-school">${gold ? esc(gold.school || 'Dojang') : ''}</div>
                         </div>
                         <div class="podium-step step-bronze">
                             <div class="podium-medal">🥉</div>
                             <div class="podium-rank">3er Lugar (Bronce)</div>
-                            <div class="podium-athlete">${bronze ? bronze.name : '--'}</div>
-                            <div class="podium-school">${bronze ? bronze.school || 'Dojang' : ''}</div>
+                            <div class="podium-athlete">${bronze ? esc(bronze.name) : '--'}</div>
+                            <div class="podium-school">${bronze ? esc(bronze.school || 'Dojang') : ''}</div>
                         </div>
                     </div>
                 `;
@@ -817,8 +819,10 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
         const isRedWinner = isFinished && m.winner === 'red';
         const isBye = m.winReason === 'BYE';
 
-        const blueName = m.blue ? m.blue.name : (m.round === 1 ? 'Sin Competidor' : 'Por Definir');
-        const redName = m.red ? (isBye ? 'BYE (Pase Libre)' : m.red.name) : (m.round === 1 ? (isBye ? 'BYE (Pase Libre)' : 'Sin Competidor') : 'Por Definir');
+        const esc = (s) => (s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '');
+
+        const blueName = m.blue ? esc(m.blue.name) : (m.round === 1 ? 'Sin Competidor' : 'Por Definir');
+        const redName = m.red ? (isBye ? 'BYE (Pase Libre)' : esc(m.red.name)) : (m.round === 1 ? (isBye ? 'BYE (Pase Libre)' : 'Sin Competidor') : 'Por Definir');
 
         return `
             <div class="bracket-match-card ${isFinished ? 'finished' : ''}" onclick="app.openBracketMatchModal('${m.id}')" title="Clic para puntuar o registrar resultado">
@@ -830,7 +834,7 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
                     <div class="fighter-indicator"></div>
                     <div class="fighter-info">
                         <span class="fighter-name">${blueName}</span>
-                        ${m.blue ? `<small class="fighter-sub">${m.blue.belt} · ${m.blue.school || ''}</small>` : ''}
+                        ${m.blue ? `<small class="fighter-sub">${esc(m.blue.belt)} · ${esc(m.blue.school || '')}</small>` : ''}
                     </div>
                     <div class="fighter-score">${isFinished ? (isBye ? '-' : m.scoreBlue) : '-'}</div>
                     ${isBlueWinner ? '<i class="fa-solid fa-crown winner-crown"></i>' : ''}
@@ -839,7 +843,7 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
                     <div class="fighter-indicator"></div>
                     <div class="fighter-info">
                         <span class="fighter-name">${redName}</span>
-                        ${m.red ? `<small class="fighter-sub">${m.red.belt} · ${m.red.school || ''}</small>` : ''}
+                        ${m.red ? `<small class="fighter-sub">${esc(m.red.belt)} · ${esc(m.red.school || '')}</small>` : ''}
                     </div>
                     <div class="fighter-score">${isFinished ? (isBye ? '-' : m.scoreRed) : '-'}</div>
                     ${isRedWinner ? '<i class="fa-solid fa-crown winner-crown"></i>' : ''}
@@ -985,7 +989,7 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
 
         // Navigate to #combate
         window.location.hash = '#combate';
-        this.handleRoute();
+        this.handleRouting();
 
         // Select blue athlete
         const selectAthlete = document.getElementById('combate-athlete-select');

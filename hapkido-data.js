@@ -312,11 +312,11 @@ HapkidoApp.prototype.loadData = function() {
     }
 
 
-HapkidoApp.prototype.saveData = function() {
+HapkidoApp.prototype.saveData = function(skipNotify = false) {
         try {
             localStorage.setItem('hapkido_athlete_tracker_data', JSON.stringify(this.data));
             this.updateDashboardStats();
-            if (this.notifyDataChanged) {
+            if (!skipNotify && this.notifyDataChanged) {
                 this.notifyDataChanged();
             }
         } catch (e) {
