@@ -2398,45 +2398,132 @@ button {
 }
 
 /* ==========================================================================
-   ROLE-BASED VIEW CONTROL (CSS SECURITY DECORATIONS)
+   ROLE-BASED VIEW CONTROL & INTERFACE CLEANUP (RBAC UI)
    ========================================================================== */
 
-/* Hiding Navigation links based on role */
-body.role-instructor #nav-ajustes,
-body.role-instructor #nav-escuelas,
-body.role-instructor #nav-usuarios {
-    display: none !important;
-}
-
-body.role-ayudante #nav-ajustes,
-body.role-ayudante #nav-escuelas,
-body.role-ayudante #nav-usuarios {
-    display: none !important;
-}
-
+/* --------------------------------------------------------------------------
+   1. ROL: ATLETA / ALUMNO (Portal del Practicante - Solo Consulta Personal)
+   -------------------------------------------------------------------------- */
+/* Ocultar grupos y enlaces en Sidebar */
+body.role-athlete #group-mediciones,
+body.role-athlete #group-organizacion,
+body.role-athlete #group-configuracion,
 body.role-athlete #nav-atletas,
 body.role-athlete #nav-combate,
 body.role-athlete #nav-fisica,
 body.role-athlete #nav-examenes,
-body.role-athlete #nav-ajustes,
 body.role-athlete #nav-escuelas,
-body.role-athlete #nav-usuarios {
+body.role-athlete #nav-torneos,
+body.role-athlete #nav-timer,
+body.role-athlete #nav-usuarios,
+body.role-athlete #nav-ajustes {
     display: none !important;
 }
 
-/* Hiding standard panels in Dashboard for athletes */
+/* Ocultar en Barra Inferior Móvil (Solo dejar Inicio, Mi Historial, Manual y Menú) */
+body.role-athlete .mobile-nav-item[data-nav="atletas"],
+body.role-athlete .mobile-nav-item[data-nav="fisica"],
+body.role-athlete .mobile-nav-item[data-nav="combate"],
+body.role-athlete .mobile-nav-item[data-nav="torneos"],
+body.role-athlete .mobile-nav-item[data-nav="timer"] {
+    display: none !important;
+}
+
+body.role-athlete .mobile-nav-item[data-nav="historial"],
+body.role-athlete .mobile-nav-item[data-nav="manual"] {
+    display: flex !important;
+}
+
+/* Ocultar paneles globales de entrenador en Dashboard */
 body.role-athlete #section-dashboard > .grid-stats,
-body.role-athlete #section-dashboard > .dashboard-grid {
+body.role-athlete #section-dashboard > .dashboard-grid,
+body.role-athlete .header-sync-widget {
     display: none !important;
 }
 
-/* Hiding select dropdown group in Historial for athletes */
-body.role-athlete #analysis-select-group {
+/* Ocultar controles de filtrado o edición para Atletas */
+body.role-athlete #analysis-select-group,
+body.role-athlete .actions-cell,
+body.role-athlete .btn-new-test,
+body.role-athlete .admin-only-btn,
+body.role-athlete .athlete-action-btns,
+body.role-athlete button[onclick*="openAthleteModal"],
+body.role-athlete button[onclick*="openPhysicalTestModal"],
+body.role-athlete button[onclick*="openExamModal"],
+body.role-athlete button[onclick*="openTorneoModal"],
+body.role-athlete button[onclick*="openSchoolModal"] {
     display: none !important;
 }
 
-/* Hiding edit / delete action buttons on grids for athletes */
-body.role-athlete .actions-cell {
+/* --------------------------------------------------------------------------
+   2. ROL: MESA TÉCNICA / JUEZ DE TATAMI (Arbitraje, Llaves y Timer)
+   -------------------------------------------------------------------------- */
+/* Ocultar en Sidebar */
+body.role-ayudante #group-configuracion,
+body.role-ayudante #nav-atletas,
+body.role-ayudante #nav-fisica,
+body.role-ayudante #nav-examenes,
+body.role-ayudante #nav-escuelas,
+body.role-ayudante #nav-usuarios,
+body.role-ayudante #nav-ajustes {
+    display: none !important;
+}
+
+/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Combate, Torneos, Timer y Menú) */
+body.role-ayudante .mobile-nav-item[data-nav="atletas"],
+body.role-ayudante .mobile-nav-item[data-nav="historial"],
+body.role-ayudante .mobile-nav-item[data-nav="fisica"],
+body.role-ayudante .mobile-nav-item[data-nav="manual"] {
+    display: none !important;
+}
+
+body.role-ayudante .mobile-nav-item[data-nav="combate"],
+body.role-ayudante .mobile-nav-item[data-nav="torneos"],
+body.role-ayudante .mobile-nav-item[data-nav="timer"] {
+    display: flex !important;
+}
+
+/* Ocultar creación/edición de torneos para Mesa Técnica */
+body.role-ayudante #btn-new-torneo,
+body.role-ayudante .btn-delete-torneo,
+body.role-ayudante .actions-cell .delete-btn {
+    display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. ROL: INSTRUCTOR / ENTRENADOR (Gestión Técnica de Alumnos)
+   -------------------------------------------------------------------------- */
+/* Ocultar en Sidebar */
+body.role-instructor #group-configuracion,
+body.role-instructor #nav-usuarios,
+body.role-instructor #nav-ajustes,
+body.role-instructor #nav-escuelas {
+    display: none !important;
+}
+
+/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Atletas, Física, Combate y Menú) */
+body.role-instructor .mobile-nav-item[data-nav="historial"],
+body.role-instructor .mobile-nav-item[data-nav="torneos"],
+body.role-instructor .mobile-nav-item[data-nav="timer"],
+body.role-instructor .mobile-nav-item[data-nav="manual"] {
+    display: none !important;
+}
+
+body.role-instructor .mobile-nav-item[data-nav="atletas"],
+body.role-instructor .mobile-nav-item[data-nav="fisica"],
+body.role-instructor .mobile-nav-item[data-nav="combate"] {
+    display: flex !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. REGLAS GENERALES PARA ROLES NO ADMINISTRADORES
+   -------------------------------------------------------------------------- */
+body:not(.role-admin) #nav-usuarios,
+body:not(.role-admin) #nav-ajustes,
+body:not(.role-admin) #nav-escuelas,
+body:not(.role-admin) #btn-new-school,
+body:not(.role-admin) .btn-admin-danger,
+body:not(.role-admin) #group-configuracion {
     display: none !important;
 }
 

@@ -92,12 +92,18 @@ class HapkidoApp {
 
         // RBAC Access Control & Redirects
         if (this.currentUser.role === 'athlete') {
-            const allowedHashes = ['#dashboard', '#historial', '#manual', '#torneos'];
+            const allowedHashes = ['#dashboard', '#historial', '#manual'];
             if (!allowedHashes.includes(hash)) {
                 this.navigateTo('#dashboard');
                 return;
             }
-        } else if (this.currentUser.role === 'instructor' || this.currentUser.role === 'ayudante') {
+        } else if (this.currentUser.role === 'ayudante') {
+            const allowedHashes = ['#dashboard', '#combate', '#torneos', '#timer', '#manual'];
+            if (!allowedHashes.includes(hash)) {
+                this.navigateTo('#dashboard');
+                return;
+            }
+        } else if (this.currentUser.role === 'instructor') {
             const forbiddenHashes = ['#ajustes', '#escuelas', '#usuarios'];
             if (forbiddenHashes.includes(hash)) {
                 this.navigateTo('#dashboard');
