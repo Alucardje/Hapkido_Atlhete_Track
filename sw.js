@@ -1,10 +1,10 @@
 /**
  * Service Worker: Hapkido Athlete Tracker PWA
- * Version: 20260901-8
+ * Version: 20260901-9
  * Strategy: Network-First for Application Code (Instant Updates), Cache-First for Static Assets (100% Offline Capable)
  */
 
-const CACHE_NAME = 'hapkido-tracker-v20260901-8';
+const CACHE_NAME = 'hapkido-tracker-v20260901-9';
 
 const CORE_ASSETS = [
   './',
@@ -21,6 +21,7 @@ const CORE_ASSETS = [
   './hapkido-schools.js',
   './hapkido-torneos.js',
   './hapkido-vocab.js',
+  './hapkido-timer.js',
   './manifest.json',
   './icons/favicon-64.png',
   './icons/icon-192.png',

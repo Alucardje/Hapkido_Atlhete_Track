@@ -165,6 +165,7 @@ class HapkidoApp {
                 '#examenes': 'Exámenes de Cinta y Currículum Técnico',
                 '#historial': 'Historial de Rendimiento y Gráficos',
                 '#manual': 'Manual de Estudio y Reglamento Oficial 2026',
+                '#timer': 'Temporizador Marcial de Tatami & Entrenamiento',
                 '#torneos': 'Calendario de Torneos y Topes',
                 '#ajustes': 'Respaldos y Configuración',
                 '#escuelas': 'Gestión de Escuelas y Dojangs',
@@ -174,6 +175,10 @@ class HapkidoApp {
         }
 
         // Route specific logic
+        if (hash === '#timer') {
+            this.initTatamiTimer();
+        }
+
         if (hash === '#torneos') {
             this.renderTorneosList();
         }

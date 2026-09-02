@@ -106,6 +106,12 @@
                     </div>
                 </div>
 
+                <!-- Timer de Tatami -->
+                <a href="#timer" class="nav-item" id="nav-timer">
+                    <i class="fa-solid fa-stopwatch-20"></i>
+                    <span>Timer de Tatami</span>
+                </a>
+
                 <!-- Manual -->
                 <a href="#manual" class="nav-item" id="nav-manual">
                     <i class="fa-solid fa-book-open"></i>
@@ -2253,6 +2259,140 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Temporizador de Tatami & Entrenamiento Marcial Section -->
+            <section id="section-timer" class="app-section">
+                <!-- Selector de Modos de Timer -->
+                <div class="timer-mode-selector-bar">
+                    <button type="button" class="timer-mode-btn active" data-mode="combat" onclick="app.setTimerMode('combat')">
+                        <i class="fa-solid fa-hand-fist"></i> Combate Oficial (FEVEHAPKIDO)
+                    </button>
+                    <button type="button" class="timer-mode-btn" data-mode="tabata" onclick="app.setTimerMode('tabata')">
+                        <i class="fa-solid fa-fire-flame-curved"></i> Tabata / HIIT (FSKT 20/10)
+                    </button>
+                    <button type="button" class="timer-mode-btn" data-mode="emom" onclick="app.setTimerMode('emom')">
+                        <i class="fa-solid fa-stopwatch-20"></i> EMOM (Cada Minuto)
+                    </button>
+                    <button type="button" class="timer-mode-btn" data-mode="stopwatch" onclick="app.setTimerMode('stopwatch')">
+                        <i class="fa-solid fa-stopwatch"></i> Cronómetro Libre
+                    </button>
+                </div>
+
+                <!-- Barra de Configuración y Ajustes Rápidos -->
+                <div class="panel-card mt-15">
+                    <div class="panel-body" style="padding: 14px 18px;">
+                        <!-- Configuración Combate -->
+                        <div id="timer-config-combat" class="timer-config-row">
+                            <div class="timer-cfg-item">
+                                <label for="timer-combat-work">Tiempo de Round:</label>
+                                <select id="timer-combat-work" onchange="app.applyTimerCustomSettings()">
+                                    <option value="120" selected>2:00 min (Mayores / Juveniles)</option>
+                                    <option value="90">1:30 min (Junior 12-14 años)</option>
+                                    <option value="150">2:30 min (Finales Mayores)</option>
+                                    <option value="60">1:00 min (Infantil / Ráfaga)</option>
+                                    <option value="180">3:00 min (Modo Especial)</option>
+                                </select>
+                            </div>
+                            <div class="timer-cfg-item">
+                                <label for="timer-combat-rest">Descanso (Hyusik):</label>
+                                <select id="timer-combat-rest" onchange="app.applyTimerCustomSettings()">
+                                    <option value="30" selected>30 seg (Oficial FEVEHAPKIDO)</option>
+                                    <option value="45">45 seg</option>
+                                    <option value="60">1:00 min</option>
+                                    <option value="15">15 seg</option>
+                                    <option value="0">Sin Descanso</option>
+                                </select>
+                            </div>
+                            <div class="timer-cfg-item">
+                                <label for="timer-combat-rounds">Total de Rounds:</label>
+                                <select id="timer-combat-rounds" onchange="app.applyTimerCustomSettings()">
+                                    <option value="2" selected>2 Rounds (Oficial)</option>
+                                    <option value="3">3 Rounds (Con Punto de Oro)</option>
+                                    <option value="1">1 Round Único</option>
+                                    <option value="5">5 Rounds (Campeonato)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Configuración Tabata -->
+                        <div id="timer-config-tabata" class="timer-config-row" style="display: none;">
+                            <div class="timer-cfg-item">
+                                <label for="timer-tabata-work">Tiempo de Trabajo:</label>
+                                <select id="timer-tabata-work" onchange="app.applyTimerCustomSettings()">
+                                    <option value="20" selected>20 seg (Tabata Estándar)</option>
+                                    <option value="30">30 seg (Ráfaga Potencia)</option>
+                                    <option value="40">40 seg</option>
+                                    <option value="15">15 seg (Velocidad Pura)</option>
+                                </select>
+                            </div>
+                            <div class="timer-cfg-item">
+                                <label for="timer-tabata-rest">Tiempo de Descanso:</label>
+                                <select id="timer-tabata-rest" onchange="app.applyTimerCustomSettings()">
+                                    <option value="10" selected>10 seg (Estándar)</option>
+                                    <option value="15">15 seg</option>
+                                    <option value="20">20 seg</option>
+                                    <option value="5">5 seg</option>
+                                </select>
+                            </div>
+                            <div class="timer-cfg-item">
+                                <label for="timer-tabata-cycles">Número de Ciclos:</label>
+                                <select id="timer-tabata-cycles" onchange="app.applyTimerCustomSettings()">
+                                    <option value="8" selected>8 Ciclos (4 minutos)</option>
+                                    <option value="6">6 Ciclos (3 minutos)</option>
+                                    <option value="10">10 Ciclos (5 minutos)</option>
+                                    <option value="12">12 Ciclos (6 minutos)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Configuración EMOM -->
+                        <div id="timer-config-emom" class="timer-config-row" style="display: none;">
+                            <div class="timer-cfg-item">
+                                <label for="timer-emom-minutes">Minutos Totales (EMOM):</label>
+                                <select id="timer-emom-minutes" onchange="app.applyTimerCustomSettings()">
+                                    <option value="5">5 Minutos</option>
+                                    <option value="10" selected>10 Minutos</option>
+                                    <option value="15">15 Minutos</option>
+                                    <option value="20">20 Minutos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Opciones de Audio -->
+                        <div class="timer-sound-toggles">
+                            <label class="timer-toggle-label">
+                                <input type="checkbox" id="timer-sound-toggle" checked onchange="app.timerState.soundEnabled = this.checked">
+                                <i class="fa-solid fa-bell"></i> Campana / Gong Tatami
+                            </label>
+                            <label class="timer-toggle-label">
+                                <input type="checkbox" id="timer-voice-toggle" checked onchange="app.timerState.voiceEnabled = this.checked">
+                                <i class="fa-solid fa-volume-high"></i> Comandos Vocales Coreanos
+                            </label>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="app.playBellSound()" title="Probar sonido"><i class="fa-solid fa-play"></i> Probar Campana</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pantalla Gigante de Tatami -->
+                <div class="tatami-timer-screen" id="tatami-timer-screen">
+                    <div class="tatami-screen-top">
+                        <div class="tatami-badge badge-idle" id="tatami-phase-badge">LISTO (JUNBI)</div>
+                        <div class="tatami-round-badge" id="tatami-round-badge">ROUND 1 / 2</div>
+                        <button type="button" class="tatami-fs-btn" onclick="app.toggleTimerFullScreen()" title="Pantalla Completa"><i class="fa-solid fa-expand"></i></button>
+                    </div>
+
+                    <div class="tatami-timer-display" id="tatami-timer-digits">02:00</div>
+
+                    <div class="tatami-korean-subtitle" id="tatami-korean-subtitle">준비 (Junbi) - ¡En Guardia!</div>
+
+                    <!-- Botones de Control Gigantes -->
+                    <div class="tatami-controls-grid">
+                        <button type="button" class="timer-action-btn btn-reset" onclick="app.resetTatamiTimer()" title="Reiniciar"><i class="fa-solid fa-rotate-left"></i> Reiniciar</button>
+                        <button type="button" class="timer-action-btn btn-start" id="btn-timer-toggle" onclick="app.toggleTatamiTimer()"><i class="fa-solid fa-play"></i> Iniciar (Sichak)</button>
+                        <button type="button" class="timer-action-btn btn-skip" onclick="app.skipToNextTimerPhase()" title="Siguiente Round / Saltar"><i class="fa-solid fa-forward-step"></i> Siguiente</button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -2501,16 +2641,17 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-8"></script>
-    <script src="hapkido-data.js?v=20260901-8"></script>
-    <script src="hapkido-auth.js?v=20260901-8"></script>
-    <script src="hapkido-athletes.js?v=20260901-8"></script>
-    <script src="hapkido-physical.js?v=20260901-8"></script>
-    <script src="hapkido-exams.js?v=20260901-8"></script>
-    <script src="hapkido-combat.js?v=20260901-8"></script>
-    <script src="hapkido-schools.js?v=20260901-8"></script>
-    <script src="hapkido-torneos.js?v=20260901-8"></script>
-    <script src="hapkido-vocab.js?v=20260901-8"></script>
-    <script src="hapkido-init.js?v=20260901-8"></script>
+    <script src="app.js?v=20260901-9"></script>
+    <script src="hapkido-data.js?v=20260901-9"></script>
+    <script src="hapkido-auth.js?v=20260901-9"></script>
+    <script src="hapkido-athletes.js?v=20260901-9"></script>
+    <script src="hapkido-physical.js?v=20260901-9"></script>
+    <script src="hapkido-exams.js?v=20260901-9"></script>
+    <script src="hapkido-combat.js?v=20260901-9"></script>
+    <script src="hapkido-schools.js?v=20260901-9"></script>
+    <script src="hapkido-torneos.js?v=20260901-9"></script>
+    <script src="hapkido-vocab.js?v=20260901-9"></script>
+    <script src="hapkido-timer.js?v=20260901-9"></script>
+    <script src="hapkido-init.js?v=20260901-9"></script>
 </body>
 </html>
