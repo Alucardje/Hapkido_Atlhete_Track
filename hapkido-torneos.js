@@ -530,6 +530,476 @@ HapkidoApp.prototype.deleteTorneoInscripcion = function(torneoId, athleteId) {
         }
     };
 
+    /**
+     * Abrir modal de generación y visualización de llaves de combate
+     */
+    HapkidoApp.prototype.openBracketGeneratorModal = function(torneoId) {
+        const id = torneoId || this.selectedTorneoId;
+        if (!id) {
+            this.showAlert("Por favor seleccione un torneo primero.", "warning", "Torneo Requerido");
+            return;
+        }
+
+        const trn = this.data.torneos.find(t => t.id === id);
+        if (!trn) return;
+
+        this.selectedTorneoId = id;
+        document.getElementById('bracket-modal-torneo-name').textContent = trn.name;
+
+        // Extract unique combat divisions from registered athletes
+        const combatRegs = (trn.registrations || []).filter(r => r.categories?.combate);
+        const divisions = [...new Set(combatRegs.map(r => r.division || 'General'))].filter(Boolean);
+
+        const selectDiv = document.getElementById('bracket-division-select');
+        if (selectDiv) {
+            if (divisions.length > 0) {
+                selectDiv.innerHTML = '<option value="ALL">🥋 Todos los Competidores de Combate</option>' +
+                    divisions.map(d => `<option value="${d}">${d}</option>`).join('');
+            } else {
+                selectDiv.innerHTML = '<option value="ALL">🥋 Todos los Competidores de Combate</option>';
+            }
+        }
+
+        trn.brackets = trn.brackets || {};
+        this.renderTournamentBracketTree();
+
+        document.getElementById('tournament-bracket-modal').classList.add('active');
+    };
+
+    HapkidoApp.prototype.handleBracketCategoryChange = function() {
+        this.renderTournamentBracketTree();
+    };
+
+    /**
+     * Algoritmo de Generación y Sorteo de Llaves de Torneo
+     */
+    HapkidoApp.prototype.generateTournamentBracket = function() {
+        const trn = this.data.torneos.find(t => t.id === this.selectedTorneoId);
+        if (!trn) return;
+
+        const categoryKey = document.getElementById('bracket-division-select')?.value || 'ALL';
+        const seedingMode = document.getElementById('bracket-seeding-select')?.value || 'random';
+
+        let combatRegs = (trn.registrations || []).filter(r => r.categories?.combate);
+        if (categoryKey !== 'ALL') {
+            combatRegs = combatRegs.filter(r => (r.division || 'General') === categoryKey);
+        }
+
+        if (combatRegs.length < 2) {
+            this.showAlert("Se requieren al menos 2 competidores inscritos en combate para generar una llave eliminatoria.", "warning", "Competidores Insuficientes");
+            return;
+        }
+
+        // Seeding / Sorting
+        let fighters = [...combatRegs];
+        if (seedingMode === 'seeded') {
+            // Sort by latest physical test global score
+            fighters.sort((a, b) => {
+                const aPhys = this.data.records.filter(r => r.athleteId === a.athleteId && r.type === 'FISICA').sort((x, y) => new Date(y.date) - new Date(x.date))[0]?.physicalDetails?.evalResults?.globalScore || 5;
+                const bPhys = this.data.records.filter(r => r.athleteId === b.athleteId && r.type === 'FISICA').sort((x, y) => new Date(y.date) - new Date(x.date))[0]?.physicalDetails?.evalResults?.globalScore || 5;
+                return bPhys - aPhys;
+            });
+        } else {
+            // Fisher-Yates random shuffle
+            for (let i = fighters.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [fighters[i], fighters[j]] = [fighters[j], fighters[i]];
+            }
+        }
+
+        // Determine bracket power-of-two size (2, 4, 8, 16, 32)
+        const count = fighters.length;
+        let bracketSize = 2;
+        if (count > 16) bracketSize = 32;
+        else if (count > 8) bracketSize = 16;
+        else if (count > 4) bracketSize = 8;
+        else if (count > 2) bracketSize = 4;
+
+        // Build Round 1 matches
+        const numMatchesR1 = bracketSize / 2;
+        const matchesR1 = [];
+
+        for (let i = 0; i < numMatchesR1; i++) {
+            const fighter1 = fighters[i * 2] || null;
+            const fighter2 = fighters[i * 2 + 1] || null;
+
+            const isBye = fighter1 && !fighter2;
+            matchesR1.push({
+                id: `R1-M${i + 1}`,
+                round: 1,
+                matchNum: i + 1,
+                blue: fighter1 ? { id: fighter1.athleteId, name: fighter1.athleteName, belt: fighter1.belt, school: fighter1.school || 'Dojang' } : null,
+                red: fighter2 ? { id: fighter2.athleteId, name: fighter2.athleteName, belt: fighter2.belt, school: fighter2.school || 'Dojang' } : null,
+                scoreBlue: isBye ? 0 : 0,
+                scoreRed: isBye ? 0 : 0,
+                winner: isBye ? 'blue' : null,
+                winReason: isBye ? 'BYE' : null,
+                status: isBye ? 'FINISHED' : 'PENDING'
+            });
+        }
+
+        // Build subsequent rounds (Semifinales, Final, Bronce)
+        const rounds = [matchesR1];
+        let currentMatchesCount = numMatchesR1;
+        let roundNum = 2;
+
+        while (currentMatchesCount > 1) {
+            currentMatchesCount = currentMatchesCount / 2;
+            const roundMatches = [];
+            for (let i = 0; i < currentMatchesCount; i++) {
+                const prevM1 = rounds[roundNum - 2][i * 2];
+                const prevM2 = rounds[roundNum - 2][i * 2 + 1];
+
+                const blueFighter = (prevM1.status === 'FINISHED' && prevM1.winner) ? (prevM1.winner === 'blue' ? prevM1.blue : prevM1.red) : null;
+                const redFighter = (prevM2.status === 'FINISHED' && prevM2.winner) ? (prevM2.winner === 'blue' ? prevM2.blue : prevM2.red) : null;
+
+                roundMatches.push({
+                    id: `R${roundNum}-M${i + 1}`,
+                    round: roundNum,
+                    matchNum: i + 1,
+                    blue: blueFighter,
+                    red: redFighter,
+                    scoreBlue: 0,
+                    scoreRed: 0,
+                    winner: null,
+                    winReason: null,
+                    status: 'PENDING'
+                });
+            }
+            rounds.push(roundMatches);
+            roundNum++;
+        }
+
+        // Bronze match (if at least 4 competitors)
+        let bronzeMatch = null;
+        if (bracketSize >= 4) {
+            bronzeMatch = {
+                id: 'BRONZE-M1',
+                round: 'BRONZE',
+                matchNum: 1,
+                blue: null,
+                red: null,
+                scoreBlue: 0,
+                scoreRed: 0,
+                winner: null,
+                winReason: null,
+                status: 'PENDING'
+            };
+        }
+
+        trn.brackets = trn.brackets || {};
+        trn.brackets[categoryKey] = {
+            categoryKey,
+            bracketSize,
+            seedingMode,
+            generatedAt: new Date().toISOString(),
+            rounds,
+            bronzeMatch
+        };
+
+        this.saveData();
+        this.renderTournamentBracketTree();
+    };
+
+    /**
+     * Renderizador del Árbol Visual de la Llave
+     */
+    HapkidoApp.prototype.renderTournamentBracketTree = function() {
+        const trn = this.data.torneos.find(t => t.id === this.selectedTorneoId);
+        if (!trn) return;
+
+        const categoryKey = document.getElementById('bracket-division-select')?.value || 'ALL';
+        const bracket = trn.brackets ? trn.brackets[categoryKey] : null;
+
+        const container = document.getElementById('bracket-tree-container');
+        const podiumEl = document.getElementById('bracket-podium-banner');
+        const countEl = document.getElementById('bracket-registered-count');
+
+        const combatRegs = (trn.registrations || []).filter(r => r.categories?.combate && (categoryKey === 'ALL' || (r.division || 'General') === categoryKey));
+        if (countEl) countEl.textContent = `${combatRegs.length} Competidores en esta categoría`;
+
+        if (!bracket || !bracket.rounds || bracket.rounds.length === 0) {
+            if (podiumEl) podiumEl.style.display = 'none';
+            container.innerHTML = `
+                <div class="empty-list" style="padding: 40px 20px;">
+                    <i class="fa-solid fa-sitemap" style="font-size: 38px; color: var(--primary); margin-bottom: 12px;"></i>
+                    <h3>No hay llave generada para esta categoría</h3>
+                    <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 16px;">Presiona el botón "Sortear / Generar Llave" arriba para crear el cuadro de emparejamientos oficial.</p>
+                    <button type="button" class="primary-btn" onclick="app.generateTournamentBracket()"><i class="fa-solid fa-dice"></i> Sortear / Generar Llave Ahora</button>
+                </div>
+            `;
+            return;
+        }
+
+        const totalRounds = bracket.rounds.length;
+        const roundNames = (rIdx, total) => {
+            const fromFinal = total - rIdx;
+            if (fromFinal === 1) return "🏆 Gran Final";
+            if (fromFinal === 2) return "Semifinales";
+            if (fromFinal === 3) return "Cuartos de Final";
+            if (fromFinal === 4) return "Octavos de Final";
+            return `Ronda ${rIdx + 1}`;
+        };
+
+        let treeHTML = '<div class="bracket-rounds-wrapper">';
+
+        bracket.rounds.forEach((roundMatches, rIdx) => {
+            const rName = roundNames(rIdx, totalRounds);
+            treeHTML += `
+                <div class="bracket-round-column">
+                    <div class="round-title">${rName}</div>
+                    <div class="round-matches-list">
+                        ${roundMatches.map(m => this.generateMatchCardHTML(m)).join('')}
+                    </div>
+                </div>
+            `;
+        });
+
+        // Add Bronze Match column if exists
+        if (bracket.bronzeMatch) {
+            treeHTML += `
+                <div class="bracket-round-column bronze-column">
+                    <div class="round-title" style="color: #cd7f32;"><i class="fa-solid fa-medal"></i> 3er Lugar (Bronce)</div>
+                    <div class="round-matches-list">
+                        ${this.generateMatchCardHTML(bracket.bronzeMatch)}
+                    </div>
+                </div>
+            `;
+        }
+
+        treeHTML += '</div>';
+        container.innerHTML = treeHTML;
+
+        // Check if tournament has finished to show Podium
+        const finalMatch = bracket.rounds[totalRounds - 1][0];
+        if (finalMatch && finalMatch.status === 'FINISHED' && finalMatch.winner) {
+            const gold = finalMatch.winner === 'blue' ? finalMatch.blue : finalMatch.red;
+            const silver = finalMatch.winner === 'blue' ? finalMatch.red : finalMatch.blue;
+            let bronze = null;
+            if (bracket.bronzeMatch && bracket.bronzeMatch.status === 'FINISHED' && bracket.bronzeMatch.winner) {
+                bronze = bracket.bronzeMatch.winner === 'blue' ? bracket.bronzeMatch.blue : bracket.bronzeMatch.red;
+            }
+
+            if (podiumEl) {
+                podiumEl.style.display = 'block';
+                podiumEl.innerHTML = `
+                    <div class="podium-header"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> ¡CUADRO DE HONOR Y MEDALLERO OFICIAL!</div>
+                    <div class="podium-grid">
+                        <div class="podium-step step-silver">
+                            <div class="podium-medal">🥈</div>
+                            <div class="podium-rank">2do Lugar (Plata)</div>
+                            <div class="podium-athlete">${silver ? silver.name : '--'}</div>
+                            <div class="podium-school">${silver ? silver.school || 'Dojang' : ''}</div>
+                        </div>
+                        <div class="podium-step step-gold">
+                            <div class="podium-medal">🥇</div>
+                            <div class="podium-rank">¡CAMPEÓN ORO!</div>
+                            <div class="podium-athlete">${gold ? gold.name : '--'}</div>
+                            <div class="podium-school">${gold ? gold.school || 'Dojang' : ''}</div>
+                        </div>
+                        <div class="podium-step step-bronze">
+                            <div class="podium-medal">🥉</div>
+                            <div class="podium-rank">3er Lugar (Bronce)</div>
+                            <div class="podium-athlete">${bronze ? bronze.name : '--'}</div>
+                            <div class="podium-school">${bronze ? bronze.school || 'Dojang' : ''}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        } else {
+            if (podiumEl) podiumEl.style.display = 'none';
+        }
+    };
+
+    HapkidoApp.prototype.generateMatchCardHTML = function(m) {
+        const isFinished = m.status === 'FINISHED';
+        const isBlueWinner = isFinished && m.winner === 'blue';
+        const isRedWinner = isFinished && m.winner === 'red';
+        const isBye = m.winReason === 'BYE';
+
+        const blueName = m.blue ? m.blue.name : (m.round === 1 ? 'Sin Competidor' : 'Por Definir');
+        const redName = m.red ? (isBye ? 'BYE (Pase Libre)' : m.red.name) : (m.round === 1 ? (isBye ? 'BYE (Pase Libre)' : 'Sin Competidor') : 'Por Definir');
+
+        return `
+            <div class="bracket-match-card ${isFinished ? 'finished' : ''}" onclick="app.openBracketMatchModal('${m.id}')" title="Clic para puntuar o registrar resultado">
+                <div class="match-card-header">
+                    <span class="match-code">${m.id}</span>
+                    <span class="match-badge ${isFinished ? 'badge-finished' : 'badge-pending'}">${isFinished ? (isBye ? 'PASE BYE' : 'FINALIZADO') : 'PENDIENTE'}</span>
+                </div>
+                <div class="match-fighter-row blue ${isBlueWinner ? 'winner' : ''}">
+                    <div class="fighter-indicator"></div>
+                    <div class="fighter-info">
+                        <span class="fighter-name">${blueName}</span>
+                        ${m.blue ? `<small class="fighter-sub">${m.blue.belt} · ${m.blue.school || ''}</small>` : ''}
+                    </div>
+                    <div class="fighter-score">${isFinished ? (isBye ? '-' : m.scoreBlue) : '-'}</div>
+                    ${isBlueWinner ? '<i class="fa-solid fa-crown winner-crown"></i>' : ''}
+                </div>
+                <div class="match-fighter-row red ${isRedWinner ? 'winner' : ''}">
+                    <div class="fighter-indicator"></div>
+                    <div class="fighter-info">
+                        <span class="fighter-name">${redName}</span>
+                        ${m.red ? `<small class="fighter-sub">${m.red.belt} · ${m.red.school || ''}</small>` : ''}
+                    </div>
+                    <div class="fighter-score">${isFinished ? (isBye ? '-' : m.scoreRed) : '-'}</div>
+                    ${isRedWinner ? '<i class="fa-solid fa-crown winner-crown"></i>' : ''}
+                </div>
+            </div>
+        `;
+    };
+
+    /**
+     * Modal para registrar resultado rápido de un combate en la llave
+     */
+    HapkidoApp.prototype.openBracketMatchModal = function(matchId) {
+        const trn = this.data.torneos.find(t => t.id === this.selectedTorneoId);
+        if (!trn || !trn.brackets) return;
+
+        const categoryKey = document.getElementById('bracket-division-select')?.value || 'ALL';
+        const bracket = trn.brackets[categoryKey];
+        if (!bracket) return;
+
+        let targetMatch = null;
+        if (bracket.bronzeMatch && bracket.bronzeMatch.id === matchId) {
+            targetMatch = bracket.bronzeMatch;
+        } else {
+            for (const r of bracket.rounds) {
+                const found = r.find(m => m.id === matchId);
+                if (found) { targetMatch = found; break; }
+            }
+        }
+
+        if (!targetMatch) return;
+        if (!targetMatch.blue || !targetMatch.red) {
+            this.showAlert("Este combate aún no tiene ambos competidores definidos.", "info", "Combate Pendiente");
+            return;
+        }
+        if (targetMatch.winReason === 'BYE') {
+            this.showAlert("Este combate fue resuelto automáticamente por pase libre (BYE).", "info", "Pase Libre");
+            return;
+        }
+
+        this.currentBracketMatch = targetMatch;
+        document.getElementById('bracket-match-id').value = targetMatch.id;
+        document.getElementById('match-blue-name').textContent = targetMatch.blue.name;
+        document.getElementById('match-blue-school').textContent = `${targetMatch.blue.belt} - ${targetMatch.blue.school || 'Dojang'}`;
+        document.getElementById('match-blue-points').value = targetMatch.scoreBlue || 0;
+
+        document.getElementById('match-red-name').textContent = targetMatch.red.name;
+        document.getElementById('match-red-school').textContent = `${targetMatch.red.belt} - ${targetMatch.red.school || 'Dojang'}`;
+        document.getElementById('match-red-points').value = targetMatch.scoreRed || 0;
+
+        document.getElementById('match-winner-select').value = targetMatch.winner || 'blue';
+        document.getElementById('match-win-reason').value = targetMatch.winReason || 'POINTS';
+
+        document.getElementById('bracket-match-modal').classList.add('active');
+    };
+
+    /**
+     * Guardar resultado y avanzar ganador a la siguiente ronda
+     */
+    HapkidoApp.prototype.saveBracketMatchResult = function(event) {
+        if (event) event.preventDefault();
+        const trn = this.data.torneos.find(t => t.id === this.selectedTorneoId);
+        if (!trn || !trn.brackets || !this.currentBracketMatch) return;
+
+        const categoryKey = document.getElementById('bracket-division-select')?.value || 'ALL';
+        const bracket = trn.brackets[categoryKey];
+        if (!bracket) return;
+
+        const matchId = document.getElementById('bracket-match-id').value;
+        const scoreBlue = parseInt(document.getElementById('match-blue-points').value, 10) || 0;
+        const scoreRed = parseInt(document.getElementById('match-red-points').value, 10) || 0;
+        const winner = document.getElementById('match-winner-select').value;
+        const winReason = document.getElementById('match-win-reason').value;
+
+        let targetMatch = null;
+        let roundIdx = -1;
+        let matchIdx = -1;
+
+        if (bracket.bronzeMatch && bracket.bronzeMatch.id === matchId) {
+            targetMatch = bracket.bronzeMatch;
+        } else {
+            for (let r = 0; r < bracket.rounds.length; r++) {
+                const idx = bracket.rounds[r].findIndex(m => m.id === matchId);
+                if (idx !== -1) {
+                    targetMatch = bracket.rounds[r][idx];
+                    roundIdx = r;
+                    matchIdx = idx;
+                    break;
+                }
+            }
+        }
+
+        if (!targetMatch) return;
+
+        targetMatch.scoreBlue = scoreBlue;
+        targetMatch.scoreRed = scoreRed;
+        targetMatch.winner = winner;
+        targetMatch.winReason = winReason;
+        targetMatch.status = 'FINISHED';
+
+        const winningFighter = winner === 'blue' ? targetMatch.blue : targetMatch.red;
+        const losingFighter = winner === 'blue' ? targetMatch.red : targetMatch.blue;
+
+        // Advance to next round if not the final or bronze match
+        if (roundIdx !== -1 && roundIdx < bracket.rounds.length - 1) {
+            const nextRoundIdx = roundIdx + 1;
+            const nextMatchIdx = Math.floor(matchIdx / 2);
+            const isBlueSlot = (matchIdx % 2 === 0);
+
+            const nextMatch = bracket.rounds[nextRoundIdx][nextMatchIdx];
+            if (nextMatch) {
+                if (isBlueSlot) {
+                    nextMatch.blue = winningFighter;
+                } else {
+                    nextMatch.red = winningFighter;
+                }
+            }
+
+            // If this was a semifinal (round before final) and bracket has bronze match:
+            if (roundIdx === bracket.rounds.length - 2 && bracket.bronzeMatch) {
+                if (isBlueSlot) {
+                    bracket.bronzeMatch.blue = losingFighter;
+                } else {
+                    bracket.bronzeMatch.red = losingFighter;
+                }
+            }
+        }
+
+        this.saveData();
+        document.getElementById('bracket-match-modal').classList.remove('active');
+        this.renderTournamentBracketTree();
+    };
+
+    /**
+     * Salto directo al marcador de combate en vivo
+     */
+    HapkidoApp.prototype.jumpToLiveCombatScoring = function() {
+        if (!this.currentBracketMatch) return;
+        const match = this.currentBracketMatch;
+        if (!match.blue || !match.red) return;
+
+        document.getElementById('bracket-match-modal').classList.remove('active');
+        document.getElementById('tournament-bracket-modal').classList.remove('active');
+
+        // Navigate to #combate
+        window.location.hash = '#combate';
+        this.handleRoute();
+
+        // Select blue athlete
+        const selectAthlete = document.getElementById('combate-athlete-select');
+        const selectOpponent = document.getElementById('combate-opponent-select');
+
+        if (selectAthlete) {
+            selectAthlete.value = match.blue.id;
+            this.updateOpponentDropdown(match.blue.id);
+            if (selectOpponent) {
+                selectOpponent.value = match.red.id;
+            }
+        }
+    };
+
 
 
 

@@ -2079,7 +2079,10 @@
                 <div class="panel-card mt-20" id="torneo-inscritos-card" style="display: none; width: 100%;">
                     <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <h2><i class="fa-solid fa-users"></i> Atletas Inscritos en el Evento: <span id="inscritos-torneo-name" style="color: var(--primary);">--</span></h2>
-                        <button class="primary-btn btn-sm" onclick="app.openTorneoInscripcionModal()"><i class="fa-solid fa-user-plus"></i> Inscribir Competidor</button>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="primary-btn btn-sm" onclick="app.openBracketGeneratorModal()" style="background: linear-gradient(135deg, #0284c7, #0369a1);"><i class="fa-solid fa-sitemap"></i> Generar Cuadro / Llaves (Brackets)</button>
+                            <button class="primary-btn btn-sm" onclick="app.openTorneoInscripcionModal()"><i class="fa-solid fa-user-plus"></i> Inscribir Competidor</button>
+                        </div>
                     </div>
                     <div class="panel-body table-responsive">
                         <table class="data-table" id="torneo-inscritos-table">
@@ -2371,6 +2374,116 @@
         </a>
     </nav>
 
+    <!-- Modal para Visualizador y Generador de Llaves de Torneo / Brackets -->
+    <div class="modal" id="tournament-bracket-modal">
+        <div class="modal-content bracket-modal-content" style="width: 1150px; max-width: 98vw;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2><i class="fa-solid fa-sitemap" style="color: var(--primary);"></i> Cuadro de Eliminación Directa: <span id="bracket-modal-torneo-name">--</span></h2>
+                <span class="close-modal" onclick="document.getElementById('tournament-bracket-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 16px; max-height: 80vh; overflow-y: auto;">
+                <!-- Barra de control y filtrado de llaves -->
+                <div class="bracket-controls-bar">
+                    <div class="bracket-ctrl-group">
+                        <label for="bracket-division-select">División / Categoría:</label>
+                        <select id="bracket-division-select" onchange="app.handleBracketCategoryChange()">
+                            <!-- Dinámico -->
+                        </select>
+                    </div>
+                    <div class="bracket-ctrl-group">
+                        <label for="bracket-seeding-select">Método de Emparejamiento:</label>
+                        <select id="bracket-seeding-select">
+                            <option value="random">🎲 Sorteo Aleatorio</option>
+                            <option value="seeded">🏅 Sembrado por Rendimiento Físico / Ranking</option>
+                        </select>
+                    </div>
+                    <div class="bracket-actions-group">
+                        <button type="button" class="primary-btn btn-sm" onclick="app.generateTournamentBracket()"><i class="fa-solid fa-dice"></i> Sortear / Generar Llave</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Llave</button>
+                    </div>
+                </div>
+
+                <!-- Banner de Podio Oficial si la final terminó -->
+                <div id="bracket-podium-banner" class="bracket-podium-banner" style="display: none;">
+                    <!-- Dinámico -->
+                </div>
+
+                <!-- Contenedor del Árbol de Llaves -->
+                <div id="bracket-tree-container" class="bracket-tree-container">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: #121620;">
+                <span id="bracket-registered-count" style="font-size: 12px; color: var(--text-muted);">-- Competidores</span>
+                <button type="button" class="btn-cancel" onclick="document.getElementById('tournament-bracket-modal').classList.remove('active')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Registrar Resultado de Combate en la Llave -->
+    <div class="modal" id="bracket-match-modal">
+        <div class="modal-content" style="width: 480px; max-width: 95%;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-trophy" style="color: var(--primary);"></i> Registrar Resultado del Combate</h2>
+                <span class="close-modal" onclick="document.getElementById('bracket-match-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="bracket-match-form" onsubmit="app.saveBracketMatchResult(event)">
+                    <input type="hidden" id="bracket-match-id">
+                    
+                    <div class="match-scoring-grid">
+                        <div class="match-score-box blue">
+                            <div class="score-fighter-name" id="match-blue-name">Atleta Azul</div>
+                            <span class="badge primary" id="match-blue-school">Dojang</span>
+                            <div class="form-group mt-10" style="margin-bottom: 0;">
+                                <label for="match-blue-points">Puntos Azul</label>
+                                <input type="number" id="match-blue-points" min="0" max="99" value="0" required style="font-size: 20px; text-align: center; font-weight: 800;">
+                            </div>
+                        </div>
+
+                        <div class="match-vs-divider">VS</div>
+
+                        <div class="match-score-box red">
+                            <div class="score-fighter-name" id="match-red-name">Atleta Rojo</div>
+                            <span class="badge danger" id="match-red-school">Dojang</span>
+                            <div class="form-group mt-10" style="margin-bottom: 0;">
+                                <label for="match-red-points">Puntos Rojo</label>
+                                <input type="number" id="match-red-points" min="0" max="99" value="0" required style="font-size: 20px; text-align: center; font-weight: 800;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-15">
+                        <label for="match-winner-select">Ganador Oficial del Encuentro</label>
+                        <select id="match-winner-select" required>
+                            <option value="blue">Esquina Azul (Chung)</option>
+                            <option value="red">Esquina Roja (Hong)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="match-win-reason">Forma de Decisión</label>
+                        <select id="match-win-reason">
+                            <option value="POINTS">Por Puntos (Final de Tiempo)</option>
+                            <option value="SUP_TECH">Superioridad Técnica (+12 Pts Dif)</option>
+                            <option value="DISQ">Descalificación / Acumulación de Faltas (Gam-jeom)</option>
+                            <option value="DECISION">Decisión Arbitral / Punto de Oro</option>
+                            <option value="WO">Walkover / No Presentación (W.O.)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="app.jumpToLiveCombatScoring()"><i class="fa-solid fa-stopwatch"></i> Ir al Tablero en Vivo</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-cancel" onclick="document.getElementById('bracket-match-modal').classList.remove('active')">Cancelar</button>
+                            <button type="submit" class="primary-btn">Guardar y Avanzar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Universal App Modal (Replaces browser alert/confirm) -->
     <div id="app-modal-overlay" class="app-modal-overlay">
         <div class="app-modal-card" id="app-modal-card">
@@ -2388,16 +2501,16 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-7"></script>
-    <script src="hapkido-data.js?v=20260901-7"></script>
-    <script src="hapkido-auth.js?v=20260901-7"></script>
-    <script src="hapkido-athletes.js?v=20260901-7"></script>
-    <script src="hapkido-physical.js?v=20260901-7"></script>
-    <script src="hapkido-exams.js?v=20260901-7"></script>
-    <script src="hapkido-combat.js?v=20260901-7"></script>
-    <script src="hapkido-schools.js?v=20260901-7"></script>
-    <script src="hapkido-torneos.js?v=20260901-7"></script>
-    <script src="hapkido-vocab.js?v=20260901-7"></script>
-    <script src="hapkido-init.js?v=20260901-7"></script>
+    <script src="app.js?v=20260901-8"></script>
+    <script src="hapkido-data.js?v=20260901-8"></script>
+    <script src="hapkido-auth.js?v=20260901-8"></script>
+    <script src="hapkido-athletes.js?v=20260901-8"></script>
+    <script src="hapkido-physical.js?v=20260901-8"></script>
+    <script src="hapkido-exams.js?v=20260901-8"></script>
+    <script src="hapkido-combat.js?v=20260901-8"></script>
+    <script src="hapkido-schools.js?v=20260901-8"></script>
+    <script src="hapkido-torneos.js?v=20260901-8"></script>
+    <script src="hapkido-vocab.js?v=20260901-8"></script>
+    <script src="hapkido-init.js?v=20260901-8"></script>
 </body>
 </html>

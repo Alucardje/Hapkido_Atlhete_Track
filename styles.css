@@ -4185,5 +4185,373 @@ body.role-athlete .actions-cell {
     }
 }
 
+/* ==========================================================================
+   FASE 4: GENERADOR DE LLAVES DE TORNEO (BRACKETS INTERACTIVOS)
+   ========================================================================== */
+.bracket-controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: rgba(22, 27, 34, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 18px;
+}
+
+.bracket-ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 220px;
+}
+
+.bracket-ctrl-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bracket-ctrl-group select {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    background: #0d1117;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f0f6fc;
+    border-radius: 6px;
+}
+
+.bracket-actions-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Podium Banner */
+.bracket-podium-banner {
+    background: radial-gradient(circle at center, rgba(245, 158, 11, 0.15) 0%, rgba(13, 17, 23, 0.95) 100%);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 22px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
+}
+
+.podium-header {
+    font-size: 16px;
+    font-weight: 800;
+    color: #f59e0b;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.podium-grid {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.podium-step {
+    flex: 1;
+    background: rgba(22, 27, 34, 0.9);
+    border-radius: 8px;
+    padding: 14px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s;
+}
+
+.podium-step:hover {
+    transform: translateY(-4px);
+}
+
+.podium-step.step-gold {
+    order: 2;
+    border-color: #d4af37;
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.25) 0%, rgba(22, 27, 34, 0.95) 100%);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+    padding-top: 24px;
+}
+
+.podium-step.step-silver {
+    order: 1;
+    border-color: #94a3b8;
+    background: linear-gradient(180deg, rgba(148, 163, 184, 0.2) 0%, rgba(22, 27, 34, 0.95) 100%);
+}
+
+.podium-step.step-bronze {
+    order: 3;
+    border-color: #cd7f32;
+    background: linear-gradient(180deg, rgba(205, 127, 50, 0.2) 0%, rgba(22, 27, 34, 0.95) 100%);
+}
+
+.podium-medal {
+    font-size: 30px;
+    margin-bottom: 4px;
+}
+
+.podium-rank {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b949e;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.podium-step.step-gold .podium-rank { color: #f59e0b; }
+
+.podium-athlete {
+    font-size: 14px;
+    font-weight: 800;
+    color: #f0f6fc;
+}
+
+.podium-school {
+    font-size: 10.5px;
+    color: #8b949e;
+    margin-top: 2px;
+}
+
+/* Bracket Tree Layout */
+.bracket-tree-container {
+    overflow-x: auto;
+    padding-bottom: 16px;
+}
+
+.bracket-rounds-wrapper {
+    display: inline-flex;
+    gap: 28px;
+    min-width: 100%;
+    align-items: stretch;
+}
+
+.bracket-round-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    max-width: 250px;
+    flex: 1;
+}
+
+.round-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.round-matches-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 16px;
+    height: 100%;
+}
+
+/* Match Cards */
+.bracket-match-card {
+    background: rgba(22, 27, 34, 0.9);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+}
+
+.bracket-match-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+}
+
+.bracket-match-card.finished {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.match-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.4);
+    font-size: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.match-code {
+    font-weight: 700;
+    color: #8b949e;
+}
+
+.match-badge {
+    font-size: 8.5px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.match-badge.badge-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.match-badge.badge-finished {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.match-fighter-row {
+    display: flex;
+    align-items: center;
+    padding: 7px 8px;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.match-fighter-row:last-child {
+    border-bottom: none;
+}
+
+.fighter-indicator {
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.match-fighter-row.blue .fighter-indicator { background: #38bdf8; }
+.match-fighter-row.red .fighter-indicator { background: #ef4444; }
+
+.match-fighter-row.winner {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.fighter-info {
+    flex: 1;
+    margin-left: 6px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fighter-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #f0f6fc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.match-fighter-row.winner .fighter-name {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.fighter-sub {
+    font-size: 9.5px;
+    color: #8b949e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fighter-score {
+    font-size: 13px;
+    font-weight: 800;
+    color: #8b949e;
+    padding: 0 6px;
+}
+
+.match-fighter-row.winner .fighter-score {
+    color: #f59e0b;
+    font-size: 14px;
+}
+
+.winner-crown {
+    color: #f59e0b;
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+/* Match Scoring Modal Grid */
+.match-scoring-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.match-score-box {
+    background: rgba(22, 27, 34, 0.9);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+
+.match-score-box.blue { border-top: 3px solid #38bdf8; }
+.match-score-box.red { border-top: 3px solid #ef4444; }
+
+.score-fighter-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.match-vs-divider {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+@media print {
+    #tournament-bracket-modal.active #bracket-tree-container,
+    #tournament-bracket-modal.active #bracket-tree-container *,
+    #tournament-bracket-modal.active #bracket-podium-banner,
+    #tournament-bracket-modal.active #bracket-podium-banner * {
+        visibility: visible !important;
+    }
+
+    #tournament-bracket-modal.active .bracket-modal-content {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    #tournament-bracket-modal.active .bracket-match-card {
+        background: #ffffff !important;
+        border: 1px solid #94a3b8 !important;
+        color: #000000 !important;
+    }
+
+    #tournament-bracket-modal.active .fighter-name {
+        color: #000000 !important;
+    }
+}
+
+
 
 
