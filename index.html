@@ -967,177 +967,286 @@
 
             <!-- Historial Section -->
             <section id="section-historial" class="app-section">
-                <div class="panel-card">
-                    <div class="panel-header">
-                        <h2><i class="fa-solid fa-chart-line"></i> Análisis de Atleta</h2>
+                <!-- Sub-tabs for Individual Progress vs Head-to-Head Comparison -->
+                <div class="sticky-subnav">
+                    <button class="tab-btn active" id="subtab-btn-hist-progreso" onclick="app.switchHistorySubTab('progreso')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-chart-line"></i> Evolución y Progreso Individual
+                    </button>
+                    <button class="tab-btn" id="subtab-btn-hist-h2h" onclick="app.switchHistorySubTab('h2h')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-people-arrows"></i> Comparador Cara a Cara (Head-to-Head)
+                    </button>
+                </div>
+
+                <!-- Sub-Tab 1: Progreso Individual y Evolución -->
+                <div id="subtab-hist-progreso-container">
+                    <div class="panel-card">
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <h2><i class="fa-solid fa-chart-line"></i> Análisis de Atleta</h2>
+                            <div class="timeframe-filters" id="hist-timeframe-filters" style="display: none; gap: 6px;">
+                                <button type="button" class="btn-timeframe active" onclick="app.filterHistoryTimeframe('all', this)">Todo</button>
+                                <button type="button" class="btn-timeframe" onclick="app.filterHistoryTimeframe('1y', this)">1 Año</button>
+                                <button type="button" class="btn-timeframe" onclick="app.filterHistoryTimeframe('6m', this)">6 Meses</button>
+                                <button type="button" class="btn-timeframe" onclick="app.filterHistoryTimeframe('3m', this)">3 Meses</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group" style="max-width: 400px; margin-bottom: 0;">
+                                <label for="analysis-athlete-select">Seleccionar Atleta para Ver Progreso</label>
+                                <select id="analysis-athlete-select">
+                                    <option value="">-- Seleccione un atleta --</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="panel-body">
-                        <div class="form-group" style="max-width: 400px;">
-                            <label for="analysis-athlete-select">Seleccionar Atleta para Ver Progreso</label>
-                            <select id="analysis-athlete-select">
-                                <option value="">-- Seleccione un atleta --</option>
-                            </select>
+
+                    <div class="progress-charts-container hidden" id="progress-charts-container">
+                        <!-- Banner de Evolución y Deltas de Progreso -->
+                        <div class="evolution-highlights-banner" id="athlete-evolution-banner">
+                            <!-- Dinámico -->
+                        </div>
+
+                        <!-- Ficha de Rendimiento Físico Reciente -->
+                        <div class="panel-card" id="athlete-physical-card" style="margin-bottom: 24px;">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-heart-pulse"></i> Ficha de Rendimiento Físico Reciente</h2>
+                            </div>
+                            <div class="panel-body" id="athlete-physical-content">
+                                <!-- Dinámico -->
+                            </div>
+                        </div>
+
+                        <!-- Plan de Entrenamiento Recomendado -->
+                        <div class="panel-card" id="athlete-plan-card" style="margin-bottom: 24px;">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-dumbbell"></i> Plan de Entrenamiento Personalizado</h2>
+                            </div>
+                            <div class="panel-body" id="athlete-plan-content">
+                                <!-- Dinámico -->
+                            </div>
+                        </div>
+
+                        <!-- GRUPO 1: ACONDICIONAMIENTO Y RENDIMIENTO FÍSICO -->
+                        <div class="charts-group-title">Acondicionamiento y Rendimiento Físico (Evaluación Regular)</div>
+                        <div class="dashboard-grid">
+                            <!-- Physical Capacities Profile Chart (Radar) -->
+                            <div class="panel-card" style="grid-column: span 2;">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-chart-radar"></i> Perfil Físico de Capacidades (Último Test - Puntuación 1-10)</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper" style="height: 350px;">
+                                        <canvas id="chart-physical-profile"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ruffier Chart (Cardio) -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-heart-pulse"></i> Evolución de Condición Cardiovascular (Ruffier)</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-ruffier"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fuerza y Resistencia Chart -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-dumbbell"></i> Evolución de Fuerza y Resistencia</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-strength"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Flexibilidad y Agilidad Chart -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-child"></i> Evolución de Elasticidad y Agilidad</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-flex-agility"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resistencia Cooper y Salto Vertical Chart -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-person-running"></i> Resistencia Aeróbica y Potencia</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-aerobic-jump"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GRUPO 2: RENDIMIENTO COMPETITIVO Y TÉCNICO -->
+                        <div class="charts-group-title mt-20">Rendimiento Competitivo y Técnico (Eventos y Torneos)</div>
+                        <div class="dashboard-grid">
+                            <!-- Jumps Chart (For Deportivo Athletes) -->
+                            <div class="panel-card" id="card-chart-jumps">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-arrow-up-right-dots"></i> Saltos Competitivos (Largo y Alto)</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-jumps"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Scores (Deportivo Figures/Demo) -->
+                            <div class="panel-card" id="card-chart-scores">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-award"></i> Evolución de Calificaciones (Figuras y Demos)</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-scores"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Technical Performance Chart (Traditional) -->
+                            <div class="panel-card" id="card-chart-technical">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-graduation-cap"></i> Evolución Técnica Tradicional (Básico/Examen)</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-technical"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Combat Performance Chart -->
+                            <div class="panel-card" id="card-chart-combat">
+                                <div class="panel-header">
+                                    <h3><i class="fa-solid fa-user-ninja"></i> Evolución de Combates (Puntos y Resultados)</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="chart-combat"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historial Tabular -->
+                        <div class="panel-card mt-20">
+                            <div class="panel-header">
+                                <h3>Historial de Registros</h3>
+                            </div>
+                            <div class="panel-body table-responsive">
+                                <table class="data-table" id="athlete-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Tipo de Registro</th>
+                                            <th>Fisiología / Puntuación</th>
+                                            <th>Detalles</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dinámico -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="progress-charts-container hidden" id="progress-charts-container">
-                    <!-- Ficha de Rendimiento Físico Reciente -->
-                    <div class="panel-card" id="athlete-physical-card" style="margin-bottom: 24px;">
+                <!-- Sub-Tab 2: Comparador Cara a Cara (Head-to-Head) -->
+                <div id="subtab-hist-h2h-container" class="hidden">
+                    <div class="panel-card">
                         <div class="panel-header">
-                            <h2><i class="fa-solid fa-heart-pulse"></i> Ficha de Rendimiento Físico Reciente</h2>
+                            <h2><i class="fa-solid fa-people-arrows"></i> Emparejamiento y Comparativa Cara a Cara (H2H)</h2>
                         </div>
-                        <div class="panel-body" id="athlete-physical-content">
-                            <!-- Dinámico -->
-                        </div>
-                    </div>
-
-                    <!-- Plan de Entrenamiento Recomendado -->
-                    <div class="panel-card" id="athlete-plan-card" style="margin-bottom: 24px;">
-                        <div class="panel-header">
-                            <h2><i class="fa-solid fa-dumbbell"></i> Plan de Entrenamiento Personalizado</h2>
-                        </div>
-                        <div class="panel-body" id="athlete-plan-content">
-                            <!-- Dinámico -->
-                        </div>
-                    </div>
-
-                    <!-- GRUPO 1: ACONDICIONAMIENTO Y RENDIMIENTO FÍSICO (EL MÁS IMPORTANTE) -->
-                    <div class="charts-group-title">Acondicionamiento y Rendimiento Físico (Evaluación Regular)</div>
-                    <div class="dashboard-grid">
-                        <!-- Physical Capacities Profile Chart (Radar) -->
-                        <div class="panel-card" style="grid-column: span 2;">
-                            <div class="panel-header">
-                                <h3><i class="fa-solid fa-chart-radar"></i> Perfil Físico de Capacidades (Último Test - Puntuación 1-10)</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper" style="height: 350px;">
-                                    <canvas id="chart-physical-profile"></canvas>
+                        <div class="panel-body">
+                            <div class="h2h-selector-grid">
+                                <div class="h2h-athlete-select-box blue-corner">
+                                    <div class="corner-badge blue"><i class="fa-solid fa-shield"></i> Esquina Azul (Chung)</div>
+                                    <label for="h2h-select-blue">Seleccionar Atleta Azul</label>
+                                    <select id="h2h-select-blue" onchange="app.renderH2HComparison()">
+                                        <option value="">-- Seleccione Atleta Azul --</option>
+                                    </select>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Ruffier Chart (Cardio) -->
-                        <div class="panel-card">
-                            <div class="panel-header">
-                                <h3><i class="fa-solid fa-heart-pulse"></i> Evolución de Condición Cardiovascular (Ruffier)</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-ruffier"></canvas>
+                                <div class="h2h-vs-badge">
+                                    <span>VS</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Fuerza y Resistencia Chart -->
-                        <div class="panel-card">
-                            <div class="panel-header">
-                                <h3><i class="fa-solid fa-dumbbell"></i> Evolución de Fuerza y Resistencia</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-strength"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Flexibilidad y Agilidad Chart -->
-                        <div class="panel-card">
-                            <div class="panel-header">
-                                <h3><i class="fa-solid fa-child"></i> Evolución de Elasticidad y Agilidad</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-flex-agility"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Resistencia Cooper y Salto Vertical Chart -->
-                        <div class="panel-card">
-                            <div class="panel-header">
-                                <h3><i class="fa-solid fa-person-running"></i> Resistencia Aeróbica y Potencia</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-aerobic-jump"></canvas>
+                                <div class="h2h-athlete-select-box red-corner">
+                                    <div class="corner-badge red"><i class="fa-solid fa-shield-halved"></i> Esquina Roja (Hong)</div>
+                                    <label for="h2h-select-red">Seleccionar Atleta Rojo</label>
+                                    <select id="h2h-select-red" onchange="app.renderH2HComparison()">
+                                        <option value="">-- Seleccione Atleta Rojo --</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- GRUPO 2: RENDIMIENTO COMPETITIVO Y TÉCNICO -->
-                    <div class="charts-group-title mt-20">Rendimiento Competitivo y Técnico (Eventos y Torneos)</div>
-                    <div class="dashboard-grid">
-                        <!-- Jumps Chart (For Deportivo Athletes) -->
-                        <div class="panel-card" id="card-chart-jumps">
+                    <!-- Contenedor de Resultados H2H -->
+                    <div id="h2h-results-container" class="hidden">
+                        <!-- Comparativa de Biometría y Alcance -->
+                        <div class="panel-card mt-20">
                             <div class="panel-header">
-                                <h3><i class="fa-solid fa-arrow-up-right-dots"></i> Saltos Competitivos (Largo y Alto)</h3>
+                                <h3><i class="fa-solid fa-arrows-left-right"></i> Perfil Biomecánico & Ventajas de Alcance</h3>
+                            </div>
+                            <div class="panel-body" id="h2h-biometrics-content">
+                                <!-- Dinámico -->
+                            </div>
+                        </div>
+
+                        <!-- Radar Dual Comparativo -->
+                        <div class="panel-card mt-20">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-chart-radar"></i> Radar de Capacidades Físicas Superpuestas</h3>
                             </div>
                             <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-jumps"></canvas>
+                                <div class="chart-wrapper" style="height: 380px;">
+                                    <canvas id="chart-h2h-radar"></canvas>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Scores (Deportivo Figures/Demo) -->
-                        <div class="panel-card" id="card-chart-scores">
+                        <!-- Tabla Comparativa Métrica a Métrica -->
+                        <div class="panel-card mt-20">
                             <div class="panel-header">
-                                <h3><i class="fa-solid fa-award"></i> Evolución de Calificaciones (Figuras y Demos)</h3>
+                                <h3><i class="fa-solid fa-table-list"></i> Comparativa Directa Métrica a Métrica</h3>
                             </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-scores"></canvas>
-                                </div>
+                            <div class="panel-body table-responsive" id="h2h-metrics-table-content">
+                                <!-- Dinámico -->
                             </div>
                         </div>
 
-                        <!-- Technical Performance Chart (Traditional) -->
-                        <div class="panel-card" id="card-chart-technical">
+                        <!-- Historial de Combates Previos Directos -->
+                        <div class="panel-card mt-20" id="h2h-fights-card">
                             <div class="panel-header">
-                                <h3><i class="fa-solid fa-graduation-cap"></i> Evolución Técnica Tradicional (Básico/Examen)</h3>
+                                <h3><i class="fa-solid fa-hand-fist"></i> Historial de Enfrentamientos Previos entre Ambos</h3>
                             </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-technical"></canvas>
-                                </div>
+                            <div class="panel-body table-responsive" id="h2h-fights-content">
+                                <!-- Dinámico -->
                             </div>
                         </div>
 
-                        <!-- Combat Performance Chart -->
-                        <div class="panel-card" id="card-chart-combat">
+                        <!-- Veredicto Táctico & Sugerencia Estratégica -->
+                        <div class="panel-card mt-20" id="h2h-tactical-card">
                             <div class="panel-header">
-                                <h3><i class="fa-solid fa-user-ninja"></i> Evolución de Combates (Puntos y Resultados)</h3>
+                                <h3><i class="fa-solid fa-chess-knight"></i> Análisis Táctico Marcial Sugerido</h3>
                             </div>
-                            <div class="panel-body">
-                                <div class="chart-wrapper">
-                                    <canvas id="chart-combat"></canvas>
-                                </div>
+                            <div class="panel-body" id="h2h-tactical-content">
+                                <!-- Dinámico -->
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Historial Tabular -->
-                    <div class="panel-card mt-20">
-                        <div class="panel-header">
-                            <h3>Historial de Registros</h3>
-                        </div>
-                        <div class="panel-body table-responsive">
-                            <table class="data-table" id="athlete-history-table">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Tipo de Registro</th>
-                                        <th>Fisiología / Puntuación</th>
-                                        <th>Detalles</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dinámico -->
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -2279,16 +2388,16 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-6"></script>
-    <script src="hapkido-data.js?v=20260901-6"></script>
-    <script src="hapkido-auth.js?v=20260901-6"></script>
-    <script src="hapkido-athletes.js?v=20260901-6"></script>
-    <script src="hapkido-physical.js?v=20260901-6"></script>
-    <script src="hapkido-exams.js?v=20260901-6"></script>
-    <script src="hapkido-combat.js?v=20260901-6"></script>
-    <script src="hapkido-schools.js?v=20260901-6"></script>
-    <script src="hapkido-torneos.js?v=20260901-6"></script>
-    <script src="hapkido-vocab.js?v=20260901-6"></script>
-    <script src="hapkido-init.js?v=20260901-6"></script>
+    <script src="app.js?v=20260901-7"></script>
+    <script src="hapkido-data.js?v=20260901-7"></script>
+    <script src="hapkido-auth.js?v=20260901-7"></script>
+    <script src="hapkido-athletes.js?v=20260901-7"></script>
+    <script src="hapkido-physical.js?v=20260901-7"></script>
+    <script src="hapkido-exams.js?v=20260901-7"></script>
+    <script src="hapkido-combat.js?v=20260901-7"></script>
+    <script src="hapkido-schools.js?v=20260901-7"></script>
+    <script src="hapkido-torneos.js?v=20260901-7"></script>
+    <script src="hapkido-vocab.js?v=20260901-7"></script>
+    <script src="hapkido-init.js?v=20260901-7"></script>
 </body>
 </html>

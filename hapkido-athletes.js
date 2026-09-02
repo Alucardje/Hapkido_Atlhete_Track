@@ -274,7 +274,9 @@ HapkidoApp.prototype.populateAthleteDropdowns = function() {
                 dropdownAnalisis.appendChild(opt);
             });
         }
-    }
+
+        this.populateH2HDropdowns();
+    };
 
 
 HapkidoApp.prototype.openNewAthleteModal = function() {
@@ -650,36 +652,181 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
         }
     }
 
+    /**
+     * Sub-navegación dentro de Historial (Evolución vs H2H)
+     */
+    HapkidoApp.prototype.switchHistorySubTab = function(subTab) {
+        const btnProgreso = document.getElementById('subtab-btn-hist-progreso');
+        const btnH2H = document.getElementById('subtab-btn-hist-h2h');
+        const contProgreso = document.getElementById('subtab-hist-progreso-container');
+        const contH2H = document.getElementById('subtab-hist-h2h-container');
 
-HapkidoApp.prototype.loadAthleteAnalysis = function(athleteId) {
-    const chartContainer = document.getElementById('progress-charts-container');
-    if (!athleteId) {
-        chartContainer.classList.add('hidden');
-        return;
-    }
+        if (!btnProgreso || !btnH2H || !contProgreso || !contH2H) return;
 
-    const athlete = this.data.athletes.find(a => a.id === athleteId);
-    if (!athlete) return;
+        if (subTab === 'h2h') {
+            btnProgreso.classList.remove('active');
+            btnH2H.classList.add('active');
+            contProgreso.classList.add('hidden');
+            contH2H.classList.remove('hidden');
+            this.populateH2HDropdowns();
+        } else {
+            btnProgreso.classList.add('active');
+            btnH2H.classList.remove('active');
+            contProgreso.classList.remove('hidden');
+            contH2H.classList.add('hidden');
+        }
+    };
 
-    // Filter physical records for this athlete, sorted by date
-    const athleteRecords = this.data.records
-        .filter(r => r.athleteId === athleteId)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    /**
+     * Filtrar Historial por Período Temporal (3m, 6m, 1y, all)
+     */
+    HapkidoApp.prototype.filterHistoryTimeframe = function(period, btnEl) {
+        document.querySelectorAll('.btn-timeframe').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
 
-    // Show charts container
-    chartContainer.classList.remove('hidden');
+        const select = document.getElementById('analysis-athlete-select');
+        if (select && select.value) {
+            this.loadAthleteAnalysis(select.value, period);
+        }
+    };
 
-    // Toggle cards depending on modalities
-    document.getElementById('card-chart-jumps').style.display = athlete.modalities.deportivo ? 'block' : 'none';
-    document.getElementById('card-chart-scores').style.display = athlete.modalities.deportivo ? 'block' : 'none';
-    document.getElementById('card-chart-technical').style.display = athlete.modalities.tradicional ? 'block' : 'none';
+    /**
+     * Población de Atletas en Comparador Cara a Cara
+     */
+    HapkidoApp.prototype.populateH2HDropdowns = function() {
+        const selectBlue = document.getElementById('h2h-select-blue');
+        const selectRed = document.getElementById('h2h-select-red');
+        if (!selectBlue || !selectRed) return;
 
-    // Render tabular history
-    this.renderAthleteHistoryTable(athleteId);
+        let athletes = this.data.athletes || [];
+        if (this.currentUser && this.currentUser.role !== 'admin') {
+            athletes = athletes.filter(a => a.school === this.currentUser.school);
+        }
 
-    // Extract dates and values for charts
-    const physRecords = athleteRecords.filter(r => r.type === 'FISICA');
-    const dates = physRecords.map(r => r.date);
+        const optionsHTML = '<option value="">-- Seleccione Atleta --</option>' +
+            athletes.map(a => `<option value="${a.id}">${a.name} (${a.belt} - ${a.school || 'Dojang'})</option>`).join('');
+
+        const currentBlue = selectBlue.value;
+        const currentRed = selectRed.value;
+
+        selectBlue.innerHTML = optionsHTML;
+        selectRed.innerHTML = optionsHTML;
+
+        if (currentBlue) selectBlue.value = currentBlue;
+        if (currentRed) selectRed.value = currentRed;
+    };
+
+    HapkidoApp.prototype.loadAthleteAnalysis = function(athleteId, timeframe = 'all') {
+        const chartContainer = document.getElementById('progress-charts-container');
+        if (!athleteId) {
+            chartContainer.classList.add('hidden');
+            const tfFilters = document.getElementById('hist-timeframe-filters');
+            if (tfFilters) tfFilters.style.display = 'none';
+            return;
+        }
+
+        const athlete = this.data.athletes.find(a => a.id === athleteId);
+        if (!athlete) return;
+
+        // Filter physical records for this athlete, sorted by date
+        let athleteRecords = this.data.records
+            .filter(r => r.athleteId === athleteId)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        // Timeframe filtering
+        const now = new Date();
+        if (timeframe === '3m') {
+            const cut = new Date(); cut.setMonth(now.getMonth() - 3);
+            athleteRecords = athleteRecords.filter(r => new Date(r.date) >= cut);
+        } else if (timeframe === '6m') {
+            const cut = new Date(); cut.setMonth(now.getMonth() - 6);
+            athleteRecords = athleteRecords.filter(r => new Date(r.date) >= cut);
+        } else if (timeframe === '1y') {
+            const cut = new Date(); cut.setFullYear(now.getFullYear() - 1);
+            athleteRecords = athleteRecords.filter(r => new Date(r.date) >= cut);
+        }
+
+        // Show timeframe filter buttons
+        const tfFilters = document.getElementById('hist-timeframe-filters');
+        if (tfFilters) tfFilters.style.display = 'flex';
+
+        // Render Evolution Highlights Banner (Deltas)
+        const allPhys = this.data.records
+            .filter(r => r.athleteId === athleteId && r.type === 'FISICA')
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const bannerEl = document.getElementById('athlete-evolution-banner');
+        if (bannerEl && allPhys.length >= 1) {
+            const first = allPhys[0].physicalDetails;
+            const last = allPhys[allPhys.length - 1].physicalDetails;
+
+            // Ruffier delta
+            const ruffierDiff = (last.ruffierIndex - first.ruffierIndex);
+            const ruffierGood = ruffierDiff <= 0;
+            const ruffierTxt = ruffierDiff === 0 ? "Sin cambio" : (ruffierGood ? `${Math.abs(ruffierDiff).toFixed(1)} pts mejor` : `+${ruffierDiff.toFixed(1)} pts`);
+
+            // Fat delta
+            let fatTxt = "--";
+            let fatGood = true;
+            if (first.fat && last.fat) {
+                const fatDiff = last.fat - first.fat;
+                fatGood = fatDiff <= 0;
+                fatTxt = fatDiff === 0 ? "0.0%" : (fatGood ? `-${Math.abs(fatDiff).toFixed(1)}%` : `+${fatDiff.toFixed(1)}%`);
+            }
+
+            // Kick Speed / FSKT delta
+            let kickTxt = "--";
+            let kickGood = true;
+            if (first.kickSpeed !== undefined && last.kickSpeed !== undefined) {
+                const kickDiff = last.kickSpeed - first.kickSpeed;
+                kickGood = kickDiff >= 0;
+                kickTxt = kickDiff === 0 ? "0 reps" : (kickGood ? `+${kickDiff} reps` : `${kickDiff} reps`);
+            }
+
+            // Global Score
+            const firstScore = allPhys[0].physicalDetails?.evalResults?.globalScore || 5.0;
+            const lastScore = allPhys[allPhys.length - 1].physicalDetails?.evalResults?.globalScore || 5.0;
+            const scoreDiff = lastScore - firstScore;
+            const scoreGood = scoreDiff >= 0;
+
+            bannerEl.innerHTML = `
+                <div class="evolution-delta-card ${scoreGood ? 'positive' : 'neutral'}">
+                    <div class="delta-label">Rendimiento General</div>
+                    <div class="delta-val">${lastScore.toFixed(1)}/10</div>
+                    <div class="delta-trend">${scoreDiff >= 0 ? '▲ +' + scoreDiff.toFixed(1) : '▼ ' + scoreDiff.toFixed(1)} pts vs inicio</div>
+                </div>
+                <div class="evolution-delta-card ${ruffierGood ? 'positive' : 'negative'}">
+                    <div class="delta-label">Índice Ruffier</div>
+                    <div class="delta-val">${last.ruffierIndex.toFixed(1)}</div>
+                    <div class="delta-trend">${ruffierGood ? '▲ ' : '▼ '}${ruffierTxt}</div>
+                </div>
+                <div class="evolution-delta-card ${fatGood ? 'positive' : 'negative'}">
+                    <div class="delta-label">% Grasa Corporal</div>
+                    <div class="delta-val">${last.fat ? last.fat.toFixed(1) + '%' : '--'}</div>
+                    <div class="delta-trend">${fatTxt !== '--' ? (fatGood ? '▲ ' : '▼ ') + fatTxt + ' vs inicio' : 'Monitoreo regular'}</div>
+                </div>
+                <div class="evolution-delta-card ${kickGood ? 'positive' : 'negative'}">
+                    <div class="delta-label">Cadencia Pateo FSKT</div>
+                    <div class="delta-val">${last.kickSpeed !== undefined ? last.kickSpeed + ' reps' : '--'}</div>
+                    <div class="delta-trend">${kickTxt !== '--' ? (kickGood ? '▲ ' : '▼ ') + kickTxt + ' en 10s' : 'Prueba de combate'}</div>
+                </div>
+            `;
+        }
+
+        // Show charts container
+        chartContainer.classList.remove('hidden');
+
+        // Toggle cards depending on modalities
+        document.getElementById('card-chart-jumps').style.display = athlete.modalities.deportivo ? 'block' : 'none';
+        document.getElementById('card-chart-scores').style.display = athlete.modalities.deportivo ? 'block' : 'none';
+        document.getElementById('card-chart-technical').style.display = athlete.modalities.tradicional ? 'block' : 'none';
+
+        // Render tabular history
+        this.renderAthleteHistoryTable(athleteId);
+
+        // Extract dates and values for charts
+        const physRecords = athleteRecords.filter(r => r.type === 'FISICA');
+        const dates = physRecords.map(r => r.date);
 
     if (physRecords.length > 0) {
         const latestPhysRecord = physRecords[physRecords.length - 1];
@@ -1115,7 +1262,214 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
             `;
             tbody.appendChild(tr);
         });
-    }
+    };
+
+    /**
+     * Comparador Frente a Frente (Head-to-Head Matchup)
+     */
+    HapkidoApp.prototype.renderH2HComparison = function() {
+        const selectBlue = document.getElementById('h2h-select-blue');
+        const selectRed = document.getElementById('h2h-select-red');
+        const resultsContainer = document.getElementById('h2h-results-container');
+        if (!selectBlue || !selectRed || !resultsContainer) return;
+
+        const blueId = selectBlue.value;
+        const redId = selectRed.value;
+
+        if (!blueId || !redId) {
+            resultsContainer.classList.add('hidden');
+            return;
+        }
+
+        if (blueId === redId) {
+            this.showAlert('Por favor seleccione dos atletas diferentes para la comparativa cara a cara.', 'warning', 'Atletas Duplicados');
+            resultsContainer.classList.add('hidden');
+            return;
+        }
+
+        const athleteBlue = this.data.athletes.find(a => a.id === blueId);
+        const athleteRed = this.data.athletes.find(a => a.id === redId);
+        if (!athleteBlue || !athleteRed) return;
+
+        resultsContainer.classList.remove('hidden');
+
+        // Get latest physical tests for both athletes
+        const bluePhys = this.data.records.filter(r => r.athleteId === blueId && r.type === 'FISICA').sort((a, b) => new Date(b.date) - new Date(a.date))[0]?.physicalDetails || {};
+        const redPhys = this.data.records.filter(r => r.athleteId === redId && r.type === 'FISICA').sort((a, b) => new Date(b.date) - new Date(a.date))[0]?.physicalDetails || {};
+
+        const blueEval = bluePhys.evalResults || {};
+        const redEval = redPhys.evalResults || {};
+
+        const blueAge = this.calculateAge(athleteBlue.birthdate);
+        const redAge = this.calculateAge(athleteRed.birthdate);
+
+        const blueReach = bluePhys.wingspan || athleteBlue.height || 170;
+        const redReach = redPhys.wingspan || athleteRed.height || 170;
+        const reachDiff = (blueReach - redReach).toFixed(1);
+
+        // Render Biometrics & Reach
+        document.getElementById('h2h-biometrics-content').innerHTML = `
+            <div class="h2h-biometrics-grid">
+                <div class="h2h-athlete-col blue">
+                    <div class="h2h-ath-name">${athleteBlue.name}</div>
+                    <span class="badge belt-${athleteBlue.belt.toLowerCase().replace(/ /g, '-')}">Cinturón ${athleteBlue.belt}</span>
+                    <p class="h2h-ath-school">${athleteBlue.school || 'Dojang Central'}</p>
+                    <div class="h2h-bio-stat"><span>Edad:</span> <strong>${blueAge} años</strong></div>
+                    <div class="h2h-bio-stat"><span>Peso:</span> <strong>${athleteBlue.weight ? athleteBlue.weight + ' kg' : '--'}</strong></div>
+                    <div class="h2h-bio-stat"><span>Estatura:</span> <strong>${bluePhys.height || '--'} cm</strong></div>
+                    <div class="h2h-bio-stat"><span>Envergadura (Alcance):</span> <strong>${bluePhys.wingspan || '--'} cm</strong></div>
+                    <div class="h2h-bio-stat"><span>Ape Index:</span> <strong>${blueEval.apeIndex ? blueEval.apeIndex.toFixed(3) : '--'}</strong></div>
+                </div>
+
+                <div class="h2h-advantage-center">
+                    <div class="h2h-diff-badge ${reachDiff > 0 ? 'blue-lead' : (reachDiff < 0 ? 'red-lead' : 'equal')}">
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                        <span>${reachDiff > 0 ? `Azul +${reachDiff} cm Alcance` : (reachDiff < 0 ? `Rojo +${Math.abs(reachDiff)} cm Alcance` : 'Alcance Igualado')}</span>
+                    </div>
+                    <div class="h2h-global-vs">
+                        <span class="blue-score">${blueEval.globalScore ? blueEval.globalScore.toFixed(1) : '5.0'}</span>
+                        <span class="score-vs">Score</span>
+                        <span class="red-score">${redEval.globalScore ? redEval.globalScore.toFixed(1) : '5.0'}</span>
+                    </div>
+                </div>
+
+                <div class="h2h-athlete-col red">
+                    <div class="h2h-ath-name">${athleteRed.name}</div>
+                    <span class="badge belt-${athleteRed.belt.toLowerCase().replace(/ /g, '-')}">Cinturón ${athleteRed.belt}</span>
+                    <p class="h2h-ath-school">${athleteRed.school || 'Dojang Central'}</p>
+                    <div class="h2h-bio-stat"><span>Edad:</span> <strong>${redAge} años</strong></div>
+                    <div class="h2h-bio-stat"><span>Peso:</span> <strong>${athleteRed.weight ? athleteRed.weight + ' kg' : '--'}</strong></div>
+                    <div class="h2h-bio-stat"><span>Estatura:</span> <strong>${redPhys.height || '--'} cm</strong></div>
+                    <div class="h2h-bio-stat"><span>Envergadura (Alcance):</span> <strong>${redPhys.wingspan || '--'} cm</strong></div>
+                    <div class="h2h-bio-stat"><span>Ape Index:</span> <strong>${redEval.apeIndex ? redEval.apeIndex.toFixed(3) : '--'}</strong></div>
+                </div>
+            </div>
+        `;
+
+        // Render Dual Radar
+        this.renderDualRadarChart('chart-h2h-radar', blueEval, redEval, athleteBlue.name, athleteRed.name);
+
+        // Render Metric-by-Metric Table
+        const metrics = [
+            { name: "Resistencia Cardiovascular (Ruffier)", bVal: bluePhys.ruffierIndex?.toFixed(1) ?? '--', rVal: redPhys.ruffierIndex?.toFixed(1) ?? '--', bScore: blueEval.ruffier?.score ?? 5, rScore: redEval.ruffier?.score ?? 5, lowerBetter: true },
+            { name: "Fuerza Superior (Flexiones)", bVal: bluePhys.pushups ? bluePhys.pushups + ' reps' : '--', rVal: redPhys.pushups ? redPhys.pushups + ' reps' : '--', bScore: blueEval.pushups?.score ?? 5, rScore: redEval.pushups?.score ?? 5 },
+            { name: "Fuerza de Core (Plancha)", bVal: bluePhys.plank ? bluePhys.plank + ' seg' : '--', rVal: redPhys.plank ? redPhys.plank + ' seg' : '--', bScore: blueEval.plank?.score ?? 5, rScore: redEval.plank?.score ?? 5 },
+            { name: "Flexibilidad (Split / Sit & Reach)", bVal: bluePhys.split ? bluePhys.split + ' cm' : (bluePhys.flexibility ? bluePhys.flexibility + ' cm' : '--'), rVal: redPhys.split ? redPhys.split + ' cm' : (redPhys.flexibility ? redPhys.flexibility + ' cm' : '--'), bScore: blueEval.split?.score ?? blueEval.flexibility?.score ?? 5, rScore: redEval.split?.score ?? redEval.flexibility?.score ?? 5 },
+            { name: "Potencia de Piernas (Salto)", bVal: bluePhys.jumpHorizontal ? bluePhys.jumpHorizontal + ' cm' : (bluePhys.jumpVertical ? bluePhys.jumpVertical + ' cm' : '--'), rVal: redPhys.jumpHorizontal ? redPhys.jumpHorizontal + ' cm' : (redPhys.jumpVertical ? redPhys.jumpVertical + ' cm' : '--'), bScore: blueEval.jumpHorizontal?.score ?? blueEval.jumpVertical?.score ?? 5, rScore: redEval.jumpHorizontal?.score ?? redEval.jumpVertical?.score ?? 5 },
+            { name: "Velocidad de Reacción", bVal: bluePhys.reaction ? bluePhys.reaction + ' seg' : '--', rVal: redPhys.reaction ? redPhys.reaction + ' seg' : '--', bScore: blueEval.reaction?.score ?? 5, rScore: redEval.reaction?.score ?? 5, lowerBetter: true },
+            { name: "Velocidad de Pateo (FSKT)", bVal: bluePhys.kickSpeed ? bluePhys.kickSpeed + ' reps' : '--', rVal: redPhys.kickSpeed ? redPhys.kickSpeed + ' reps' : '--', bScore: blueEval.kickSpeed?.score ?? 5, rScore: redEval.kickSpeed?.score ?? 5 },
+            { name: "Potencia Anaeróbica (30s)", bVal: bluePhys.anaerobic ? bluePhys.anaerobic + ' reps' : '--', rVal: redPhys.anaerobic ? redPhys.anaerobic + ' reps' : '--', bScore: blueEval.anaerobic?.score ?? 5, rScore: redEval.anaerobic?.score ?? 5 }
+        ];
+
+        document.getElementById('h2h-metrics-table-content').innerHTML = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="color: #38bdf8; width: 28%;"><i class="fa-solid fa-shield"></i> ${athleteBlue.name} (Azul)</th>
+                        <th style="text-align: center; width: 44%;">Capacidad Evaluada</th>
+                        <th style="color: #ef4444; text-align: right; width: 28%;">${athleteRed.name} (Rojo) <i class="fa-solid fa-shield-halved"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${metrics.map(m => {
+                        const blueWins = m.bScore > m.rScore;
+                        const redWins = m.rScore > m.bScore;
+                        return `
+                            <tr>
+                                <td style="color: ${blueWins ? '#38bdf8' : '#8b949e'}; font-weight: ${blueWins ? '700' : '400'};">
+                                    ${blueWins ? '<i class="fa-solid fa-crown" style="color:#f59e0b; font-size:11px; margin-right:4px;"></i>' : ''}
+                                    ${m.bVal} <small>(${m.bScore.toFixed(1)}/10)</small>
+                                </td>
+                                <td style="text-align: center; font-weight: 600; color: #f0f6fc;">${m.name}</td>
+                                <td style="text-align: right; color: ${redWins ? '#ef4444' : '#8b949e'}; font-weight: ${redWins ? '700' : '400'};">
+                                    <small>(${m.rScore.toFixed(1)}/10)</small> ${m.rVal}
+                                    ${redWins ? '<i class="fa-solid fa-crown" style="color:#f59e0b; font-size:11px; margin-left:4px;"></i>' : ''}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+
+        // Direct combat encounters
+        const combatRecords = (this.data.records || []).filter(r => r.type === 'COMBATE' && (
+            (r.athleteId === blueId && r.combatDetails?.opponentId === redId) ||
+            (r.athleteId === redId && r.combatDetails?.opponentId === blueId)
+        ));
+
+        const fightsCard = document.getElementById('h2h-fights-card');
+        const fightsContent = document.getElementById('h2h-fights-content');
+        if (combatRecords.length > 0) {
+            fightsCard.style.display = 'block';
+            fightsContent.innerHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Fase / Ronda</th>
+                            <th>Puntos Azul (${athleteBlue.name})</th>
+                            <th>Puntos Rojo (${athleteRed.name})</th>
+                            <th>Ganador Oficial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${combatRecords.map(c => `
+                            <tr>
+                                <td>${c.date}</td>
+                                <td>${c.combatDetails.stage || 'Tope'}</td>
+                                <td><strong style="color: #38bdf8;">${c.combatDetails.totalBlue} Pts</strong></td>
+                                <td><strong style="color: #ef4444;">${c.combatDetails.totalRed} Pts</strong></td>
+                                <td><span class="badge ${c.combatDetails.winner === 'blue' ? 'primary' : 'danger'}">${c.combatDetails.winner === 'blue' ? athleteBlue.name : athleteRed.name}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        } else {
+            fightsCard.style.display = 'block';
+            fightsContent.innerHTML = `
+                <div class="empty-list" style="padding: 16px;">
+                    <i class="fa-solid fa-handshake" style="font-size: 24px; color: var(--accent); margin-bottom: 6px;"></i>
+                    <p>No hay combates previos registrados entre estos dos atletas en el sistema.</p>
+                </div>
+            `;
+        }
+
+        // Tactical martial recommendation
+        let blueAdv = [];
+        let redAdv = [];
+        if (reachDiff > 3) blueAdv.push(`Mayor alcance (+${reachDiff} cm)`);
+        else if (reachDiff < -3) redAdv.push(`Mayor alcance (+${Math.abs(reachDiff)} cm)`);
+
+        if ((blueEval.ruffier?.score || 5) > (redEval.ruffier?.score || 5) + 1) blueAdv.push("Mejor recuperación cardiovascular (Ruffier)");
+        else if ((redEval.ruffier?.score || 5) > (blueEval.ruffier?.score || 5) + 1) redAdv.push("Mejor recuperación cardiovascular (Ruffier)");
+
+        if ((blueEval.kickSpeed?.score || 5) > (redEval.kickSpeed?.score || 5) + 1) blueAdv.push("Mayor velocidad y cadencia de pateo (FSKT)");
+        else if ((redEval.kickSpeed?.score || 5) > (blueEval.kickSpeed?.score || 5) + 1) redAdv.push("Mayor velocidad y cadencia de pateo (FSKT)");
+
+        if ((blueEval.pushups?.score || 5) + (blueEval.plank?.score || 5) > (redEval.pushups?.score || 5) + (redEval.plank?.score || 5) + 1) blueAdv.push("Mayor fuerza muscular y estabilidad de core");
+        else if ((redEval.pushups?.score || 5) + (redEval.plank?.score || 5) > (blueEval.pushups?.score || 5) + (blueEval.plank?.score || 5) + 1) redAdv.push("Mayor fuerza muscular y estabilidad de core");
+
+        document.getElementById('h2h-tactical-content').innerHTML = `
+            <div class="h2h-tactical-grid">
+                <div class="tactical-column blue-tactics">
+                    <h4 style="color: #38bdf8;"><i class="fa-solid fa-chess"></i> Estrategia para ${athleteBlue.name} (Azul)</h4>
+                    <ul>
+                        ${blueAdv.length > 0 ? blueAdv.map(a => `<li><i class="fa-solid fa-circle-check" style="color: #38bdf8;"></i> <strong>Fortaleza:</strong> ${a}</li>`).join('') : '<li>Perfil físico equilibrado frente al oponente.</li>'}
+                        <li><i class="fa-solid fa-bullseye" style="color: #38bdf8;"></i> <strong>Plan Táctico:</strong> ${reachDiff > 0 ? 'Mantener distancia larga con Bandal Chagi y Yeop Chagi de contención. Evitar el combate cuerpo a cuerpo prolongado.' : 'Presionar en distancia media, castigar con combinaciones rápidas de puño-patada y buscar clinch.'}</li>
+                    </ul>
+                </div>
+                <div class="tactical-column red-tactics">
+                    <h4 style="color: #ef4444;"><i class="fa-solid fa-chess"></i> Estrategia para ${athleteRed.name} (Rojo)</h4>
+                    <ul>
+                        ${redAdv.length > 0 ? redAdv.map(a => `<li><i class="fa-solid fa-circle-check" style="color: #ef4444;"></i> <strong>Fortaleza:</strong> ${a}</li>`).join('') : '<li>Perfil físico equilibrado frente al oponente.</li>'}
+                        <li><i class="fa-solid fa-bullseye" style="color: #ef4444;"></i> <strong>Plan Táctico:</strong> ${reachDiff < 0 ? 'Explotar la ventaja de alcance, lanzar ataques directos lineales y cerrar con bloqueo firme.' : 'Romper la distancia con pasos laterales, cortar los ángulos y buscar proyecciones o barridos en el cuerpo a cuerpo.'}</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    };
 
 
 

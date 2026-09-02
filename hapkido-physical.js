@@ -938,7 +938,114 @@ HapkidoApp.prototype.renderPhysicalProfileChart = function(canvasId, evalResults
                 }
             }
         });
-    }
+    };
+
+    /**
+     * Gráfico Radar Superpuesto Dual (Head-to-Head Comparison)
+     */
+    HapkidoApp.prototype.renderDualRadarChart = function(canvasId, eval1, eval2, name1, name2) {
+        if (typeof Chart === 'undefined') return;
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        const labels = [
+            'Cardio (Ruffier)',
+            'Fuerza (Flexiones)',
+            'Core (Plancha)',
+            'Resistencia (Cooper)',
+            'Flexibilidad (Split)',
+            'Saltabilidad (Potencia)',
+            'Velocidad (10m)',
+            'Agilidad (Shuttle)',
+            'Reacción Refleja',
+            'Pateo FSKT',
+            'Potencia 30s'
+        ];
+
+        const getScore = (evalObj, fallbackKey) => {
+            if (!evalObj) return 5;
+            if (evalObj[fallbackKey] && typeof evalObj[fallbackKey].score === 'number') {
+                return evalObj[fallbackKey].score;
+            }
+            return 5;
+        };
+
+        const data1 = [
+            getScore(eval1, 'ruffier'),
+            getScore(eval1, 'pushups'),
+            eval1?.plank?.score ?? eval1?.situps?.score ?? 5,
+            getScore(eval1, 'cooper'),
+            eval1?.split?.score ?? eval1?.flexibility?.score ?? 5,
+            eval1?.jumpHorizontal?.score ?? eval1?.jumpVertical?.score ?? 5,
+            getScore(eval1, 'agility'),
+            getScore(eval1, 'shuttle'),
+            getScore(eval1, 'reaction'),
+            getScore(eval1, 'kickSpeed'),
+            getScore(eval1, 'anaerobic')
+        ];
+
+        const data2 = [
+            getScore(eval2, 'ruffier'),
+            getScore(eval2, 'pushups'),
+            eval2?.plank?.score ?? eval2?.situps?.score ?? 5,
+            getScore(eval2, 'cooper'),
+            eval2?.split?.score ?? eval2?.flexibility?.score ?? 5,
+            eval2?.jumpHorizontal?.score ?? eval2?.jumpVertical?.score ?? 5,
+            getScore(eval2, 'agility'),
+            getScore(eval2, 'shuttle'),
+            getScore(eval2, 'reaction'),
+            getScore(eval2, 'kickSpeed'),
+            getScore(eval2, 'anaerobic')
+        ];
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: name1 || 'Esquina Azul (Chung)',
+                        data: data1,
+                        backgroundColor: 'rgba(56, 189, 248, 0.25)',
+                        borderColor: '#0284c7',
+                        pointBackgroundColor: '#38bdf8',
+                        borderWidth: 2.5
+                    },
+                    {
+                        label: name2 || 'Esquina Roja (Hong)',
+                        data: data2,
+                        backgroundColor: 'rgba(239, 68, 68, 0.25)',
+                        borderColor: '#dc2626',
+                        pointBackgroundColor: '#ef4444',
+                        borderWidth: 2.5
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 10,
+                        ticks: { stepSize: 2, display: true, color: '#94a3b8', backdropColor: 'transparent' },
+                        grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                        angleLines: { color: 'rgba(255, 255, 255, 0.08)' },
+                        pointLabels: { color: '#e2e8f0', font: { family: 'Outfit', size: 11, weight: '600' } }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#f8fafc', font: { family: 'Outfit', size: 13, weight: '700' } }
+                    }
+                }
+            }
+        });
+    };
 
 
 HapkidoApp.prototype.deleteRecord = function(recordId, athleteId) {
