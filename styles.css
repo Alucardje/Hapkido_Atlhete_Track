@@ -1050,37 +1050,150 @@ button {
 .red-side h2 { color: #ef4444; }
 
 .penalties-display {
-    display: flex;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 10px;
     width: 100%;
-    max-width: 320px;
-    margin-bottom: 30px;
+    max-width: 420px;
+    margin-bottom: 24px;
 }
 
 .penalty-box {
-    flex: 1;
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-color);
-    padding: 10px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 6px;
     border-radius: var(--radius-md);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.penalty-box:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(15, 23, 42, 0.85);
+}
+
+.penalty-consolidated-box {
+    background: linear-gradient(145deg, rgba(239, 68, 68, 0.12) 0%, rgba(15, 23, 42, 0.7) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .penalty-label {
     display: block;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
+}
+
+.penalty-label small {
+    font-size: 8px;
+    opacity: 0.75;
+    font-weight: 600;
 }
 
 .penalty-count {
     font-family: var(--font-digital);
     font-size: 24px;
     font-weight: 700;
-    color: #e2e8f0;
+    color: #f1f5f9;
+    line-height: 1.1;
+    margin: 2px 0;
+}
+
+.penalty-total-negative {
+    color: #f87171;
+    text-shadow: 0 0 10px rgba(248, 113, 113, 0.35);
+}
+
+.penalty-sub-hint {
+    font-size: 9px;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: block;
+}
+
+.dq-risk-meter {
+    margin-top: 4px;
+    display: flex;
+    justify-content: center;
+}
+
+.dq-risk-label {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    text-transform: uppercase;
+}
+
+.dq-risk-label.risk-1 {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.dq-risk-label.risk-2 {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.dq-risk-label.risk-3 {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.5);
+    animation: pulseRisk 1.5s infinite;
+}
+
+.dq-risk-label.risk-4,
+.dq-risk-label.risk-dq {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #ef4444;
+    font-weight: 900;
+    animation: pulseRisk 0.8s infinite;
+}
+
+@keyframes pulseRisk {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.85; }
+}
+
+.combat-corrections-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.btn-corr {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.btn-corr:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .scoring-controls {

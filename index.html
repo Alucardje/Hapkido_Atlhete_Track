@@ -535,26 +535,40 @@
                             <h2 id="score-blue-name">ATLETA AZUL (EVALUADO)</h2>
                             <div class="total-score" id="score-blue-total">0</div>
                             <div class="penalties-display">
-                                <div class="penalty-box">
-                                    <span class="penalty-label">KYONGOS (Amonestaciones)</span>
+                                <div class="penalty-box" title="Amonestaciones leves (Cada 2 amonestaciones otorgan 1 punto al rival)">
+                                    <span class="penalty-label">KYONGOS <small>(Leves)</small></span>
                                     <div class="penalty-count" id="score-blue-kyongo">0</div>
+                                    <span class="penalty-sub-hint" id="score-blue-kyongo-hint">0 deducciones</span>
                                 </div>
-                                <div class="penalty-box">
-                                    <span class="penalty-label">GANCHOMS (Deducciones)</span>
+                                <div class="penalty-box" title="Deducciones directas por faltas graves (+1 punto al rival)">
+                                    <span class="penalty-label">GAMCHOMS <small>(Graves)</small></span>
                                     <div class="penalty-count" id="score-blue-ganchom">0</div>
+                                    <span class="penalty-sub-hint" id="score-blue-ganchom-hint">0 directas</span>
+                                </div>
+                                <div class="penalty-box penalty-consolidated-box" title="Puntos totales concedidos al oponente por faltas y límite hacia descalificación (Art. 105)">
+                                    <span class="penalty-label">PTS EN CONTRA</span>
+                                    <div class="penalty-count penalty-total-negative" id="score-blue-penalty-total">-0 Pts</div>
+                                    <div class="dq-risk-meter">
+                                        <span class="dq-risk-label" id="score-blue-dq-status">0/4 Gamchoms</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="scoring-controls">
                                 <h3>Registrar Puntos</h3>
                                 <div class="scoring-btns">
-                                    <button class="score-btn plus-1" onclick="app.addScore('blue', 1, 'Golpe/Patada simple')">+1 Punto</button>
-                                    <button class="score-btn plus-2" onclick="app.addScore('blue', 2, 'Giro / Cabeza / Barrido 1 pie')">+2 Puntos</button>
-                                    <button class="score-btn plus-3" onclick="app.addScore('blue', 3, 'Giro Cabeza / Barrido 2 pies / Proyección / Sumisión 10s')">+3 Puntos</button>
+                                    <button type="button" class="score-btn plus-1" onclick="app.addScore('blue', 1, 'Golpe/Patada simple')">+1 Punto</button>
+                                    <button type="button" class="score-btn plus-2" onclick="app.addScore('blue', 2, 'Giro / Cabeza / Barrido 1 pie')">+2 Puntos</button>
+                                    <button type="button" class="score-btn plus-3" onclick="app.addScore('blue', 3, 'Giro Cabeza / Barrido 2 pies / Proyección / Sumisión 10s')">+3 Puntos</button>
                                 </div>
                                 <h3>Penalizaciones</h3>
                                 <div class="scoring-btns">
-                                    <button class="score-btn kyongo-btn" onclick="app.addPenalty('blue', 'kyongo')">+1 Kyongo (Falta leve)</button>
-                                    <button class="score-btn ganchom-btn" onclick="app.addPenalty('blue', 'ganchom')">+1 Ganchom (-1 Punto)</button>
+                                    <button type="button" class="score-btn kyongo-btn" onclick="app.addPenalty('blue', 'kyongo')" title="Amonestación leve (2 Kyongos = 1 Gamchom)">+1 Kyongo (Leve)</button>
+                                    <button type="button" class="score-btn ganchom-btn" onclick="app.addPenalty('blue', 'ganchom')" title="Deducción grave (+1 punto al rival)">+1 Gamchom (Grave)</button>
+                                </div>
+                                <div class="combat-corrections-row">
+                                    <button type="button" class="btn-corr" onclick="app.removePenalty('blue', 'kyongo')" title="Deshacer 1 Kyongo"><i class="fa-solid fa-rotate-left"></i> -1 Kyongo</button>
+                                    <button type="button" class="btn-corr" onclick="app.removePenalty('blue', 'ganchom')" title="Deshacer 1 Gamchom"><i class="fa-solid fa-rotate-left"></i> -1 Gamchom</button>
+                                    <button type="button" class="btn-corr" onclick="app.removeScore('blue', 1)" title="Restar 1 punto marcado por error"><i class="fa-solid fa-minus"></i> -1 Pto</button>
                                 </div>
                             </div>
                         </div>
@@ -564,26 +578,40 @@
                             <h2 id="score-red-name">OPONENTE (ROJO)</h2>
                             <div class="total-score" id="score-red-total">0</div>
                             <div class="penalties-display">
-                                <div class="penalty-box">
-                                    <span class="penalty-label">KYONGOS</span>
+                                <div class="penalty-box" title="Amonestaciones leves (Cada 2 amonestaciones otorgan 1 punto al rival)">
+                                    <span class="penalty-label">KYONGOS <small>(Leves)</small></span>
                                     <div class="penalty-count" id="score-red-kyongo">0</div>
+                                    <span class="penalty-sub-hint" id="score-red-kyongo-hint">0 deducciones</span>
                                 </div>
-                                <div class="penalty-box">
-                                    <span class="penalty-label">GANCHOMS</span>
+                                <div class="penalty-box" title="Deducciones directas por faltas graves (+1 punto al rival)">
+                                    <span class="penalty-label">GAMCHOMS <small>(Graves)</small></span>
                                     <div class="penalty-count" id="score-red-ganchom">0</div>
+                                    <span class="penalty-sub-hint" id="score-red-ganchom-hint">0 directas</span>
+                                </div>
+                                <div class="penalty-box penalty-consolidated-box" title="Puntos totales concedidos al oponente por faltas y límite hacia descalificación (Art. 105)">
+                                    <span class="penalty-label">PTS EN CONTRA</span>
+                                    <div class="penalty-count penalty-total-negative" id="score-red-penalty-total">-0 Pts</div>
+                                    <div class="dq-risk-meter">
+                                        <span class="dq-risk-label" id="score-red-dq-status">0/4 Gamchoms</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="scoring-controls">
                                 <h3>Registrar Puntos</h3>
                                 <div class="scoring-btns">
-                                    <button class="score-btn plus-1" onclick="app.addScore('red', 1, 'Golpe/Patada simple')">+1 Punto</button>
-                                    <button class="score-btn plus-2" onclick="app.addScore('red', 2, 'Giro / Cabeza / Barrido 1 pie')">+2 Puntos</button>
-                                    <button class="score-btn plus-3" onclick="app.addScore('red', 3, 'Giro Cabeza / Barrido 2 pies / Proyección / Sumisión 10s')">+3 Puntos</button>
+                                    <button type="button" class="score-btn plus-1" onclick="app.addScore('red', 1, 'Golpe/Patada simple')">+1 Punto</button>
+                                    <button type="button" class="score-btn plus-2" onclick="app.addScore('red', 2, 'Giro / Cabeza / Barrido 1 pie')">+2 Puntos</button>
+                                    <button type="button" class="score-btn plus-3" onclick="app.addScore('red', 3, 'Giro Cabeza / Barrido 2 pies / Proyección / Sumisión 10s')">+3 Puntos</button>
                                 </div>
                                 <h3>Penalizaciones</h3>
                                 <div class="scoring-btns">
-                                    <button class="score-btn kyongo-btn" onclick="app.addPenalty('red', 'kyongo')">+1 Kyongo (Falta leve)</button>
-                                    <button class="score-btn ganchom-btn" onclick="app.addPenalty('red', 'ganchom')">+1 Ganchom (-1 Punto)</button>
+                                    <button type="button" class="score-btn kyongo-btn" onclick="app.addPenalty('red', 'kyongo')" title="Amonestación leve (2 Kyongos = 1 Gamchom)">+1 Kyongo (Leve)</button>
+                                    <button type="button" class="score-btn ganchom-btn" onclick="app.addPenalty('red', 'ganchom')" title="Deducción grave (+1 punto al rival)">+1 Gamchom (Grave)</button>
+                                </div>
+                                <div class="combat-corrections-row">
+                                    <button type="button" class="btn-corr" onclick="app.removePenalty('red', 'kyongo')" title="Deshacer 1 Kyongo"><i class="fa-solid fa-rotate-left"></i> -1 Kyongo</button>
+                                    <button type="button" class="btn-corr" onclick="app.removePenalty('red', 'ganchom')" title="Deshacer 1 Gamchom"><i class="fa-solid fa-rotate-left"></i> -1 Gamchom</button>
+                                    <button type="button" class="btn-corr" onclick="app.removeScore('red', 1)" title="Restar 1 punto marcado por error"><i class="fa-solid fa-minus"></i> -1 Pto</button>
                                 </div>
                             </div>
                         </div>
@@ -2827,18 +2855,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-14"></script>
-    <script src="hapkido-data.js?v=20260901-14"></script>
-    <script src="hapkido-auth.js?v=20260901-14"></script>
-    <script src="hapkido-athletes.js?v=20260901-14"></script>
-    <script src="hapkido-physical.js?v=20260901-14"></script>
-    <script src="hapkido-exams.js?v=20260901-14"></script>
-    <script src="hapkido-combat.js?v=20260901-14"></script>
-    <script src="hapkido-schools.js?v=20260901-14"></script>
-    <script src="hapkido-torneos.js?v=20260901-14"></script>
-    <script src="hapkido-vocab.js?v=20260901-14"></script>
-    <script src="hapkido-timer.js?v=20260901-14"></script>
-    <script src="hapkido-sync.js?v=20260901-14"></script>
-    <script src="hapkido-init.js?v=20260901-14"></script>
+    <script src="app.js?v=20260901-15"></script>
+    <script src="hapkido-data.js?v=20260901-15"></script>
+    <script src="hapkido-auth.js?v=20260901-15"></script>
+    <script src="hapkido-athletes.js?v=20260901-15"></script>
+    <script src="hapkido-physical.js?v=20260901-15"></script>
+    <script src="hapkido-exams.js?v=20260901-15"></script>
+    <script src="hapkido-combat.js?v=20260901-15"></script>
+    <script src="hapkido-schools.js?v=20260901-15"></script>
+    <script src="hapkido-torneos.js?v=20260901-15"></script>
+    <script src="hapkido-vocab.js?v=20260901-15"></script>
+    <script src="hapkido-timer.js?v=20260901-15"></script>
+    <script src="hapkido-sync.js?v=20260901-15"></script>
+    <script src="hapkido-init.js?v=20260901-15"></script>
 </body>
 </html>
