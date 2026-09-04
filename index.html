@@ -37,6 +37,20 @@
                     <i class="fa-solid fa-angles-left"></i>
                 </button>
             </div>
+
+            <!-- Mobile & Desktop Sidebar User Profile Card -->
+            <div class="sidebar-user-card" id="sidebar-user-card" style="display: none;">
+                <div class="sidebar-user-avatar">
+                    <i class="fa-solid fa-user-ninja" id="sidebar-user-icon"></i>
+                </div>
+                <div class="sidebar-user-meta">
+                    <span class="sidebar-user-name" id="sidebar-user-name">Usuario</span>
+                    <span class="sidebar-user-role" id="sidebar-user-role">Rol Activo</span>
+                </div>
+                <button type="button" class="sidebar-quick-logout-btn" onclick="app.logout()" title="Cerrar sesión / Cambiar de Rol">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
             
             <nav class="sidebar-nav">
                 <!-- Dashboard -->
@@ -167,6 +181,10 @@
                             <span class="user-active-meta" id="header-user-meta">--</span>
                         </div>
                     </div>
+                    <button type="button" class="header-logout-btn" id="header-logout-btn" onclick="app.logout()" title="Cerrar sesión / Cambiar de Rol" style="display: none;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="header-logout-text">Salir</span>
+                    </button>
                     <div class="header-sync-widget" id="header-sync-widget" onclick="app.syncWithCloud(true)" title="Clic para sincronizar con la nube">
                         <i class="fa-solid fa-cloud" id="header-sync-icon"></i>
                         <span id="header-sync-text">Sincronizado</span>
@@ -2681,6 +2699,10 @@
             <div class="mobile-nav-icon"><i class="fa-solid fa-bars"></i></div>
             <span class="mobile-nav-label">Menú</span>
         </a>
+        <a href="javascript:void(0)" class="mobile-nav-item mobile-nav-logout" id="mobile-logout-btn" onclick="app.logout()" title="Cerrar Sesión / Cambiar de Rol">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+            <span class="mobile-nav-label">Salir</span>
+        </a>
     </nav>
 
     <!-- Modal para Visualizador y Generador de Llaves de Torneo / Brackets -->
@@ -2855,18 +2877,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-15"></script>
-    <script src="hapkido-data.js?v=20260901-15"></script>
-    <script src="hapkido-auth.js?v=20260901-15"></script>
-    <script src="hapkido-athletes.js?v=20260901-15"></script>
-    <script src="hapkido-physical.js?v=20260901-15"></script>
-    <script src="hapkido-exams.js?v=20260901-15"></script>
-    <script src="hapkido-combat.js?v=20260901-15"></script>
-    <script src="hapkido-schools.js?v=20260901-15"></script>
-    <script src="hapkido-torneos.js?v=20260901-15"></script>
-    <script src="hapkido-vocab.js?v=20260901-15"></script>
-    <script src="hapkido-timer.js?v=20260901-15"></script>
-    <script src="hapkido-sync.js?v=20260901-15"></script>
-    <script src="hapkido-init.js?v=20260901-15"></script>
+    <script src="app.js?v=20260901-16"></script>
+    <script src="hapkido-data.js?v=20260901-16"></script>
+    <script src="hapkido-auth.js?v=20260901-16"></script>
+    <script src="hapkido-athletes.js?v=20260901-16"></script>
+    <script src="hapkido-physical.js?v=20260901-16"></script>
+    <script src="hapkido-exams.js?v=20260901-16"></script>
+    <script src="hapkido-combat.js?v=20260901-16"></script>
+    <script src="hapkido-schools.js?v=20260901-16"></script>
+    <script src="hapkido-torneos.js?v=20260901-16"></script>
+    <script src="hapkido-vocab.js?v=20260901-16"></script>
+    <script src="hapkido-timer.js?v=20260901-16"></script>
+    <script src="hapkido-sync.js?v=20260901-16"></script>
+    <script src="hapkido-init.js?v=20260901-16"></script>
 </body>
 </html>

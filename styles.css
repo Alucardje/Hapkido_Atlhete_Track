@@ -2517,6 +2517,128 @@ button {
 /* --------------------------------------------------------------------------
    1. ROL: ATLETA / ALUMNO (Portal del Practicante - Solo Consulta Personal)
    -------------------------------------------------------------------------- */
+/* Header Logout Button */
+.header-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #f87171;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.header-logout-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
+    transform: translateY(-1px);
+}
+
+.header-logout-btn:active {
+    transform: scale(0.96);
+}
+
+/* Sidebar User Profile Card (Mobile Drawer & Desktop Top) */
+.sidebar-user-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(22, 27, 34, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.sidebar-user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.sidebar-user-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.sidebar-user-name {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #f0f6fc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+    display: block;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-quick-logout-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.sidebar-quick-logout-btn:hover {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.sidebar-collapsed .sidebar .sidebar-user-card {
+    display: none !important;
+}
+
+/* Mobile Bottom Nav Logout Item */
+.mobile-nav-item.mobile-nav-logout {
+    color: #f87171 !important;
+}
+.mobile-nav-item.mobile-nav-logout .mobile-nav-icon {
+    color: #f87171 !important;
+}
+.mobile-nav-item.mobile-nav-logout:hover,
+.mobile-nav-item.mobile-nav-logout:active {
+    color: #ef4444 !important;
+}
+
+/* ==========================================================================
+   ROLE-BASED VIEW CONTROL & INTERFACE CLEANUP (RBAC UI)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ROL: ATLETA / ALUMNO (Portal del Practicante - Solo Consulta Personal)
+   -------------------------------------------------------------------------- */
 /* Ocultar grupos y enlaces en Sidebar */
 body.role-athlete #group-mediciones,
 body.role-athlete #group-organizacion,
@@ -2533,17 +2655,19 @@ body.role-athlete #nav-ajustes {
     display: none !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Solo dejar Inicio, Mi Historial, Manual y Menú) */
+/* Ocultar en Barra Inferior Móvil (Solo dejar Inicio, Mi Historial, Manual y Salir) */
 body.role-athlete .mobile-nav-item[data-nav="atletas"],
 body.role-athlete .mobile-nav-item[data-nav="fisica"],
 body.role-athlete .mobile-nav-item[data-nav="combate"],
 body.role-athlete .mobile-nav-item[data-nav="torneos"],
-body.role-athlete .mobile-nav-item[data-nav="timer"] {
+body.role-athlete .mobile-nav-item[data-nav="timer"],
+body.role-athlete #mobile-more-btn {
     display: none !important;
 }
 
 body.role-athlete .mobile-nav-item[data-nav="historial"],
-body.role-athlete .mobile-nav-item[data-nav="manual"] {
+body.role-athlete .mobile-nav-item[data-nav="manual"],
+body.role-athlete .mobile-nav-logout {
     display: flex !important;
 }
 
@@ -2582,7 +2706,7 @@ body.role-ayudante #nav-ajustes {
     display: none !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Combate, Torneos, Timer y Menú) */
+/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Combate, Torneos, Timer, Menú y Salir) */
 body.role-ayudante .mobile-nav-item[data-nav="atletas"],
 body.role-ayudante .mobile-nav-item[data-nav="historial"],
 body.role-ayudante .mobile-nav-item[data-nav="fisica"],
@@ -2592,7 +2716,8 @@ body.role-ayudante .mobile-nav-item[data-nav="manual"] {
 
 body.role-ayudante .mobile-nav-item[data-nav="combate"],
 body.role-ayudante .mobile-nav-item[data-nav="torneos"],
-body.role-ayudante .mobile-nav-item[data-nav="timer"] {
+body.role-ayudante .mobile-nav-item[data-nav="timer"],
+body.role-ayudante .mobile-nav-logout {
     display: flex !important;
 }
 
@@ -2614,7 +2739,7 @@ body.role-instructor #nav-escuelas {
     display: none !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Atletas, Física, Combate y Menú) */
+/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Atletas, Física, Combate, Menú y Salir) */
 body.role-instructor .mobile-nav-item[data-nav="historial"],
 body.role-instructor .mobile-nav-item[data-nav="torneos"],
 body.role-instructor .mobile-nav-item[data-nav="timer"],
@@ -2624,12 +2749,32 @@ body.role-instructor .mobile-nav-item[data-nav="manual"] {
 
 body.role-instructor .mobile-nav-item[data-nav="atletas"],
 body.role-instructor .mobile-nav-item[data-nav="fisica"],
-body.role-instructor .mobile-nav-item[data-nav="combate"] {
+body.role-instructor .mobile-nav-item[data-nav="combate"],
+body.role-instructor .mobile-nav-logout {
     display: flex !important;
 }
 
 /* --------------------------------------------------------------------------
-   4. REGLAS GENERALES PARA ROLES NO ADMINISTRADORES
+   4. ROL: MAESTRO / ADMINISTRADOR (Mobile Bottom Nav Optimizado)
+   -------------------------------------------------------------------------- */
+/* En barra inferior móvil, mostrar 5 módulos clave + Menú + Salir */
+body.role-admin .mobile-nav-item[data-nav="historial"],
+body.role-admin .mobile-nav-item[data-nav="fisica"],
+body.role-admin .mobile-nav-item[data-nav="manual"] {
+    display: none !important;
+}
+
+body.role-admin .mobile-nav-item[data-nav="atletas"],
+body.role-admin .mobile-nav-item[data-nav="combate"],
+body.role-admin .mobile-nav-item[data-nav="torneos"],
+body.role-admin .mobile-nav-item[data-nav="timer"],
+body.role-admin #mobile-more-btn,
+body.role-admin .mobile-nav-logout {
+    display: flex !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. REGLAS GENERALES PARA ROLES NO ADMINISTRADORES
    -------------------------------------------------------------------------- */
 body:not(.role-admin) #nav-usuarios,
 body:not(.role-admin) #nav-ajustes,

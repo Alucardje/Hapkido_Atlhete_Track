@@ -154,32 +154,49 @@ HapkidoApp.prototype.logout = function() {
         this.currentUser = null;
         localStorage.removeItem('hapkido_current_user');
         document.body.className = '';
+
+        // Close mobile drawer if open
+        const sidebar = document.querySelector('.sidebar');
+        const backdrop = document.getElementById('mobile-backdrop');
+        if (sidebar) sidebar.classList.remove('mobile-open');
+        if (backdrop) backdrop.classList.remove('active');
+
         const overlay = document.getElementById('login-overlay');
         if (overlay) overlay.classList.add('active');
         
-        document.getElementById('login-form').reset();
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) loginForm.reset();
         const errorMsg = document.getElementById('login-error-msg');
         if (errorMsg) errorMsg.classList.add('hidden');
 
         this.updateUserSessionHeader();
 
         window.location.hash = '#dashboard';
-    }
+    };
 
 
-HapkidoApp.prototype.updateUserSessionHeader = function() {
+    HapkidoApp.prototype.updateUserSessionHeader = function() {
         const badge = document.getElementById('header-user-badge');
         const nameSpan = document.getElementById('header-user-name');
         const metaSpan = document.getElementById('header-user-meta');
-        
-        if (!badge || !nameSpan || !metaSpan) return;
+        const headerLogoutBtn = document.getElementById('header-logout-btn');
+        const sidebarUserCard = document.getElementById('sidebar-user-card');
+        const sidebarUserName = document.getElementById('sidebar-user-name');
+        const sidebarUserRole = document.getElementById('sidebar-user-role');
+        const sidebarUserIcon = document.getElementById('sidebar-user-icon');
         
         if (this.currentUser) {
             const roleMap = {
-                'admin': 'Administrador',
-                'instructor': 'Maestro / Instructor',
-                'ayudante': 'Instructor en Ent. / Ayudante',
-                'athlete': 'Atleta'
+                'admin': 'Administrador / Maestro',
+                'instructor': 'Instructor / Entrenador',
+                'ayudante': 'Mesa Técnica / Juez',
+                'athlete': 'Atleta / Alumno'
+            };
+            const roleIcons = {
+                'admin': 'fa-crown',
+                'instructor': 'fa-user-ninja',
+                'ayudante': 'fa-stopwatch-20',
+                'athlete': 'fa-medal'
             };
             const roleText = roleMap[this.currentUser.role] || this.currentUser.role || 'Usuario';
             
@@ -191,13 +208,26 @@ HapkidoApp.prototype.updateUserSessionHeader = function() {
                 rankText = this.currentUser.rank || 'Sin Rango';
             }
             
-            nameSpan.textContent = this.currentUser.name || 'Usuario';
-            metaSpan.textContent = `${roleText} • ${rankText}`;
-            badge.style.display = 'flex';
+            const displayName = this.currentUser.name || 'Usuario';
+
+            if (nameSpan) nameSpan.textContent = displayName;
+            if (metaSpan) metaSpan.textContent = `${roleText} • ${rankText}`;
+            if (badge) badge.style.display = 'flex';
+            if (headerLogoutBtn) headerLogoutBtn.style.display = 'inline-flex';
+
+            // Sidebar card update
+            if (sidebarUserName) sidebarUserName.textContent = displayName;
+            if (sidebarUserRole) sidebarUserRole.textContent = `${roleText}`;
+            if (sidebarUserCard) sidebarUserCard.style.display = 'flex';
+            if (sidebarUserIcon) {
+                sidebarUserIcon.className = `fa-solid ${roleIcons[this.currentUser.role] || 'fa-user-ninja'}`;
+            }
         } else {
-            badge.style.display = 'none';
+            if (badge) badge.style.display = 'none';
+            if (headerLogoutBtn) headerLogoutBtn.style.display = 'none';
+            if (sidebarUserCard) sidebarUserCard.style.display = 'none';
         }
-    }
+    };
 
 
 HapkidoApp.prototype.validateUserPrivilege = function(role, rankOrBelt) {
