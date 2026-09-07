@@ -2759,15 +2759,15 @@ body.role-instructor .mobile-nav-logout {
    -------------------------------------------------------------------------- */
 /* En barra inferior móvil, mostrar 5 módulos clave + Menú + Salir */
 body.role-admin .mobile-nav-item[data-nav="historial"],
-body.role-admin .mobile-nav-item[data-nav="fisica"],
+body.role-admin .mobile-nav-item[data-nav="timer"],
 body.role-admin .mobile-nav-item[data-nav="manual"] {
     display: none !important;
 }
 
 body.role-admin .mobile-nav-item[data-nav="atletas"],
+body.role-admin .mobile-nav-item[data-nav="fisica"],
 body.role-admin .mobile-nav-item[data-nav="combate"],
 body.role-admin .mobile-nav-item[data-nav="torneos"],
-body.role-admin .mobile-nav-item[data-nav="timer"],
 body.role-admin #mobile-more-btn,
 body.role-admin .mobile-nav-logout {
     display: flex !important;
