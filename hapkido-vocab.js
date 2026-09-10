@@ -352,7 +352,8 @@ HapkidoApp.prototype.filterManualVocab = function() {
 
             // Attempt image for vocabulary cards (.jpg → .png → .gif → .webp)
             const imgBasePath = `docs/tecnicas/${imgKey}`;
-            const imageBlock = item.cat !== "numeros" ? `
+            const shouldHaveImage = (item.cat === "tecnicas" || item.cat === "cuerpo" || item.cat === "generales");
+            const imageBlock = shouldHaveImage ? `
                 <div class="vocab-img-wrap" id="img-wrap-${imgKey}">
                     <img
                         src="${imgBasePath}.jpg"

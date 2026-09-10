@@ -503,5 +503,82 @@ HapkidoApp.prototype.startCombatScoring = function() {
         this.populateAthleteDropdowns();
     };
 
+    /**
+     * Timer controls for Combat Scoreboard
+     */
+    HapkidoApp.prototype.toggleTimer = function() {
+        if (this.isTimerRunning) {
+            this.pauseTimer();
+        } else {
+            this.startTimer();
+        }
+    };
+
+    HapkidoApp.prototype.startTimer = function() {
+        if (this.isTimerRunning) return;
+        this.isTimerRunning = true;
+        const btnPlay = document.getElementById('btn-timer-play');
+        if (btnPlay) btnPlay.innerHTML = '<i class="fa-solid fa-pause"></i>';
+        
+        this.combatTimer = setInterval(() => {
+            if (this.timerSeconds > 0) {
+                this.timerSeconds--;
+                const timerEl = document.getElementById('timer-display');
+                if (timerEl) timerEl.textContent = this.formatTime(this.timerSeconds);
+            } else {
+                this.pauseTimer();
+                this.logCombatAction("SISTEMA", "¡Tiempo finalizado en este round!");
+                if (typeof this.playBellSound === 'function') {
+                    this.playBellSound();
+                }
+                alert("¡Tiempo finalizado!");
+            }
+        }, 1000);
+    };
+
+    HapkidoApp.prototype.pauseTimer = function() {
+        this.isTimerRunning = false;
+        if (this.combatTimer) {
+            clearInterval(this.combatTimer);
+            this.combatTimer = null;
+        }
+        const btnPlay = document.getElementById('btn-timer-play');
+        if (btnPlay) btnPlay.innerHTML = '<i class="fa-solid fa-play"></i>';
+    };
+
+    HapkidoApp.prototype.resetTimer = function() {
+        this.pauseTimer();
+        if (this.activeCombat) {
+            this.timerSeconds = this.activeCombat.roundDuration || 120;
+        } else {
+            this.timerSeconds = 120;
+        }
+        const timerEl = document.getElementById('timer-display');
+        if (timerEl) timerEl.textContent = this.formatTime(this.timerSeconds);
+    };
+
+    HapkidoApp.prototype.formatTime = function(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
+
+    HapkidoApp.prototype.changeRound = function(offset) {
+        this.pauseTimer();
+        if (!this.activeCombat) return;
+        const nextRound = this.activeCombat.currentRound + offset;
+        
+        if (nextRound > 3) {
+            this.finishCombat();
+            return;
+        }
+
+        this.activeCombat.currentRound = nextRound;
+        this.resetTimer();
+        this.updateScoreboardUI();
+        this.logCombatAction("SISTEMA", `Inicia el Round ${nextRound}`);
+    };
+
+
 
 
