@@ -284,7 +284,7 @@ HapkidoApp.prototype.generateP2PShareToken = function() {
 };
 
 /**
- * Importar Datos desde Token P2P de Otro Dispositivo
+ * Importar Datos desde Token P2P de Otro Dispositivo con Validación de Esquema
  */
 HapkidoApp.prototype.importP2PShareToken = function() {
     const tokenStr = document.getElementById('sync-token-import-input')?.value?.trim();
@@ -293,20 +293,76 @@ HapkidoApp.prototype.importP2PShareToken = function() {
         return;
     }
 
+    if (tokenStr.length > 5000000) { // Max ~5MB
+        this.showAlert("El tamaño del token excede el límite permitido de seguridad.", "error", "Token Demasiado Grande");
+        return;
+    }
+
     try {
-        const jsonStr = decodeURIComponent(escape(atob(tokenStr)));
+        // Safe base64 decode (replaces deprecated escape)
+        const binaryStr = atob(tokenStr);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+        }
+        const jsonStr = new TextDecoder('utf-8').decode(bytes);
         const imported = JSON.parse(jsonStr);
 
-        if (!imported.athletes || !imported.records) {
-            throw new Error("El token no contiene una estructura de datos válida.");
+        // Schema & Type Validation
+        if (!imported || typeof imported !== 'object' || Array.isArray(imported)) {
+            throw new Error("El token no contiene un objeto de datos válido.");
         }
 
-        const countAth = imported.athletes.length;
-        const countRec = imported.records.length;
+        if (!Array.isArray(imported.athletes) || !Array.isArray(imported.records)) {
+            throw new Error("El token no contiene colecciones válidas de atletas o registros.");
+        }
 
-        if (confirm(`Se han detectado ${countAth} atletas y ${countRec} registros en el token.\n\n¿Deseas fusionarlos con tu base de datos actual sin perder los registros locales existentes?`)) {
-            // Smart Merge
-            imported.athletes.forEach(newAth => {
+        // Sanitize and whitelist athlete objects
+        const sanitizedAthletes = imported.athletes.filter(a => a && typeof a === 'object' && a.id && a.name).map(a => {
+            return {
+                id: String(a.id).replace(/[^a-zA-Z0-9_\-]/g, ''),
+                name: String(a.name).trim().slice(0, 100),
+                birthdate: a.birthdate ? String(a.birthdate).slice(0, 10) : '',
+                gender: a.gender === 'FEMENINO' ? 'FEMENINO' : 'MASCULINO',
+                belt: String(a.belt || 'Blanco').slice(0, 50),
+                weight: typeof a.weight === 'number' ? a.weight : (parseFloat(a.weight) || null),
+                height: typeof a.height === 'number' ? a.height : (parseFloat(a.height) || null),
+                experience: a.experience ? String(a.experience).slice(0, 50) : '',
+                school: a.school ? String(a.school).slice(0, 100) : '',
+                isAyudante: !!a.isAyudante,
+                modalities: {
+                    tradicional: !!a.modalities?.tradicional,
+                    deportivo: !!a.modalities?.deportivo
+                },
+                status: a.status === 'inactivo' ? 'inactivo' : 'activo'
+            };
+        });
+
+        // Sanitize and whitelist record objects
+        const sanitizedRecords = imported.records.filter(r => r && typeof r === 'object' && r.id && r.athleteId).map(r => {
+            const cleanRec = {
+                id: String(r.id).replace(/[^a-zA-Z0-9_\-]/g, ''),
+                athleteId: String(r.athleteId).replace(/[^a-zA-Z0-9_\-]/g, ''),
+                type: String(r.type || 'FISICA').slice(0, 30),
+                date: r.date ? String(r.date).slice(0, 10) : ''
+            };
+            if (r.physicalDetails && typeof r.physicalDetails === 'object') {
+                cleanRec.physicalDetails = Object.assign({}, r.physicalDetails);
+                delete cleanRec.physicalDetails.__proto__;
+            }
+            if (r.combatDetails && typeof r.combatDetails === 'object') {
+                cleanRec.combatDetails = Object.assign({}, r.combatDetails);
+                delete cleanRec.combatDetails.__proto__;
+            }
+            return cleanRec;
+        });
+
+        const countAth = sanitizedAthletes.length;
+        const countRec = sanitizedRecords.length;
+
+        if (confirm(`Se han validado ${countAth} atletas y ${countRec} registros en el token.\n\n¿Deseas fusionarlos con tu base de datos actual sin perder los registros locales existentes?`)) {
+            // Smart Merge without prototype pollution
+            sanitizedAthletes.forEach(newAth => {
                 const idx = this.data.athletes.findIndex(a => a.id === newAth.id);
                 if (idx !== -1) {
                     this.data.athletes[idx] = newAth;
@@ -315,7 +371,7 @@ HapkidoApp.prototype.importP2PShareToken = function() {
                 }
             });
 
-            imported.records.forEach(newRec => {
+            sanitizedRecords.forEach(newRec => {
                 const idx = this.data.records.findIndex(r => r.id === newRec.id);
                 if (idx !== -1) {
                     this.data.records[idx] = newRec;
@@ -324,22 +380,30 @@ HapkidoApp.prototype.importP2PShareToken = function() {
                 }
             });
 
-            if (imported.schools) {
+            if (Array.isArray(imported.schools)) {
                 this.data.schools = this.data.schools || [];
-                imported.schools.forEach(newSch => {
-                    const idx = this.data.schools.findIndex(s => s.id === newSch.id);
-                    if (idx !== -1) this.data.schools[idx] = newSch;
-                    else this.data.schools.push(newSch);
+                imported.schools.filter(s => s && s.id && s.name).forEach(s => {
+                    const cleanSch = {
+                        id: String(s.id).replace(/[^a-zA-Z0-9_\-]/g, ''),
+                        name: String(s.name).trim().slice(0, 100),
+                        location: String(s.location || '').slice(0, 150),
+                        instructorName: String(s.instructorName || '').slice(0, 100),
+                        instructorRole: String(s.instructorRole || 'Maestro / Instructor').slice(0, 50),
+                        associationId: String(s.associationId || '').replace(/[^a-zA-Z0-9_\-]/g, '')
+                    };
+                    const idx = this.data.schools.findIndex(exist => exist.id === cleanSch.id);
+                    if (idx !== -1) this.data.schools[idx] = cleanSch;
+                    else this.data.schools.push(cleanSch);
                 });
             }
 
             this.saveData();
             document.getElementById('sync-token-modal')?.classList.remove('active');
-            this.showAlert("¡Datos fusionados e importados exitosamente!", "success", "Fusión P2P Completada");
+            this.showAlert("¡Datos validados, fusionados e importados exitosamente!", "success", "Fusión P2P Completada");
             window.location.reload();
         }
     } catch (e) {
-        this.showAlert("El token ingresado es inválido o está dañado: " + e.message, "error", "Token Inválido");
+        this.showAlert("El token ingresado es inválido o no cumple con el esquema de seguridad: " + e.message, "error", "Token Inválido");
     }
 };
 

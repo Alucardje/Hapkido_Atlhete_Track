@@ -84,16 +84,23 @@ HapkidoApp.prototype.renderSchoolsList = function() {
             const assoc = this.data.associations.find(a => a.id === sch.associationId);
             const assocName = assoc ? assoc.name : "Sin Asociación";
 
+            const safeName = this.escapeHTML(sch.name);
+            const safeAssocName = this.escapeHTML(assocName);
+            const safeLocation = this.escapeHTML(sch.location);
+            const safeInstructor = this.escapeHTML(sch.instructorName);
+            const safeRole = this.escapeHTML(sch.instructorRole);
+            const safeId = this.escapeHTML(sch.id);
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${sch.name}</strong></td>
-                <td>${assocName}</td>
-                <td>${sch.location}</td>
-                <td>${sch.instructorName}</td>
-                <td><span class="badge ${sch.instructorRole.includes('Maestro') ? 'success' : 'warning'}">${sch.instructorRole}</span></td>
+                <td><strong>${safeName}</strong></td>
+                <td>${safeAssocName}</td>
+                <td>${safeLocation}</td>
+                <td>${safeInstructor}</td>
+                <td><span class="badge ${sch.instructorRole.includes('Maestro') ? 'success' : 'warning'}">${safeRole}</span></td>
                 <td class="actions-cell">
-                    <button class="icon-btn edit" onclick="app.openEditSchoolModal('${sch.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="icon-btn delete" onclick="app.deleteSchool('${sch.id}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="icon-btn edit" onclick="app.openEditSchoolModal('${safeId}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="icon-btn delete" onclick="app.deleteSchool('${safeId}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -224,14 +231,19 @@ HapkidoApp.prototype.renderAssociationsList = function() {
         }
 
         associations.forEach(asc => {
+            const safeName = this.escapeHTML(asc.name);
+            const safeState = this.escapeHTML(asc.state);
+            const safeFederation = this.escapeHTML(asc.federation);
+            const safeId = this.escapeHTML(asc.id);
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${asc.name}</strong></td>
-                <td>${asc.state}</td>
-                <td><span class="badge success">${asc.federation}</span></td>
+                <td><strong>${safeName}</strong></td>
+                <td>${safeState}</td>
+                <td><span class="badge success">${safeFederation}</span></td>
                 <td class="actions-cell">
-                    <button class="icon-btn edit" onclick="app.openEditAssociationModal('${asc.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="icon-btn delete" onclick="app.deleteAssociation('${asc.id}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="icon-btn edit" onclick="app.openEditAssociationModal('${safeId}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="icon-btn delete" onclick="app.deleteAssociation('${safeId}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);

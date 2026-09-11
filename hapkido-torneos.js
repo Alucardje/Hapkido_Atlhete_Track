@@ -262,28 +262,33 @@ HapkidoApp.prototype.renderTorneosList = function() {
             const showEditDelete = isAdmin || isOwner;
             const canManageInscripcion = trn.status === 'Aprobado' && (isAdmin || isOwner);
 
-            if (this.selectedTorneoId === trn.id) {
-                tr.classList.add('selected-row');
-            }
+            const safeName = this.escapeHTML(trn.name);
+            const safeReferee = this.escapeHTML(trn.referee || '');
+            const safeType = this.escapeHTML(trn.type);
+            const safeDate = this.escapeHTML(trn.date);
+            const safeSchool = this.escapeHTML(trn.school);
+            const safeState = this.escapeHTML(trn.state || 'N/A');
+            const safeStatus = this.escapeHTML(trn.status || 'Solicitado');
+            const safeId = this.escapeHTML(trn.id);
 
             tr.innerHTML = `
                 <td>
-                    <strong>${trn.name}</strong>
-                    ${trn.referee ? `<br><small style="color: var(--cyan); display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;"><i class="fa-solid fa-scale-balanced"></i> Árbitro: ${trn.referee}</small>` : ''}
+                    <strong>${safeName}</strong>
+                    ${trn.referee ? `<br><small style="color: var(--cyan); display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;"><i class="fa-solid fa-scale-balanced"></i> Árbitro: ${safeReferee}</small>` : ''}
                 </td>
-                <td>${trn.type}</td>
-                <td>${trn.date}</td>
-                <td>${trn.school}</td>
-                <td>${trn.state || 'N/A'}</td>
+                <td>${safeType}</td>
+                <td>${safeDate}</td>
+                <td>${safeSchool}</td>
+                <td>${safeState}</td>
                 <td>${modsText}</td>
-                <td><span class="badge ${badgeClass}">${trn.status.toUpperCase()}</span></td>
+                <td><span class="badge ${badgeClass}">${safeStatus.toUpperCase()}</span></td>
                 <td class="actions-cell">
                     ${canManageInscripcion ? `
-                        <button class="icon-btn" onclick="app.selectTorneoForInscripcion('${trn.id}')" title="Atletas Inscritos" style="background: rgba(56, 189, 248, 0.15); color: var(--primary);"><i class="fa-solid fa-users"></i></button>
+                        <button class="icon-btn" onclick="app.selectTorneoForInscripcion('${safeId}')" title="Atletas Inscritos" style="background: rgba(56, 189, 248, 0.15); color: var(--primary);"><i class="fa-solid fa-users"></i></button>
                     ` : ''}
                     ${showEditDelete ? `
-                        <button class="icon-btn edit" onclick="app.openEditTorneoModal('${trn.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                        <button class="icon-btn delete" onclick="app.deleteTorneo('${trn.id}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="icon-btn edit" onclick="app.openEditTorneoModal('${safeId}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                        <button class="icon-btn delete" onclick="app.deleteTorneo('${safeId}')" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
                     ` : (!canManageInscripcion ? '<span style="color: var(--text-muted); font-size: 11px;">Lectura</span>' : '')}
                 </td>
             `;
@@ -341,14 +346,21 @@ HapkidoApp.prototype.renderTorneoInscritosList = function(torneoId) {
 
             const formattedWeight = reg.weight ? `${reg.weight} kg` : 'N/A';
 
+            const safeAthleteName = this.escapeHTML(reg.athleteName);
+            const safeBelt = this.escapeHTML(reg.belt);
+            const safeGender = this.escapeHTML(reg.gender);
+            const safeDivision = this.escapeHTML(reg.division);
+            const safeTorneoId = this.escapeHTML(trn.id);
+            const safeAthleteId = this.escapeHTML(reg.athleteId);
+
             tr.innerHTML = `
-                <td><strong>${reg.athleteName}</strong></td>
-                <td>${reg.belt}</td>
-                <td>${reg.age} años / ${reg.gender}</td>
-                <td>${formattedWeight} <br><small style="color: var(--cyan); font-weight: bold;">${reg.division}</small></td>
+                <td><strong>${safeAthleteName}</strong></td>
+                <td>${safeBelt}</td>
+                <td>${reg.age} años / ${safeGender}</td>
+                <td>${formattedWeight} <br><small style="color: var(--cyan); font-weight: bold;">${safeDivision}</small></td>
                 <td><div style="display: flex; gap: 4px; flex-wrap: wrap;">${catsText}</div></td>
                 <td class="actions-cell">
-                    <button class="icon-btn delete" onclick="app.deleteTorneoInscripcion('${trn.id}', '${reg.athleteId}')" title="Eliminar Inscripción"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="icon-btn delete" onclick="app.deleteTorneoInscripcion('${safeTorneoId}', '${safeAthleteId}')" title="Eliminar Inscripción"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);

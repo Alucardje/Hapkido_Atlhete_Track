@@ -167,11 +167,11 @@ HapkidoApp.prototype.loadData = function() {
                 { id: "asc_3", name: "Asociación del Estado Carabobo", state: "Carabobo", federation: "Federación Venezolana de Hapkido" }
             ],
             users: [
-                { id: "usr_admin", username: "admin", password: "123", role: "admin", name: "Administrador", school: null, athleteId: null, rank: "Administrador Central" },
-                { id: "usr_maestro1", username: "maestro1", password: "123", role: "instructor", name: "Maestro 1", school: "Dojang Tigres", athleteId: null, rank: "Maestro 4to Dan (Sabeomnim)" },
-                { id: "usr_maestro2", username: "maestro2", password: "123", role: "instructor", name: "Maestro 2", school: "Academia Hapkido Sur", athleteId: null, rank: "Maestro 2do Dan (Kyosaeonim)" },
-                { id: "usr_atleta1", username: "atleta1", password: "123", role: "ayudante", name: "Carlos Gómez", school: "Dojang Tigres", athleteId: "ath_carlos_gomez" },
-                { id: "usr_atleta2", username: "atleta2", password: "123", role: "athlete", name: "María Rodríguez", school: "Academia Hapkido Sur", athleteId: "ath_maria_rodriguez" }
+                { id: "usr_admin", username: "admin", password: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", role: "admin", name: "Administrador", school: null, athleteId: null, rank: "Administrador Central" },
+                { id: "usr_maestro1", username: "maestro1", password: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", role: "instructor", name: "Maestro 1", school: "Dojang Tigres", athleteId: null, rank: "Maestro 4to Dan (Sabeomnim)" },
+                { id: "usr_maestro2", username: "maestro2", password: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", role: "instructor", name: "Maestro 2", school: "Academia Hapkido Sur", athleteId: null, rank: "Maestro 2do Dan (Kyosaeonim)" },
+                { id: "usr_atleta1", username: "atleta1", password: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", role: "ayudante", name: "Carlos Gómez", school: "Dojang Tigres", athleteId: "ath_carlos_gomez" },
+                { id: "usr_atleta2", username: "atleta2", password: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3", role: "athlete", name: "María Rodríguez", school: "Academia Hapkido Sur", athleteId: "ath_maria_rodriguez" }
             ],
             torneos: [
                 {
@@ -271,14 +271,15 @@ HapkidoApp.prototype.loadData = function() {
                     parsed.users = defaultData.users;
                     changed = true;
                 } else {
+                    const adminHash = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3";
                     const adminUser = parsed.users.find(u => u.username === 'admin' || u.id === 'usr_admin');
                     if (!adminUser) {
-                        parsed.users.push({ id: "usr_admin", username: "admin", password: "123", role: "admin", name: "Administrador", school: null, athleteId: null, rank: "Administrador Central" });
+                        parsed.users.push({ id: "usr_admin", username: "admin", password: adminHash, role: "admin", name: "Administrador", school: null, athleteId: null, rank: "Administrador Central" });
                         changed = true;
                     } else {
                         let innerChanged = false;
                         if (adminUser.username !== "admin") { adminUser.username = "admin"; innerChanged = true; }
-                        if (adminUser.password !== "123") { adminUser.password = "123"; innerChanged = true; }
+                        if (adminUser.password !== adminHash && adminUser.password !== "123") { adminUser.password = adminHash; innerChanged = true; }
                         if (adminUser.role !== "admin") { adminUser.role = "admin"; innerChanged = true; }
                         if (!adminUser.rank) { adminUser.rank = "Administrador Central"; innerChanged = true; }
                         if (innerChanged) changed = true;

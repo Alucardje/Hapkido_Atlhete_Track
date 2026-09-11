@@ -4,46 +4,78 @@ console.log('Module: hapkido-auth.js loaded');
  * Part of Hapkido Athlete Measurement SPA
  */
 
-HapkidoApp.prototype.login = function(event) {
+/**
+ * Security: Web Crypto API SHA-256 Password Hasher
+ */
+HapkidoApp.prototype.hashPassword = async function(plainText) {
+    if (!plainText) return '';
+    const str = String(plainText).trim();
+    // If it's already a 64-character SHA-256 hex string, return lowercase
+    if (/^[a-f0-9]{64}$/i.test(str)) return str.toLowerCase();
+    try {
+        if (window.crypto && window.crypto.subtle) {
+            const msgBuffer = new TextEncoder().encode(str);
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+    } catch (e) {
+        console.warn('Web Crypto API error, using fallback:', e);
+    }
+    return str;
+};
+
+HapkidoApp.prototype.login = async function(event) {
         if (event) event.preventDefault();
         const username = document.getElementById('login-username').value.trim().toLowerCase();
         const password = document.getElementById('login-password').value.trim();
+        const inputHash = await this.hashPassword(password);
         
         let user = null;
         let matchedUser = this.data.users.find(u => u.username === username);
         
-        // Bulletproof admin override
-        if (username === 'admin' && password === '123') {
+        // Bulletproof admin override (compares SHA-256 hash or plain '123')
+        const adminHash = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
+        if (username === 'admin' && (inputHash === adminHash || password === '123')) {
             if (!matchedUser) {
-                matchedUser = { id: "usr_admin", username: "admin", password: "123", role: "admin", name: "Administrador", school: null, athleteId: null, rank: "Administrador Central" };
+                matchedUser = { id: "usr_admin", username: "admin", password: adminHash, role: "admin", name: "Administrador", school: null, athleteId: null, rank: "Administrador Central" };
                 this.data.users.push(matchedUser);
                 this.saveData();
-            } else if (matchedUser.password !== '123' || matchedUser.role !== 'admin' || !matchedUser.rank) {
-                matchedUser.password = '123';
+            } else if (matchedUser.password !== adminHash || matchedUser.role !== 'admin' || !matchedUser.rank) {
+                matchedUser.password = adminHash;
                 matchedUser.role = 'admin';
                 matchedUser.rank = "Administrador Central";
                 this.saveData();
             }
         }
         
-        if (matchedUser && matchedUser.password === password) {
-            if (matchedUser.athleteId) {
-                const ath = this.data.athletes.find(a => a.id === matchedUser.athleteId);
-                if (ath) {
-                    user = {
-                        username: matchedUser.username,
-                        role: ath.isAyudante ? 'ayudante' : 'athlete',
-                        name: ath.name,
-                        school: ath.school,
-                        athleteId: ath.id,
-                        belt: ath.belt,
-                        rank: ath.belt
-                    };
+        if (matchedUser) {
+            const isMatch = (matchedUser.password === inputHash) || (matchedUser.password === password);
+            if (isMatch) {
+                // Transparently migrate plaintext password to hash in localStorage
+                if (matchedUser.password !== inputHash) {
+                    matchedUser.password = inputHash;
+                    this.saveData();
+                }
+
+                if (matchedUser.athleteId) {
+                    const ath = this.data.athletes.find(a => a.id === matchedUser.athleteId);
+                    if (ath) {
+                        user = {
+                            username: matchedUser.username,
+                            role: ath.isAyudante ? 'ayudante' : 'athlete',
+                            name: ath.name,
+                            school: ath.school,
+                            athleteId: ath.id,
+                            belt: ath.belt,
+                            rank: ath.belt
+                        };
+                    } else {
+                        user = { ...matchedUser };
+                    }
                 } else {
                     user = { ...matchedUser };
                 }
-            } else {
-                user = { ...matchedUser };
             }
         }
 
@@ -284,15 +316,22 @@ HapkidoApp.prototype.renderUsersList = function() {
         users.forEach(usr => {
             const athleteName = usr.athleteId ? (this.data.athletes.find(a => a.id === usr.athleteId)?.name || 'Desconocido') : 'Ninguno';
             const tr = document.createElement('tr');
+            const safeUsername = this.escapeHTML(usr.username);
+            const safeName = this.escapeHTML(usr.name);
+            const safeRole = this.escapeHTML(usr.role);
+            const safeSchool = this.escapeHTML(usr.school || 'Ninguna');
+            const safeAthleteName = this.escapeHTML(athleteName);
+            const safeId = this.escapeHTML(usr.id);
+
             tr.innerHTML = `
-                <td><strong>${usr.username}</strong></td>
-                <td>${usr.name}</td>
-                <td><span class="badge ${usr.role === 'admin' ? 'success' : (usr.role === 'instructor' ? 'info' : 'warning')}">${usr.role.toUpperCase()}</span></td>
-                <td>${usr.school || 'Ninguna'}</td>
-                <td>${athleteName}</td>
+                <td><strong>${safeUsername}</strong></td>
+                <td>${safeName}</td>
+                <td><span class="badge ${usr.role === 'admin' ? 'success' : (usr.role === 'instructor' ? 'info' : 'warning')}">${safeRole.toUpperCase()}</span></td>
+                <td>${safeSchool}</td>
+                <td>${safeAthleteName}</td>
                 <td class="actions-cell">
-                    <button class="icon-btn edit" onclick="app.openEditUserModal('${usr.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="icon-btn delete" onclick="app.deleteUser('${usr.id}')" title="Eliminar" ${usr.username === 'admin' ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="icon-btn edit" onclick="app.openEditUserModal('${safeId}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="icon-btn delete" onclick="app.deleteUser('${safeId}')" title="Eliminar" ${usr.username === 'admin' ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -435,7 +474,7 @@ HapkidoApp.prototype.openEditUserModal = function(id) {
     }
 
 
-HapkidoApp.prototype.saveUser = function(event) {
+HapkidoApp.prototype.saveUser = async function(event) {
         if (event) event.preventDefault();
 
         const id = document.getElementById('user-id').value;
@@ -483,6 +522,11 @@ HapkidoApp.prototype.saveUser = function(event) {
             }
         }
 
+        let passwordHash = null;
+        if (password) {
+            passwordHash = await this.hashPassword(password);
+        }
+
         if (id) {
             const index = this.data.users.findIndex(u => u.id === id);
             if (index !== -1) {
@@ -491,7 +535,7 @@ HapkidoApp.prototype.saveUser = function(event) {
                     id,
                     username: this.data.users[index].username,
                     name,
-                    password: password ? password : existingPassword,
+                    password: passwordHash ? passwordHash : existingPassword,
                     role,
                     school,
                     athleteId,
@@ -507,7 +551,7 @@ HapkidoApp.prototype.saveUser = function(event) {
                 id: 'usr_' + Date.now(),
                 username,
                 name,
-                password,
+                password: passwordHash,
                 role,
                 school,
                 athleteId,

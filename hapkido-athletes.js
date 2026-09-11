@@ -204,23 +204,31 @@ HapkidoApp.prototype.renderAthletesList = function() {
                 const topAlert = athAlerts[0];
                 const colorMap = { danger: '#ef4444', warning: '#f59e0b', info: '#38bdf8' };
                 const color = colorMap[topAlert.type] || '#f59e0b';
-                alertBadge = `<span title="${athAlerts.map(a => a.message).join('\n')}" style="color:${color}; margin-left:6px; cursor:help;"><i class="fa-solid ${topAlert.icon}"></i> ${athAlerts.length > 1 ? `(${athAlerts.length})` : ''}</span>`;
+                const safeAlertMsg = this.escapeHTML(athAlerts.map(a => a.message).join('\n'));
+                alertBadge = `<span title="${safeAlertMsg}" style="color:${color}; margin-left:6px; cursor:help;"><i class="fa-solid ${this.escapeHTML(topAlert.icon)}"></i> ${athAlerts.length > 1 ? `(${athAlerts.length})` : ''}</span>`;
             }
 
             // Weight display – never show "null kg"
             const weightDisplay = ath.weight ? `${ath.weight} kg${ath.height ? ` / ${ath.height} cm` : ''}` : `<span style="color:var(--warning);">Sin peso${ath.height ? ` / ${ath.height} cm` : ''}</span>`;
 
+            const safeName = this.escapeHTML(ath.name);
+            const safeGender = this.escapeHTML(ath.gender);
+            const safeBelt = this.escapeHTML(ath.belt);
+            const safeCategory = this.escapeHTML(category);
+            const safeDivision = this.escapeHTML(division);
+            const safeId = this.escapeHTML(ath.id);
+
             tr.innerHTML = `
-                <td><strong>${ath.name}</strong>${alertBadge}</td>
+                <td><strong>${safeName}</strong>${alertBadge}</td>
                 <td>${age} años</td>
-                <td>${ath.gender}</td>
-                <td>${ath.belt}</td>
+                <td>${safeGender}</td>
+                <td>${safeBelt}</td>
                 <td>${weightDisplay}</td>
-                <td><span class="badge ${(ath.modalities && ath.modalities.deportivo) ? 'success' : 'warning'}">${modText.join(' / ')}</span></td>
-                <td>${category} (${division})</td>
+                <td><span class="badge ${(ath.modalities && ath.modalities.deportivo) ? 'success' : 'warning'}">${this.escapeHTML(modText.join(' / '))}</span></td>
+                <td>${safeCategory} (${safeDivision})</td>
                 <td class="actions-cell">
-                    <button class="icon-btn edit" onclick="app.openEditAthleteModal('${ath.id}')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="icon-btn delete" onclick="app.deleteAthlete('${ath.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="icon-btn edit" onclick="app.openEditAthleteModal('${safeId}')" title="Editar Atleta"><i class="fa-solid fa-pen"></i></button>
+                    <button class="icon-btn delete" onclick="app.deleteAthlete('${safeId}')" title="Eliminar Atleta"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -522,14 +530,20 @@ HapkidoApp.prototype.renderInactiveAthletesList = function() {
             const physCount = (this.data.records || []).filter(r => r.athleteId === ath.id && r.type === 'FISICA').length;
             const tr = document.createElement('tr');
             tr.style.opacity = '0.7';
+            const safeName = this.escapeHTML(ath.name);
+            const safeBelt = this.escapeHTML(ath.belt);
+            const safeSchool = this.escapeHTML(ath.school || '—');
+            const safeDeactivatedAt = this.escapeHTML(ath.deactivatedAt || '—');
+            const safeId = this.escapeHTML(ath.id);
+
             tr.innerHTML = `
-                <td><strong>${ath.name}</strong></td>
-                <td>${ath.belt}</td>
-                <td>${ath.school || '—'}</td>
-                <td>${ath.deactivatedAt || '—'}</td>
+                <td><strong>${safeName}</strong></td>
+                <td>${safeBelt}</td>
+                <td>${safeSchool}</td>
+                <td>${safeDeactivatedAt}</td>
                 <td><span class="badge">${physCount} evaluaciones</span></td>
                 <td class="actions-cell">
-                    <button class="icon-btn edit" title="Reactivar atleta" onclick="app.reactivateAthlete('${ath.id}')">
+                    <button class="icon-btn edit" title="Reactivar atleta" onclick="app.reactivateAthlete('${safeId}')">
                         <i class="fa-solid fa-user-check"></i>
                     </button>
                 </td>
