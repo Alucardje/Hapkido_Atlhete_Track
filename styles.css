@@ -5645,6 +5645,11 @@ body.mode-dojang .federation-only {
         display: none !important;
     }
 
+    #printable-area,
+    #printable-area * {
+        visibility: visible !important;
+    }
+
     #printable-area {
         display: block !important;
         width: 100% !important;

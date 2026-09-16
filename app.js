@@ -822,6 +822,38 @@ class HapkidoApp {
         });
     }
 
+    showToast(message, type = 'info') {
+        const existing = document.querySelector('.hapkido-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'hapkido-toast toast-' + type;
+        toast.innerHTML = `<span>${message}</span>`;
+        Object.assign(toast.style, {
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: '9999',
+            padding: '14px 22px',
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: '600',
+            fontFamily: 'var(--font-main)',
+            color: '#fff',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            animation: 'fadeIn 0.3s ease',
+            cursor: 'pointer',
+            maxWidth: '400px',
+            background: type === 'success' ? '#10b981'
+                       : type === 'warning' ? '#f59e0b'
+                       : type === 'error' ? '#ef4444'
+                       : '#38bdf8'
+        });
+        toast.onclick = () => toast.remove();
+        document.body.appendChild(toast);
+        setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
+    }
+
     /**
      * Gestión del Modo de Operación (Modo Dojang vs Modo Federación)
      */
