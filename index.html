@@ -176,6 +176,10 @@
                     <h1 id="page-title">Dashboard</h1>
                 </div>
                 <div class="header-actions">
+                    <div class="mode-toggle-badge dojang-active" id="mode-toggle-badge" onclick="app.toggleOperatingMode()" title="Cambiar modo de operación">
+                        <i class="fa-solid fa-house-user"></i>
+                        <span class="mode-text">Modo Dojang</span>
+                    </div>
                     <div class="user-active-badge" id="header-user-badge" style="display: none;">
                         <i class="fa-solid fa-user-ninja" id="header-user-icon"></i>
                         <div class="user-active-details">
@@ -200,6 +204,38 @@
 
             <!-- Dashboard Section -->
             <section id="section-dashboard" class="app-section active">
+                <!-- Dojang Suite Quick Action Cards -->
+                <div class="quick-action-cards-container">
+                    <div class="quick-action-card card-gold" onclick="window.location.hash='#fisica'">
+                        <div class="quick-action-icon"><i class="fa-solid fa-notes-medical"></i></div>
+                        <div class="quick-action-info">
+                            <h4>Nueva Evaluación Física</h4>
+                            <p>Registrar test biométrico y baremos</p>
+                        </div>
+                    </div>
+                    <div class="quick-action-card card-cyan" onclick="app.openPrintSheetModal()">
+                        <div class="quick-action-icon"><i class="fa-solid fa-print"></i></div>
+                        <div class="quick-action-info">
+                            <h4>Planilla de Campo</h4>
+                            <p>Imprimir tabla para toma a mano en tatami</p>
+                        </div>
+                    </div>
+                    <div class="quick-action-card card-purple" onclick="window.location.hash='#timer'">
+                        <div class="quick-action-icon"><i class="fa-solid fa-stopwatch-20"></i></div>
+                        <div class="quick-action-info">
+                            <h4>Timer de Tatami</h4>
+                            <p>Cronómetro de asaltos, descansos y combates</p>
+                        </div>
+                    </div>
+                    <div class="quick-action-card card-green" onclick="window.location.hash='#combate'">
+                        <div class="quick-action-icon"><i class="fa-solid fa-trophy"></i></div>
+                        <div class="quick-action-info">
+                            <h4>Marcador de Combate</h4>
+                            <p>Puntaje en vivo y penalizaciones</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid-stats">
                     <div class="stat-card">
                         <div class="stat-info">
@@ -342,8 +378,9 @@
 
             <!-- Atletas Section -->
             <section id="section-atletas" class="app-section">
-                <div class="section-actions">
+                <div class="section-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="primary-btn" id="btn-new-athlete"><i class="fa-solid fa-user-plus"></i> Nuevo Atleta</button>
+                    <button type="button" class="btn btn-secondary" onclick="app.exportAthletesToCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Excel / CSV</button>
                 </div>
 
                 <div class="panel-card mt-20">
@@ -659,8 +696,12 @@
             <!-- Medición Física Section -->
             <section id="section-fisica" class="app-section">
                 <div class="panel-card">
-                    <div class="panel-header">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <h2><i class="fa-solid fa-heart-pulse"></i> Registro de Ficha Fisiológica y Pruebas Técnicas</h2>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="app.openPrintSheetModal()"><i class="fa-solid fa-print"></i> Planilla de Campo</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="app.exportRecordsToCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Evaluaciones</button>
+                        </div>
                     </div>
                     <div class="panel-body">
                         <form id="physical-test-form">
@@ -2862,6 +2903,43 @@
         </div>
     </div>
 
+    <!-- Modal para Imprimir Planilla de Campo -->
+    <div class="modal" id="field-sheet-modal">
+        <div class="modal-content" style="width: 520px; max-width: 95%;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-print" style="color: var(--primary);"></i> Planilla de Campo Imprimible</h2>
+                <span class="close-modal" onclick="document.getElementById('field-sheet-modal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
+                    Imprime una matriz física para llevar el registro a mano con lápiz y papel durante la clase en el tatami. Luego podrás registrar las mediciones en la app con calma.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button type="button" class="btn btn-primary" onclick="app.printFieldSheet('colectiva', true)" style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 14px; text-align: left;">
+                        <i class="fa-solid fa-users-line fa-2x" style="color: var(--gold-accent);"></i>
+                        <div>
+                            <strong style="display: block; font-size: 14px;">Planilla Colectiva con Atletas Registrados</strong>
+                            <small style="font-size: 12px; color: rgba(255,255,255,0.8);">Incluye nombres, cédulas y datos base de los atletas de tu Dojang.</small>
+                        </div>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="app.printFieldSheet('colectiva', false)" style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 14px; text-align: left;">
+                        <i class="fa-solid fa-file-pen fa-2x" style="color: #38bdf8;"></i>
+                        <div>
+                            <strong style="display: block; font-size: 14px;">Planilla Colectiva en Blanco</strong>
+                            <small style="font-size: 12px; color: var(--text-muted);">Tabla vacía para anotar nuevos alumnos o invitados de otros clubes.</small>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('field-sheet-modal').classList.remove('active')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor Dinámico para Impresión / Reportes PDF (@media print) -->
+    <div id="printable-area"></div>
+
     <!-- Universal App Modal (Replaces browser alert/confirm) -->
     <div id="app-modal-overlay" class="app-modal-overlay">
         <div class="app-modal-card" id="app-modal-card">
@@ -2879,18 +2957,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260901-22"></script>
-    <script src="hapkido-data.js?v=20260901-22"></script>
-    <script src="hapkido-auth.js?v=20260901-22"></script>
-    <script src="hapkido-athletes.js?v=20260901-22"></script>
-    <script src="hapkido-physical.js?v=20260901-22"></script>
-    <script src="hapkido-exams.js?v=20260901-22"></script>
-    <script src="hapkido-combat.js?v=20260901-22"></script>
-    <script src="hapkido-schools.js?v=20260901-22"></script>
-    <script src="hapkido-torneos.js?v=20260901-22"></script>
-    <script src="hapkido-vocab.js?v=20260901-22"></script>
-    <script src="hapkido-timer.js?v=20260901-22"></script>
-    <script src="hapkido-sync.js?v=20260901-22"></script>
-    <script src="hapkido-init.js?v=20260901-22"></script>
+    <script src="app.js?v=20260901-23"></script>
+    <script src="hapkido-data.js?v=20260901-23"></script>
+    <script src="hapkido-auth.js?v=20260901-23"></script>
+    <script src="hapkido-athletes.js?v=20260901-23"></script>
+    <script src="hapkido-physical.js?v=20260901-23"></script>
+    <script src="hapkido-exams.js?v=20260901-23"></script>
+    <script src="hapkido-combat.js?v=20260901-23"></script>
+    <script src="hapkido-schools.js?v=20260901-23"></script>
+    <script src="hapkido-torneos.js?v=20260901-23"></script>
+    <script src="hapkido-vocab.js?v=20260901-23"></script>
+    <script src="hapkido-timer.js?v=20260901-23"></script>
+    <script src="hapkido-sync.js?v=20260901-23"></script>
+    <script src="hapkido-init.js?v=20260901-23"></script>
 </body>
 </html>

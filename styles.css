@@ -5496,6 +5496,390 @@ body:not(.role-admin) #group-configuracion {
     transform: translateY(-1px);
 }
 
+/* ==========================================================================
+   DASHBOARD QUICK ACTIONS (ACCIONES RÁPIDAS)
+   ========================================================================== */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.quick-action-card {
+    background: linear-gradient(135deg, rgba(23, 29, 41, 0.85), rgba(15, 19, 26, 0.95));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+    transition: width var(--transition-fast);
+}
+
+.quick-action-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: var(--shadow-glow-blue);
+}
+
+.quick-action-card:hover::before {
+    width: 8px;
+}
+
+.quick-action-card.qa-gold::before { background: var(--accent); }
+.quick-action-card.qa-gold:hover { border-color: rgba(245, 158, 11, 0.4); box-shadow: var(--shadow-glow-gold); }
+
+.quick-action-card.qa-green::before { background: var(--success); }
+.quick-action-card.qa-green:hover { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+
+.quick-action-card.qa-purple::before { background: var(--purple); }
+.quick-action-card.qa-purple:hover { border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+
+.quick-action-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.qa-gold .quick-action-icon { background: rgba(245, 158, 11, 0.12); color: var(--accent); }
+.qa-green .quick-action-icon { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+.qa-purple .quick-action-icon { background: rgba(139, 92, 246, 0.12); color: var(--purple); }
+
+.quick-action-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.quick-action-info p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+/* ==========================================================================
+   OPERATING MODE TOGGLE (MODO DOJANG VS MODO FEDERACIÓN)
+   ========================================================================== */
+.mode-toggle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.mode-toggle-badge:hover {
+    background: rgba(56, 189, 248, 0.25);
+    transform: scale(1.02);
+}
+
+.mode-toggle-badge.mode-is-dojang {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: var(--accent);
+}
+
+body.mode-dojang .federation-only {
+    display: none !important;
+}
+
+/* ==========================================================================
+   PRINT STYLES FOR FIELD DATA SHEETS & ATHLETE PDF REPORTS
+   ========================================================================== */
+#printable-area {
+    display: none;
+}
+
+@media print {
+    @page {
+        margin: 8mm;
+        size: landscape;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 11px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .app-container, .sidebar, .top-header, .bottom-nav, .modal, .btn-action,
+    .quick-actions-grid, .panel-header, #app-modal-overlay, .dashboard-stats,
+    .floating-buttons-container, .actions-cell {
+        display: none !important;
+    }
+
+    #printable-area {
+        display: block !important;
+        width: 100% !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .print-sheet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+    }
+
+    .print-sheet-title {
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0;
+        color: #000;
+    }
+
+    .print-sheet-meta {
+        font-size: 11px;
+        color: #333;
+        display: flex;
+        gap: 20px;
+        margin-top: 4px;
+    }
+
+    .print-field-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10px;
+        margin-bottom: 15px;
+    }
+
+    .print-field-table th, 
+    .print-field-table td {
+        border: 1px solid #333 !important;
+        padding: 4px 6px;
+        text-align: center;
+        color: #000 !important;
+    }
+
+    .print-field-table th {
+        background-color: #e5e7eb !important;
+        font-weight: bold;
+        font-size: 9.5px;
+        text-transform: uppercase;
+    }
+
+    .print-field-table th.th-group-bio { background-color: #dbeafe !important; }
+    .print-field-table th.th-group-cardio { background-color: #fee2e2 !important; }
+    .print-field-table th.th-group-strength { background-color: #fef3c7 !important; }
+    .print-field-table th.th-group-flex { background-color: #dcfce7 !important; }
+    .print-field-table th.th-group-martial { background-color: #f3e8ff !important; }
+
+    .print-field-table td.td-name {
+        text-align: left;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .print-field-table tr:nth-child(even) td {
+        background-color: #f9fafb !important;
+    }
+
+    .print-blank-row {
+        height: 24px;
+    }
+
+    .print-sheet-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        font-size: 10px;
+        border-top: 1px dashed #666;
+        padding-top: 8px;
+    }
+
+    .print-signature-box {
+        width: 200px;
+        border-top: 1px solid #000;
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 4px;
+        font-size: 10px;
+    }
+}
+
+/* ==========================================================================
+   Operating Mode Badge & Dojang Mode Rules
+   ========================================================================== */
+.mode-toggle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mode-toggle-badge.dojang-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.25) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    color: #f59e0b;
+}
+
+.mode-toggle-badge.dojang-active:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.4) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.mode-toggle-badge.federation-active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(2, 132, 199, 0.25) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+}
+
+.mode-toggle-badge.federation-active:hover {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(2, 132, 199, 0.4) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+}
+
+body.mode-dojang .federation-only {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Dojang Suite Quick Action Cards (Dashboard)
+   ========================================================================== */
+.quick-action-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.quick-action-card {
+    background: var(--card-bg, #161b22);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: width 0.2s ease;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.quick-action-card:hover::before {
+    width: 6px;
+}
+
+.quick-action-card.card-gold::before { background: #f59e0b; }
+.quick-action-card.card-cyan::before { background: #00b4d8; }
+.quick-action-card.card-purple::before { background: #8b5cf6; }
+.quick-action-card.card-green::before { background: #10b981; }
+
+.quick-action-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.quick-action-card.card-gold .quick-action-icon {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.quick-action-card.card-cyan .quick-action-icon {
+    background: rgba(0, 180, 216, 0.15);
+    color: #00b4d8;
+}
+
+.quick-action-card.card-purple .quick-action-icon {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
+}
+
+.quick-action-card.card-green .quick-action-icon {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.quick-action-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main, #f3f4f6);
+}
+
+.quick-action-info p {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--text-muted, #9ca3af);
+    line-height: 1.35;
+}
+
+
+
 
 
 

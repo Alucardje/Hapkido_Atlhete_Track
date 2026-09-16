@@ -1485,5 +1485,136 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
         `;
     };
 
+    /**
+     * Exportar base de atletas completa a formato Excel / CSV (Compatible con Excel mediante BOM UTF-8)
+     */
+    HapkidoApp.prototype.exportAthletesToCSV = function() {
+        const athletes = this.data.athletes || [];
+        if (athletes.length === 0) {
+            this.showToast('No hay atletas registrados para exportar.', 'warning');
+            return;
+        }
+        const headers = [
+            'ID', 'Cédula / Documento', 'Nombre Completo', 'Género', 'Fecha Nacimiento', 
+            'Edad', 'Categoría Edad', 'Grado / Cinturón', 'Modalidad Tradicional', 'Modalidad Deportiva',
+            'Escuela / Dojang', 'Experiencia', 'Talla (cm)', 'Peso (kg)', 'División Peso', 'Es Ayudante', 'Estado'
+        ];
+        const rows = athletes.map(a => {
+            const age = this.calculateAge(a.birthdate);
+            const ageCat = this.calculateAgeCategory(a.birthdate);
+            const weightDiv = this.getWeightDivision(a.birthdate, a.gender, a.weight);
+            const modTrad = a.modalities?.tradicional ? 'SÍ' : 'NO';
+            const modDep = a.modalities?.deportivo ? 'SÍ' : 'NO';
+            const isAyudante = a.isAyudante ? 'SÍ' : 'NO';
+            const status = a.inactive ? 'Inactivo' : 'Activo';
+            return [
+                `"${(a.id || '').replace(/"/g, '""')}"`,
+                `"${(a.cedula || a.docNumber || '').replace(/"/g, '""')}"`,
+                `"${(a.name || '').replace(/"/g, '""')}"`,
+                `"${(a.gender || '').replace(/"/g, '""')}"`,
+                `"${(a.birthdate || '').replace(/"/g, '""')}"`,
+                age !== undefined && !isNaN(age) ? age : '',
+                `"${(ageCat || '').replace(/"/g, '""')}"`,
+                `"${(a.belt || '').replace(/"/g, '""')}"`,
+                `"${modTrad}"`,
+                `"${modDep}"`,
+                `"${(a.school || '').replace(/"/g, '""')}"`,
+                `"${(a.experience || '').replace(/"/g, '""')}"`,
+                a.height || '',
+                a.weight || '',
+                `"${(weightDiv || '').replace(/"/g, '""')}"`,
+                `"${isAyudante}"`,
+                `"${status}"`
+            ].join(';');
+        });
 
+        const csvContent = '\uFEFF' + headers.join(';') + '\n' + rows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const today = new Date().toISOString().split('T')[0];
+        link.setAttribute('href', url);
+        link.setAttribute('download', `atletas_hapkido_${today}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        this.showToast('Archivo Excel/CSV de atletas descargado correctamente.', 'success');
+    };
 
+    /**
+     * Exportar histórico de mediciones físicas a formato Excel / CSV
+     */
+    HapkidoApp.prototype.exportRecordsToCSV = function() {
+        const physicalRecords = (this.data.records || []).filter(r => r.type === 'FISICA');
+        if (physicalRecords.length === 0) {
+            this.showToast('No hay pruebas físicas registradas para exportar.', 'warning');
+            return;
+        }
+        const headers = [
+            'ID Prueba', 'Fecha', 'ID Atleta', 'Nombre Atleta', 'Grado / Cinturón', 'Escuela / Dojang',
+            'Estatura (cm)', 'Peso (kg)', 'IMC', 'Envergadura (cm)', 'Ape Index', 'Grasa (%)',
+            'FC Reposo (lpm)', 'P1 (Reposo)', 'P2 (Esfuerzo)', 'P3 (Recuperación)', 'Índice Ruffier', 'Nivel Ruffier',
+            'Flexiones (1m)', 'Abdominales (1m)', 'Plancha (seg)', 'Agarre (seg)',
+            'Salto Vertical (cm)', 'Salto Horizontal (cm)', 'Test Cooper (m)',
+            'Sit & Reach (cm)', 'Apertura Split (cm)', 'Elevación Frontal (cm)', 'Equilibrio Flamenco (seg)',
+            'Agilidad T-Test (seg)', 'Shuttle Run 4x10 (seg)', 'Test Reacción (ms)',
+            'Cadencia FSKT 10s (patadas)', 'Capacidad RAST / Anaeróbica (W)'
+        ];
+
+        const rows = physicalRecords.map(r => {
+            const athlete = (this.data.athletes || []).find(a => a.id === r.athleteId) || {};
+            const p = r.physicalDetails || {};
+            const imc = (p.height && p.weight) ? (p.weight / Math.pow(p.height / 100, 2)).toFixed(1) : '';
+            const apeIndex = (p.wingspan && p.height) ? (p.wingspan - p.height).toFixed(1) : '';
+            return [
+                `"${(r.id || '').replace(/"/g, '""')}"`,
+                `"${(r.date || '').replace(/"/g, '""')}"`,
+                `"${(r.athleteId || '').replace(/"/g, '""')}"`,
+                `"${(athlete.name || '').replace(/"/g, '""')}"`,
+                `"${(athlete.belt || '').replace(/"/g, '""')}"`,
+                `"${(athlete.school || '').replace(/"/g, '""')}"`,
+                p.height || athlete.height || '',
+                p.weight || athlete.weight || '',
+                imc,
+                p.wingspan || '',
+                apeIndex,
+                p.fat || '',
+                p.rhr || '',
+                p.pulseP1 ?? '',
+                p.pulseP2 ?? '',
+                p.pulseP3 ?? '',
+                p.ruffierIndex ?? '',
+                `"${(p.ruffierLevel || '').replace(/"/g, '""')}"`,
+                p.pushups ?? '',
+                p.situps ?? '',
+                p.plank ?? '',
+                p.grip ?? '',
+                p.jumpVertical ?? '',
+                p.jumpHorizontal ?? '',
+                p.cooper ?? '',
+                p.flexibility ?? '',
+                p.split ?? '',
+                p.kickFlex ?? '',
+                p.balance ?? '',
+                p.agility ?? '',
+                p.shuttle ?? '',
+                p.reaction ?? '',
+                p.kickSpeed ?? '',
+                p.anaerobic ?? ''
+            ].join(';');
+        });
+
+        const csvContent = '\uFEFF' + headers.join(';') + '\n' + rows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const today = new Date().toISOString().split('T')[0];
+        link.setAttribute('href', url);
+        link.setAttribute('download', `evaluaciones_fisicas_hapkido_${today}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        this.showToast('Archivo Excel/CSV de evaluaciones descargado correctamente.', 'success');
+    };

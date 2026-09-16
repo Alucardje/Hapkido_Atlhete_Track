@@ -41,16 +41,19 @@ class HapkidoApp {
             });
         }
 
+        // Operating mode initialization
+        this.initOperatingMode();
+
         // Load user session from persistent localStorage
         const sessionUser = localStorage.getItem('hapkido_current_user');
         if (sessionUser) {
             this.currentUser = JSON.parse(sessionUser);
-            document.body.className = 'role-' + this.currentUser.role;
+            this.updateBodyClasses();
             const overlay = document.getElementById('login-overlay');
             if (overlay) overlay.classList.remove('active');
         } else {
             this.currentUser = null;
-            document.body.className = '';
+            this.updateBodyClasses();
             const overlay = document.getElementById('login-overlay');
             if (overlay) overlay.classList.add('active');
         }
@@ -817,6 +820,46 @@ class HapkidoApp {
             cancelBtn.addEventListener('click', onCancel);
             overlay.classList.add('active');
         });
+    }
+
+    /**
+     * Gestión del Modo de Operación (Modo Dojang vs Modo Federación)
+     */
+    updateBodyClasses() {
+        const roleClass = this.currentUser ? 'role-' + this.currentUser.role : '';
+        const modeClass = this.operatingMode === 'dojang' ? 'mode-dojang' : 'mode-federation';
+        document.body.className = `${roleClass} ${modeClass}`.trim();
+    }
+
+    initOperatingMode() {
+        this.operatingMode = localStorage.getItem('hapkido_operating_mode') || 'dojang';
+        this.applyOperatingModeUI();
+    }
+
+    toggleOperatingMode() {
+        this.operatingMode = (this.operatingMode === 'dojang') ? 'federation' : 'dojang';
+        localStorage.setItem('hapkido_operating_mode', this.operatingMode);
+        this.applyOperatingModeUI();
+        const modeName = this.operatingMode === 'dojang' ? 'Modo Dojang (Club)' : 'Modo Federación (Nacional)';
+        this.showToast(`Modo de operación: ${modeName}`, 'info');
+    }
+
+    applyOperatingModeUI() {
+        this.updateBodyClasses();
+        const badge = document.getElementById('mode-toggle-badge');
+        if (badge) {
+            if (this.operatingMode === 'dojang') {
+                badge.innerHTML = `<i class="fa-solid fa-house-user"></i> <span class="mode-text">Modo Dojang</span>`;
+                badge.title = "Cambiar a Modo Federación (Ver asociaciones y torneos nacionales)";
+                badge.classList.remove('federation-active');
+                badge.classList.add('dojang-active');
+            } else {
+                badge.innerHTML = `<i class="fa-solid fa-earth-americas"></i> <span class="mode-text">Modo Federación</span>`;
+                badge.title = "Cambiar a Modo Dojang (Simplificado para tu club)";
+                badge.classList.remove('dojang-active');
+                badge.classList.add('federation-active');
+            }
+        }
     }
 
 }

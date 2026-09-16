@@ -2462,3 +2462,170 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
         if (modal) modal.classList.add('active');
     };
 
+    /**
+     * Abrir Modal de Opciones de Impresión de Planilla de Campo
+     */
+    HapkidoApp.prototype.openPrintSheetModal = function() {
+        const modal = document.getElementById('field-sheet-modal');
+        if (modal) modal.classList.add('active');
+    };
+
+    /**
+     * Imprimir Planilla de Campo para toma de datos manual en tatami
+     * @param {string} mode - 'colectiva' o 'individual'
+     * @param {boolean} fillAthletes - si es true, rellena con los nombres de atletas del dojang
+     */
+    HapkidoApp.prototype.printFieldSheet = function(mode = 'colectiva', fillAthletes = true) {
+        const printableArea = document.getElementById('printable-area');
+        if (!printableArea) return;
+
+        const schoolName = (this.currentUser && this.currentUser.school) ? this.currentUser.school : (this.data.schools?.[0]?.name || 'Dojang Central');
+        const evaluatorName = (this.currentUser && this.currentUser.name) ? this.currentUser.name : 'Maestro / Entrenador';
+        const todayStr = new Date().toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Filter athletes for the current user's school if not admin
+        let athletesList = this.data.athletes.filter(a => a.status !== 'inactivo');
+        if (this.currentUser && this.currentUser.role !== 'admin' && this.currentUser.school) {
+            athletesList = athletesList.filter(a => a.school === this.currentUser.school);
+        }
+
+        if (mode === 'colectiva') {
+            let rowsHTML = '';
+            if (fillAthletes && athletesList.length > 0) {
+                athletesList.forEach((ath, idx) => {
+                    const safeName = this.escapeHTML(ath.name);
+                    const safeBelt = this.escapeHTML(ath.belt);
+                    const safeAge = this.calculateAge(ath.birthdate);
+                    const prevWeight = ath.weight ? `${ath.weight} kg` : '';
+                    const prevHeight = ath.height ? `${ath.height} cm` : '';
+
+                    rowsHTML += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td class="td-name">${safeName} <small>(${safeBelt}, ${safeAge}a)</small></td>
+                            <td>${prevWeight}</td>
+                            <td>${prevHeight}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    `;
+                });
+                // Add 5 blank rows for drop-in/new athletes
+                for (let i = 1; i <= 5; i++) {
+                    rowsHTML += `
+                        <tr class="print-blank-row">
+                            <td>${athletesList.length + i}</td>
+                            <td class="td-name"></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    `;
+                }
+            } else {
+                // Completely blank sheet (18 rows)
+                for (let i = 1; i <= 18; i++) {
+                    rowsHTML += `
+                        <tr class="print-blank-row">
+                            <td>${i}</td>
+                            <td class="td-name"></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    `;
+                }
+            }
+
+            printableArea.innerHTML = `
+                <div class="print-sheet-header">
+                    <div>
+                        <h2 class="print-sheet-title">🥋 Planilla de Campo — Evaluación Física & Antropometría Marcial</h2>
+                        <div class="print-sheet-meta">
+                            <span><strong>Escuela / Dojang:</strong> ${this.escapeHTML(schoolName)}</span>
+                            <span><strong>Evaluador:</strong> ${this.escapeHTML(evaluatorName)}</span>
+                            <span><strong>Fecha:</strong> ${todayStr}</span>
+                            <span><strong>Grupo / Turno:</strong> ______________</span>
+                        </div>
+                    </div>
+                    <div style="text-align: right; font-size: 10px; font-weight: bold;">
+                        <span>FEVEHAPKIDO 2026</span><br>
+                        <small>Hoja de Control Técnico</small>
+                    </div>
+                </div>
+
+                <table class="print-field-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width: 25px;">#</th>
+                            <th rowspan="2" style="width: 140px;">Nombre del Atleta / Cinta</th>
+                            <th colspan="4" class="th-group-bio">Biometría</th>
+                            <th colspan="3" class="th-group-cardio">Test Ruffier</th>
+                            <th colspan="3" class="th-group-strength">Fuerza & Core (1m)</th>
+                            <th colspan="4" class="th-group-flex">Potencia & Flexibilidad</th>
+                            <th colspan="4" class="th-group-martial">Agilidad & Técnico (1-10)</th>
+                        </tr>
+                        <tr>
+                            <!-- Biometría -->
+                            <th class="th-group-bio" style="width: 40px;">Peso<br><small>(kg)</small></th>
+                            <th class="th-group-bio" style="width: 40px;">Talla<br><small>(cm)</small></th>
+                            <th class="th-group-bio" style="width: 40px;">Cintura<br><small>(cm)</small></th>
+                            <th class="th-group-bio" style="width: 40px;">Enverg.<br><small>(cm)</small></th>
+                            <!-- Cardio -->
+                            <th class="th-group-cardio" style="width: 35px;">P1<br><small>Reposo</small></th>
+                            <th class="th-group-cardio" style="width: 35px;">P2<br><small>Post 30s</small></th>
+                            <th class="th-group-cardio" style="width: 35px;">P3<br><small>1 min</small></th>
+                            <!-- Fuerza -->
+                            <th class="th-group-strength" style="width: 40px;">Pechadas<br><small>(reps)</small></th>
+                            <th class="th-group-strength" style="width: 40px;">Abdom.<br><small>(reps)</small></th>
+                            <th class="th-group-strength" style="width: 40px;">Plancha<br><small>(seg)</small></th>
+                            <!-- Potencia/Flex -->
+                            <th class="th-group-flex" style="width: 40px;">Salto H.<br><small>(m)</small></th>
+                            <th class="th-group-flex" style="width: 40px;">Salto V.<br><small>(cm)</small></th>
+                            <th class="th-group-flex" style="width: 40px;">Flexitest<br><small>(cm)</small></th>
+                            <th class="th-group-flex" style="width: 40px;">Split<br><small>(cm suelo)</small></th>
+                            <!-- Agilidad/Tecnico -->
+                            <th class="th-group-martial" style="width: 40px;">Shuttle<br><small>(seg)</small></th>
+                            <th class="th-group-martial" style="width: 40px;">Hyungs<br><small>(Formas)</small></th>
+                            <th class="th-group-martial" style="width: 40px;">Hosinsul<br><small>(Defensa)</small></th>
+                            <th class="th-group-martial" style="width: 40px;">Armas<br><small>(Bong/Dan)</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHTML}
+                    </tbody>
+                </table>
+
+                <div class="print-sheet-footer">
+                    <div>
+                        <p><strong>Instrucciones:</strong> Registrar con bolígrafo durante la sesión de entrenamiento. Ruffier = (P1 + P2 + P3 - 200) / 10.</p>
+                        <p>Transcribir los resultados en la app: <em>https://alucardje.github.io/Hapkido_Atlhete_Track/</em></p>
+                    </div>
+                    <div class="print-signature-box">
+                        Firma del Maestro / Evaluador
+                    </div>
+                </div>
+            `;
+        }
+
+        // Close modal if open
+        const modal = document.getElementById('field-sheet-modal');
+        if (modal) modal.classList.remove('active');
+
+        // Trigger browser print dialog
+        setTimeout(() => {
+            window.print();
+        }, 150);
+    };
+
+

@@ -82,7 +82,7 @@ HapkidoApp.prototype.login = async function(event) {
         if (user) {
             this.currentUser = user;
             localStorage.setItem('hapkido_current_user', JSON.stringify(user));
-            document.body.className = 'role-' + user.role;
+            this.updateBodyClasses();
             
             const errorMsg = document.getElementById('login-error-msg');
             if (errorMsg) errorMsg.classList.add('hidden');
@@ -164,7 +164,7 @@ HapkidoApp.prototype.login = async function(event) {
         if (user) {
             this.currentUser = user;
             localStorage.setItem('hapkido_current_user', JSON.stringify(user));
-            document.body.className = 'role-' + user.role;
+            this.updateBodyClasses();
 
             const overlay = document.getElementById('login-overlay');
             if (overlay) overlay.classList.remove('active');
@@ -185,7 +185,7 @@ HapkidoApp.prototype.login = async function(event) {
 HapkidoApp.prototype.logout = function() {
         this.currentUser = null;
         localStorage.removeItem('hapkido_current_user');
-        document.body.className = '';
+        this.updateBodyClasses();
 
         // Close mobile drawer if open
         const sidebar = document.querySelector('.sidebar');
