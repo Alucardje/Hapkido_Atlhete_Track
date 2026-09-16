@@ -1488,6 +1488,19 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
     /**
      * Exportar base de atletas completa a formato Excel / CSV (Compatible con Excel mediante BOM UTF-8)
      */
+        /**
+     * Sanitizador seguro de campos CSV para evitar Inyección de Fórmulas / Comandos DDE en Excel
+     */
+    HapkidoApp.prototype.sanitizeCSVField = function(val) {
+        if (val === null || val === undefined) return '""';
+        let str = String(val).trim();
+        // Si el valor comienza con caracteres de fórmula de Excel (=, +, -, @, tab, retorno, pipe), anteponer apóstrofe de escape
+        if (/^[=+\-@\t\r\|]/.test(str)) {
+            str = "'" + str;
+        }
+        return '"' + str.replace(/"/g, '""') + '"';
+    };
+
     HapkidoApp.prototype.exportAthletesToCSV = function() {
         const athletes = this.data.athletes || [];
         if (athletes.length === 0) {
@@ -1508,23 +1521,23 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
             const isAyudante = a.isAyudante ? 'SÍ' : 'NO';
             const status = a.inactive ? 'Inactivo' : 'Activo';
             return [
-                `"${(a.id || '').replace(/"/g, '""')}"`,
-                `"${(a.cedula || a.docNumber || '').replace(/"/g, '""')}"`,
-                `"${(a.name || '').replace(/"/g, '""')}"`,
-                `"${(a.gender || '').replace(/"/g, '""')}"`,
-                `"${(a.birthdate || '').replace(/"/g, '""')}"`,
-                age !== undefined && !isNaN(age) ? age : '',
-                `"${(ageCat || '').replace(/"/g, '""')}"`,
-                `"${(a.belt || '').replace(/"/g, '""')}"`,
-                `"${modTrad}"`,
-                `"${modDep}"`,
-                `"${(a.school || '').replace(/"/g, '""')}"`,
-                `"${(a.experience || '').replace(/"/g, '""')}"`,
-                a.height || '',
-                a.weight || '',
-                `"${(weightDiv || '').replace(/"/g, '""')}"`,
-                `"${isAyudante}"`,
-                `"${status}"`
+                this.sanitizeCSVField(a.id),
+                this.sanitizeCSVField(a.cedula || a.docNumber),
+                this.sanitizeCSVField(a.name),
+                this.sanitizeCSVField(a.gender),
+                this.sanitizeCSVField(a.birthdate),
+                (age !== undefined && !isNaN(age)) ? age : '',
+                this.sanitizeCSVField(ageCat),
+                this.sanitizeCSVField(a.belt),
+                this.sanitizeCSVField(modTrad),
+                this.sanitizeCSVField(modDep),
+                this.sanitizeCSVField(a.school),
+                this.sanitizeCSVField(a.experience),
+                (a.height !== null && a.height !== undefined && !isNaN(a.height)) ? a.height : '',
+                (a.weight !== null && a.weight !== undefined && !isNaN(a.weight)) ? a.weight : '',
+                this.sanitizeCSVField(weightDiv),
+                this.sanitizeCSVField(isAyudante),
+                this.sanitizeCSVField(status)
             ].join(';');
         });
 
@@ -1568,12 +1581,12 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
             const imc = (p.height && p.weight) ? (p.weight / Math.pow(p.height / 100, 2)).toFixed(1) : '';
             const apeIndex = (p.wingspan && p.height) ? (p.wingspan - p.height).toFixed(1) : '';
             return [
-                `"${(r.id || '').replace(/"/g, '""')}"`,
-                `"${(r.date || '').replace(/"/g, '""')}"`,
-                `"${(r.athleteId || '').replace(/"/g, '""')}"`,
-                `"${(athlete.name || '').replace(/"/g, '""')}"`,
-                `"${(athlete.belt || '').replace(/"/g, '""')}"`,
-                `"${(athlete.school || '').replace(/"/g, '""')}"`,
+                this.sanitizeCSVField(r.id),
+                this.sanitizeCSVField(r.date),
+                this.sanitizeCSVField(r.athleteId),
+                this.sanitizeCSVField(athlete.name),
+                this.sanitizeCSVField(athlete.belt),
+                this.sanitizeCSVField(athlete.school),
                 p.height || athlete.height || '',
                 p.weight || athlete.weight || '',
                 imc,
@@ -1585,7 +1598,7 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
                 p.pulseP2 ?? '',
                 p.pulseP3 ?? '',
                 p.ruffierIndex ?? '',
-                `"${(p.ruffierLevel || '').replace(/"/g, '""')}"`,
+                this.sanitizeCSVField(p.ruffierLevel),
                 p.pushups ?? '',
                 p.situps ?? '',
                 p.plank ?? '',

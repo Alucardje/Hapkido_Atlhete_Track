@@ -826,13 +826,15 @@ class HapkidoApp {
      * Gestión del Modo de Operación (Modo Dojang vs Modo Federación)
      */
     updateBodyClasses() {
-        const roleClass = this.currentUser ? 'role-' + this.currentUser.role : '';
-        const modeClass = this.operatingMode === 'dojang' ? 'mode-dojang' : 'mode-federation';
+        const validRoles = ['admin', 'instructor', 'ayudante', 'athlete'];
+        const roleClass = (this.currentUser && validRoles.includes(this.currentUser.role)) ? 'role-' + this.currentUser.role : '';
+        const modeClass = (this.operatingMode === 'federation') ? 'mode-federation' : 'mode-dojang';
         document.body.className = `${roleClass} ${modeClass}`.trim();
     }
 
     initOperatingMode() {
-        this.operatingMode = localStorage.getItem('hapkido_operating_mode') || 'dojang';
+        const saved = localStorage.getItem('hapkido_operating_mode');
+        this.operatingMode = (saved === 'federation') ? 'federation' : 'dojang';
         this.applyOperatingModeUI();
     }
 
