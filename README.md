@@ -2,6 +2,10 @@
 
 Aplicación web progresiva (PWA) para la medición, evaluación y gestión integral del atleta de Hapkido, diseñada conforme al reglamento oficial de FEVEHAPKIDO 2026.
 
+> **Beom Shin Kwan Hapkido** — Asociación de Hapkido Carabobo
+
+**Licencia:** MIT
+
 ## Objetivos
 
 1. **Estandarizar la evaluación física** del atleta de Hapkido utilizando baremos objetivos por edad, género y grado (cinta), con más de 20 métricas biométricas y de rendimiento.
@@ -120,7 +124,17 @@ Aplicación web progresiva (PWA) para la medición, evaluación y gestión integ
 ├── sw.js                   # Service Worker (caché offline)
 ├── vendor/                 # Dependencias vendored (Chart.js, FA, fuentes)
 ├── icons/                  # Iconos PWA (64, 192, 512px)
-└── docs/                   # Documentación de referencia (vocabulario, reglamento)
+├── docs/                   # Documentación
+│   ├── ARQUITECTURA.md     # Documentación técnica y arquitectura del sistema
+│   ├── MANUAL_USUARIO.md   # Guía de uso para instructores y administradores
+│   ├── DEPLOY.md           # Guía de despliegue en hosting
+│   ├── API_SYNC.md         # Protocolo de sincronización nube y P2P
+│   ├── vocabulario/        # Vocabulario coreano del Hapkido
+│   ├── tecnicas/           # Imágenes de técnicas
+│   └── *.pdf, *.doc        # Reglamento y programa oficial
+├── LICENSE                 # Licencia MIT
+├── CHANGELOG.md            # Historial de versiones
+└── CONTRIBUTING.md         # Guía para contribuidores
 ```
 
 ## Instalación
@@ -139,3 +153,14 @@ Aplicación web progresiva (PWA) para la medición, evaluación y gestión integ
 3. En móvil: Menú > "Agregar a pantalla de inicio".
 
 La aplicación funcionará 100% offline después de la primera carga.
+
+## Documentación
+
+| Archivo | Descripción |
+|---------|-------------|
+| [MANUAL_USUARIO.md](docs/MANUAL_USUARIO.md) | Guía de uso paso a paso para instructores y administradores |
+| [ARQUITECTURA.md](docs/ARQUITECTURA.md) | Documentación técnica: módulos, modelo de datos, RBAC, seguridad |
+| [DEPLOY.md](docs/DEPLOY.md) | Guía de despliegue en GitHub Pages y hosting estático |
+| [API_SYNC.md](docs/API_SYNC.md) | Protocolo de sincronización nube y transferencia P2P |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Guía para contribuidores |
+| [CHANGELOG.md](CHANGELOG.md) | Historial de versiones |
