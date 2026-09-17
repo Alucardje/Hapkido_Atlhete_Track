@@ -2,13 +2,15 @@
   "name": "Hapkido Athlete Tracker",
   "short_name": "HapkidoTracker",
   "description": "Sistema Integral de Gestión y Medición del Atleta de Hapkido - FEVEHAPKIDO",
+  "id": "./",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f131a",
   "theme_color": "#00b4d8",
   "orientation": "portrait-primary",
-  "categories": ["sports", "fitness", "productivity"],
+  "categories": ["sports", "fitness", "health"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icons/favicon-64.png",

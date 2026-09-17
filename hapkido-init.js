@@ -5,15 +5,43 @@ console.log('Module: hapkido-init.js loaded');
  */
 
 const requiredMethods = [
+    // Core (app.js)
     'loadData', 'saveData', 'login', 'logout', 'updateUserSessionHeader',
-    'validateUserPrivilege', 'renderUsersList', 'renderAthletesList',
-    'populateAthleteDropdowns', 'updateOpponentDropdown', 'startCombatScoring',
-    'updateScoreboardUI', 'updatePhysicalFormLabels', 'calculateLiveBodyFat',
+    'escapeHTML', 'navigateTo', 'toggleSidebar', 'closeSidebarMobile',
+    'toggleDesktopCollapse', 'restoreSidebarState', 'toggleNavGroup',
+    'showAlert', 'showConfirm', 'showToast',
+    'updateBodyClasses', 'initOperatingMode', 'toggleOperatingMode', 'applyOperatingModeUI',
+    'updateDashboardStats', 'handleRouting',
+    // Auth (hapkido-auth.js)
+    'validateUserPrivilege', 'renderUsersList',
+    // Athletes (hapkido-athletes.js)
+    'renderAthletesList', 'populateAthleteDropdowns', 'openNewAthleteModal',
+    'saveAthlete', 'deleteAthlete', 'calculateAge', 'calculateAgeCategory',
+    'getWeightDivision', 'getAthleteAlerts',
+    // Combat (hapkido-combate.js)
+    'updateOpponentDropdown', 'startCombatScoring', 'updateScoreboardUI',
+    'addScore', 'addPenalty', 'removeScore', 'removePenalty',
+    'changeRound', 'finishCombat', 'toggleTimer', 'resetTimer',
+    // Physical (hapkido-physical.js)
+    'updatePhysicalFormLabels', 'calculateLiveBodyFat',
     'savePhysicalTest', 'evaluatePhysicalMetrics', 'generatePhysicalReportHTML',
-    'renderPhysicalProfileChart', 'loadBeltExam', 'saveBeltExam',
-    'initVocabulary', 'switchManualTab', 'renderManualVocabulary',
-    'filterManualVocab', 'populateAthleteSchoolsDropdown', 'renderSchoolsList',
-    'renderAssociationsList', 'renderTorneosList'
+    'renderPhysicalProfileChart', 'openPrintSheetModal', 'printFieldSheet',
+    'exportRecordsToCSV',
+    // Exams (hapkido-exams.js)
+    'loadBeltExam', 'saveBeltExam', 'renderExamHistoryTable',
+    // Schools (hapkido-schools.js)
+    'renderSchoolsList', 'renderAssociationsList', 'populateAthleteSchoolsDropdown',
+    // Torneos (hapkido-torneos.js)
+    'renderTorneosList',
+    // Vocab (hapkido-vocab.js)
+    'initVocabulary', 'switchManualTab', 'renderManualVocabulary', 'filterManualVocab',
+    // Timer (hapkido-timer.js)
+    'initTatamiTimer',
+    // Athletes export
+    'exportAthletesToCSV',
+    // History (hapkido-athletes.js or hapkido-physical.js)
+    'loadAthleteAnalysis', 'populateManualBeltsDropdown',
+    'renderAthleteDashboard'
 ];
 
 requiredMethods.forEach(m => {

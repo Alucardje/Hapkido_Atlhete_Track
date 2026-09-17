@@ -21,7 +21,7 @@
     <!-- Local FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <!-- Local Chart.js for interactive analytics -->
-    <script src="vendor/chartjs/chart.umd.min.js"></script>
+    <script defer src="vendor/chartjs/chart.umd.min.js"></script>
     <link rel="stylesheet" href="styles.css?v=20260901-2">
 </head>
 <body>
@@ -36,7 +36,7 @@
                     <h2>HAPKIDO</h2>
                     <p>MEDICIÓN DEL ATLETA</p>
                 </div>
-                <button type="button" class="sidebar-collapse-btn" id="desktop-collapse-btn" onclick="app.toggleDesktopCollapse()" title="Colapsar menú">
+                <button type="button" class="sidebar-collapse-btn" id="desktop-collapse-btn" onclick="app.toggleDesktopCollapse()" title="Colapsar menú" aria-label="Colapsar menú lateral">
                     <i class="fa-solid fa-angles-left"></i>
                 </button>
             </div>
@@ -50,7 +50,7 @@
                     <span class="sidebar-user-name" id="sidebar-user-name">Usuario</span>
                     <span class="sidebar-user-role" id="sidebar-user-role">Rol Activo</span>
                 </div>
-                <button type="button" class="sidebar-quick-logout-btn" onclick="app.logout()" title="Cerrar sesión / Cambiar de Rol">
+                <button type="button" class="sidebar-quick-logout-btn" onclick="app.logout()" title="Cerrar sesión / Cambiar de Rol" aria-label="Cerrar sesión">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
@@ -177,7 +177,7 @@
                     <h1 id="page-title">Dashboard</h1>
                 </div>
                 <div class="header-actions">
-                    <div class="mode-toggle-badge dojang-active" id="mode-toggle-badge" onclick="app.toggleOperatingMode()" title="Cambiar modo de operación">
+                    <div class="mode-toggle-badge dojang-active" id="mode-toggle-badge" onclick="app.toggleOperatingMode()" title="Cambiar modo de operación" role="button" tabindex="0" aria-label="Cambiar modo de operación">
                         <i class="fa-solid fa-house-user"></i>
                         <span class="mode-text">Modo Dojang</span>
                     </div>
@@ -188,7 +188,7 @@
                             <span class="user-active-meta" id="header-user-meta">--</span>
                         </div>
                     </div>
-                    <button type="button" class="header-logout-btn" id="header-logout-btn" onclick="app.logout()" title="Cerrar sesión / Cambiar de Rol" style="display: none;">
+                    <button type="button" class="header-logout-btn" id="header-logout-btn" onclick="app.logout()" title="Cerrar sesión / Cambiar de Rol" style="display: none;" aria-label="Cerrar sesión">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span class="header-logout-text">Salir</span>
                     </button>
@@ -434,7 +434,7 @@
                 </div>
 
                 <!-- Modal para Nuevo Atleta -->
-                <div class="modal" id="athlete-modal">
+                <div class="modal" id="athlete-modal" role="dialog" aria-modal="true" aria-labelledby="athlete-modal-title">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h2 id="athlete-modal-title">Agregar Nuevo Atleta</h2>
@@ -2602,7 +2602,7 @@
     </div>
 
     <!-- Pantalla de Bienvenida y Selección Rápida de Rol para Evaluadores (Beta Testing) -->
-    <div id="login-overlay" class="login-overlay active">
+    <div id="login-overlay" class="login-overlay active" role="dialog" aria-modal="true" aria-label="Iniciar sesión">
         <div class="welcome-box">
             <div class="welcome-header">
                 <div class="welcome-logo-badge">
@@ -2905,7 +2905,7 @@
     </div>
 
     <!-- Modal para Imprimir Planilla de Campo -->
-    <div class="modal" id="field-sheet-modal">
+    <div class="modal" id="field-sheet-modal" role="dialog" aria-modal="true" aria-labelledby="field-sheet-modal">
         <div class="modal-content" style="width: 520px; max-width: 95%;">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-print" style="color: var(--primary);"></i> Planilla de Campo Imprimible</h2>

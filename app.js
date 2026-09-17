@@ -47,10 +47,22 @@ class HapkidoApp {
         // Load user session from persistent localStorage
         const sessionUser = localStorage.getItem('hapkido_current_user');
         if (sessionUser) {
-            this.currentUser = JSON.parse(sessionUser);
-            this.updateBodyClasses();
-            const overlay = document.getElementById('login-overlay');
-            if (overlay) overlay.classList.remove('active');
+            try {
+                this.currentUser = JSON.parse(sessionUser);
+            } catch (e) {
+                console.warn('[HapkidoApp] Session data corrupted, clearing:', e);
+                localStorage.removeItem('hapkido_current_user');
+                this.currentUser = null;
+            }
+            if (this.currentUser) {
+                this.updateBodyClasses();
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.classList.remove('active');
+            } else {
+                this.updateBodyClasses();
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.classList.add('active');
+            }
         } else {
             this.currentUser = null;
             this.updateBodyClasses();
@@ -372,8 +384,8 @@ class HapkidoApp {
                 
                 li.innerHTML = `
                     <div class="recent-info">
-                        <h4>${ath.name}</h4>
-                        <p>${cat} • Grado: ${ath.belt} • Peso: ${ath.weight ? ath.weight + ' kg' : 'Sin registrar'}</p>
+                        <h4>${this.escapeHTML(ath.name)}</h4>
+                        <p>${this.escapeHTML(cat)} • Grado: ${this.escapeHTML(ath.belt)} • Peso: ${ath.weight ? this.escapeHTML(String(ath.weight)) + ' kg' : 'Sin registrar'}</p>
                     </div>
                     ${modBadge}
                 `;
@@ -415,10 +427,10 @@ class HapkidoApp {
             item.innerHTML = `
                 <i class="fa-solid ${topAlert.icon}" style="color:${color}; font-size:18px; margin-top:2px; flex-shrink:0;"></i>
                 <div>
-                    <strong style="color:var(--text-primary);">${athlete.name}</strong>
-                    <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">${athlete.belt} · ${athlete.school || ''}</span>
+                    <strong style="color:var(--text-primary);">${this.escapeHTML(athlete.name)}</strong>
+                    <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">${this.escapeHTML(athlete.belt)} · ${this.escapeHTML(athlete.school || '')}</span>
                     <ul style="margin:4px 0 0 0; padding-left:16px; font-size:12px; color:var(--text-muted);">
-                        ${alerts.map(a => `<li>${a.message}</li>`).join('')}
+                        ${alerts.map(a => `<li>${this.escapeHTML(a.message)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -828,7 +840,7 @@ class HapkidoApp {
 
         const toast = document.createElement('div');
         toast.className = 'hapkido-toast toast-' + type;
-        toast.innerHTML = `<span>${message}</span>`;
+        toast.innerHTML = `<span>${this.escapeHTML(message)}</span>`;
         Object.assign(toast.style, {
             position: 'fixed',
             bottom: '24px',
