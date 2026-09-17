@@ -14,7 +14,7 @@ y este proyecto adherce al [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Added
 - **Documentación README.md:** Documentación completa del proyecto con objetivos de la aplicación, funcionalidades detalladas (12 módulos), roles y permisos, stack tecnológico, estructura de archivos, guía de instalación y uso como PWA.
-- **Licencia MIT:** Archivo `LICENSE` con titularidad de Beom Shin Kwan Hapkido / Asociación de Hapkido Carabobo.
+- **Licencia MIT:** Archivo `LICENSE` con titularidad de Javier Contreras.
 
 ---
 

@@ -773,4 +773,4 @@ La aplicación tiene dos modos de operación visibles en el encabezado:
 
 *Manual de Usuario — Hapkido Athlete Tracker v1.0.0*
 *Conforme al Reglamento Oficial FEVEHAPKIDO 2026*
-*Beom Shin Kwan Hapkido / Asociación de Hapkido Carabobo*
+*Javier Contreras — Beom Shin Kwan Hapkido / Asociación de Hapkido Carabobo*

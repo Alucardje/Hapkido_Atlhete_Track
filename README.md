@@ -2,7 +2,7 @@
 
 Aplicación web progresiva (PWA) para la medición, evaluación y gestión integral del atleta de Hapkido, diseñada conforme al reglamento oficial de FEVEHAPKIDO 2026.
 
-> **Beom Shin Kwan Hapkido** — Asociación de Hapkido Carabobo
+> **Javier Contreras** — Beom Shin Kwan Hapkido / Asociación de Hapkido Carabobo
 
 **Licencia:** MIT
 
