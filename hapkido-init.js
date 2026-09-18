@@ -25,7 +25,7 @@ const requiredMethods = [
     // Physical (hapkido-physical.js)
     'updatePhysicalFormLabels', 'calculateLiveBodyFat',
     'savePhysicalTest', 'evaluatePhysicalMetrics', 'generatePhysicalReportHTML',
-    'renderPhysicalProfileChart', 'openPrintSheetModal', 'printFieldSheet',
+    'renderPhysicalProfileChart', 'openPrintSheetModal', 'showIndividualSheetModal', 'printFieldSheet',
     'exportRecordsToCSV',
     // Exams (hapkido-exams.js)
     'loadBeltExam', 'saveBeltExam', 'renderExamHistoryTable',

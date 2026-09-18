@@ -381,7 +381,7 @@
             <section id="section-atletas" class="app-section">
                 <div class="section-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="primary-btn" id="btn-new-athlete"><i class="fa-solid fa-user-plus"></i> Nuevo Atleta</button>
-                    <button type="button" class="btn btn-secondary" onclick="app.exportAthletesToCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Excel / CSV</button>
+                            <button type="button" class="sec-btn" onclick="app.exportAthletesToCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Excel / CSV</button>
                 </div>
 
                 <div class="panel-card mt-20">
@@ -701,7 +701,7 @@
                         <h2><i class="fa-solid fa-heart-pulse"></i> Registro de Ficha Fisiológica y Pruebas Técnicas</h2>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             <button type="button" class="primary-btn" onclick="app.openPrintSheetModal()"><i class="fa-solid fa-print"></i> Planilla de Campo</button>
-                            <button type="button" class="btn btn-secondary" onclick="app.exportRecordsToCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Evaluaciones</button>
+                            <button type="button" class="sec-btn" onclick="app.exportRecordsToCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Evaluaciones</button>
                         </div>
                     </div>
                     <div class="panel-body">
@@ -1069,10 +1069,10 @@
             <section id="section-historial" class="app-section">
                 <!-- Sub-tabs for Individual Progress vs Head-to-Head Comparison -->
                 <div class="sticky-subnav">
-                    <button class="tab-btn active" id="subtab-btn-hist-progreso" onclick="app.switchHistorySubTab('progreso')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <button class="tab-btn active" id="subtab-btn-hist-progreso" onclick="app.switchHistorySubTab('progreso')">
                         <i class="fa-solid fa-chart-line"></i> Evolución y Progreso Individual
                     </button>
-                    <button class="tab-btn" id="subtab-btn-hist-h2h" onclick="app.switchHistorySubTab('h2h')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <button class="tab-btn" id="subtab-btn-hist-h2h" onclick="app.switchHistorySubTab('h2h')">
                         <i class="fa-solid fa-people-arrows"></i> Comparador Cara a Cara (Head-to-Head)
                     </button>
                 </div>
@@ -1918,10 +1918,10 @@
             <section id="section-escuelas" class="app-section">
                 <!-- Sub-tabs for Dojangs and Associations -->
                 <div class="sticky-subnav">
-                    <button class="tab-btn active" id="subtab-btn-schools" onclick="app.switchSchoolSubTab('schools')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <button class="tab-btn active" id="subtab-btn-schools" onclick="app.switchSchoolSubTab('schools')">
                         <i class="fa-solid fa-school"></i> Dojangs / Escuelas locales
                     </button>
-                    <button class="tab-btn" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')" style="padding: 10px 18px; border-radius: var(--radius-md); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <button class="tab-btn" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')">
                         <i class="fa-solid fa-sitemap"></i> Asociaciones Estatales
                     </button>
                 </div>
@@ -2241,7 +2241,7 @@
                     <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <h2><i class="fa-solid fa-users"></i> Atletas Inscritos en el Evento: <span id="inscritos-torneo-name" style="color: var(--primary);">--</span></h2>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <button class="primary-btn btn-sm" onclick="app.openBracketGeneratorModal()" style="background: linear-gradient(135deg, #0284c7, #0369a1);"><i class="fa-solid fa-sitemap"></i> Generar Cuadro / Llaves (Brackets)</button>
+                            <button class="primary-btn primary-btn--blue btn-sm" onclick="app.openBracketGeneratorModal()"><i class="fa-solid fa-sitemap"></i> Generar Cuadro / Llaves (Brackets)</button>
                             <button class="primary-btn btn-sm" onclick="app.openTorneoInscripcionModal()"><i class="fa-solid fa-user-plus"></i> Inscribir Competidor</button>
                         </div>
                     </div>
@@ -2523,7 +2523,7 @@
                                 <input type="checkbox" id="timer-voice-toggle" checked onchange="app.timerState.voiceEnabled = this.checked">
                                 <i class="fa-solid fa-volume-high"></i> Comandos Vocales Coreanos
                             </label>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="app.playBellSound()" title="Probar sonido"><i class="fa-solid fa-play"></i> Probar Campana</button>
+                            <button type="button" class="sec-btn btn-sm" onclick="app.playBellSound()" title="Probar sonido"><i class="fa-solid fa-play"></i> Probar Campana</button>
                         </div>
                     </div>
                 </div>
@@ -2579,7 +2579,7 @@
             </div>
             <div class="modal-footer" style="padding: 14px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: #121620;">
                 <button type="button" class="btn-cancel" onclick="document.getElementById('certificate-modal').classList.remove('active')">Cerrar</button>
-                <button type="button" class="primary-btn" onclick="window.print()" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fa-solid fa-print"></i> Imprimir / Guardar en PDF</button>
+                <button type="button" class="primary-btn primary-btn--gold" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir / Guardar en PDF</button>
             </div>
         </div>
     </div>
@@ -2774,7 +2774,7 @@
                     </div>
                     <div class="bracket-actions-group">
                         <button type="button" class="primary-btn btn-sm" onclick="app.generateTournamentBracket()"><i class="fa-solid fa-dice"></i> Sortear / Generar Llave</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Llave</button>
+                        <button type="button" class="sec-btn btn-sm" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Llave</button>
                     </div>
                 </div>
 
@@ -2848,7 +2848,7 @@
                     </div>
 
                     <div class="form-actions mt-20" style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="app.jumpToLiveCombatScoring()"><i class="fa-solid fa-stopwatch"></i> Ir al Tablero en Vivo</button>
+                        <button type="button" class="sec-btn btn-sm" onclick="app.jumpToLiveCombatScoring()"><i class="fa-solid fa-stopwatch"></i> Ir al Tablero en Vivo</button>
                         <div style="display: flex; gap: 8px;">
                             <button type="button" class="btn-cancel" onclick="document.getElementById('bracket-match-modal').classList.remove('active')">Cancelar</button>
                             <button type="submit" class="primary-btn">Guardar y Avanzar</button>
@@ -2916,18 +2916,25 @@
                     Imprime una matriz física para llevar el registro a mano con lápiz y papel durante la clase en el tatami. Luego podrás registrar las mediciones en la app con calma.
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <button type="button" class="btn btn-primary" onclick="app.printFieldSheet('colectiva', true)" style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 14px; text-align: left;">
-                        <i class="fa-solid fa-users-line fa-2x" style="color: var(--gold-accent);"></i>
+                    <button type="button" class="sheet-option-btn primary-btn" onclick="app.printFieldSheet('colectiva', true)">
+                        <i class="fa-solid fa-users-line fa-2x"></i>
                         <div>
-                            <strong style="display: block; font-size: 14px;">Planilla Colectiva con Atletas Registrados</strong>
-                            <small style="font-size: 12px; color: rgba(255,255,255,0.8);">Incluye nombres, cédulas y datos base de los atletas de tu Dojang.</small>
+                            <strong>Planilla Colectiva con Atletas Registrados</strong>
+                            <small>Incluye nombres, cédulas y datos base de los atletas de tu Dojang.</small>
                         </div>
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="app.printFieldSheet('colectiva', false)" style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 14px; text-align: left;">
-                        <i class="fa-solid fa-file-pen fa-2x" style="color: #38bdf8;"></i>
+                    <button type="button" class="sheet-option-btn sec-btn" onclick="app.printFieldSheet('colectiva', false)">
+                        <i class="fa-solid fa-file-pen fa-2x"></i>
                         <div>
-                            <strong style="display: block; font-size: 14px;">Planilla Colectiva en Blanco</strong>
-                            <small style="font-size: 12px; color: var(--text-muted);">Tabla vacía para anotar nuevos alumnos o invitados de otros clubes.</small>
+                            <strong>Planilla Colectiva en Blanco</strong>
+                            <small>Tabla vacía para anotar nuevos alumnos o invitados de otros clubes.</small>
+                        </div>
+                    </button>
+                    <button type="button" class="sheet-option-btn sec-btn" onclick="app.printFieldSheet('individual', false)">
+                        <i class="fa-solid fa-id-card fa-2x"></i>
+                        <div>
+                            <strong>Planilla Individual por Atleta</strong>
+                            <small>Ficha completa de un solo atleta para archivo fisico en carpeta.</small>
                         </div>
                     </button>
                 </div>

@@ -2471,11 +2471,47 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
     };
 
     /**
+     * Mostrar modal para seleccionar atleta y generar planilla individual
+     */
+    HapkidoApp.prototype.showIndividualSheetModal = function() {
+        const athletes = this.data.athletes.filter(a => a.status !== 'inactivo');
+        if (athletes.length === 0) {
+            this.showAlert('No hay atletas activos registrados.');
+            return;
+        }
+
+        let optionsHTML = '<option value="">-- Seleccione un atleta --</option>';
+        athletes.forEach(a => {
+            const age = this.calculateAge(a.birthdate);
+            optionsHTML += `<option value="${a.id}">${this.escapeHTML(a.name)} (${this.escapeHTML(a.belt)}, ${age} anos)</option>`;
+        });
+
+        this.showConfirm(
+            `<div style="text-align:left;">
+                <p style="margin-bottom:12px;color:var(--text-muted);">Selecciona el atleta para generar su ficha individual completa:</p>
+                <select id="individual-sheet-athlete" style="width:100%;padding:10px;border-radius:var(--radius-md);background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);">
+                    ${optionsHTML}
+                </select>
+            </div>`,
+            () => {
+                const selectedId = document.getElementById('individual-sheet-athlete')?.value;
+                if (!selectedId) {
+                    this.showAlert('Debes seleccionar un atleta.');
+                    return;
+                }
+                this.printFieldSheet('individual', false, selectedId);
+            },
+            'Seleccionar y Imprimir'
+        );
+    };
+
+    /**
      * Imprimir Planilla de Campo para toma de datos manual en tatami
      * @param {string} mode - 'colectiva' o 'individual'
      * @param {boolean} fillAthletes - si es true, rellena con los nombres de atletas del dojang
+     * @param {string} athleteId - ID del atleta (solo para modo 'individual')
      */
-    HapkidoApp.prototype.printFieldSheet = function(mode = 'colectiva', fillAthletes = true) {
+    HapkidoApp.prototype.printFieldSheet = function(mode = 'colectiva', fillAthletes = true, athleteId = null) {
         const printableArea = document.getElementById('printable-area');
         if (!printableArea) return;
 
@@ -2489,7 +2525,197 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
             athletesList = athletesList.filter(a => a.school === this.currentUser.school);
         }
 
-        if (mode === 'colectiva') {
+        // MODO INDIVIDUAL: Seleccionar atleta y generar ficha completa
+        if (mode === 'individual') {
+            // Si no se proporciono athleteId, mostrar modal de seleccion
+            if (!athleteId) {
+                this.showIndividualSheetModal();
+                return;
+            }
+
+            const athlete = this.data.athletes.find(a => a.id === athleteId);
+            if (!athlete) {
+                this.showAlert('Atleta no encontrado.');
+                return;
+            }
+
+            // Obtener la ultima evaluacion fisica del atleta
+            const lastPhysRecord = this.data.records
+                .filter(r => r.athleteId === athleteId && r.type === 'FISICA')
+                .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+            const phys = lastPhysRecord ? lastPhysRecord.physicalDetails : {};
+            const evalDate = lastPhysRecord ? new Date(lastPhysRecord.date).toLocaleDateString('es-VE') : 'Sin evaluacion';
+
+            const safeName = this.escapeHTML(athlete.name);
+            const safeBelt = this.escapeHTML(athlete.belt);
+            const age = this.calculateAge(athlete.birthdate);
+
+            // Helper para mostrar valor o guion
+            const val = (v) => (v !== null && v !== undefined && v !== '') ? v : '—';
+
+            printableArea.innerHTML = `
+                <div class="print-sheet-header">
+                    <div>
+                        <h2 class="print-sheet-title">🥋 Ficha Individual del Atleta</h2>
+                        <div class="print-sheet-meta">
+                            <span><strong>Escuela / Dojang:</strong> ${this.escapeHTML(schoolName)}</span>
+                            <span><strong>Evaluador:</strong> ${this.escapeHTML(evaluatorName)}</span>
+                            <span><strong>Fecha de Impresion:</strong> ${todayStr}</span>
+                        </div>
+                    </div>
+                    <div style="text-align: right; font-size: 10px; font-weight: bold;">
+                        <span>FEVEHAPKIDO 2026</span><br>
+                        <small>Ficha de Control Individual</small>
+                    </div>
+                </div>
+
+                <!-- DATOS PERSONALES -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Datos Personales</h3>
+                    <table class="print-individual-table">
+                        <tr>
+                            <td><strong>Nombre Completo:</strong> ${safeName}</td>
+                            <td><strong>Edad:</strong> ${age} anos</td>
+                            <td><strong>Genero:</strong> ${athlete.gender || '—'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cedula / ID:</strong> ${athlete.idNumber || '—'}</td>
+                            <td><strong>Cinta Actual:</strong> ${safeBelt}</td>
+                            <td><strong>Modalidad:</strong> ${athlete.modalities?.tradicional ? 'Tradicional' : ''}${athlete.modalities?.deportivo ? ' / Deportivo' : ''}${athlete.modalities?.combativo ? ' / Combativo' : ''}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Escuela:</strong> ${this.escapeHTML(athlete.school || '—')}</td>
+                            <td><strong>Peso:</strong> ${val(athlete.weight)} kg</td>
+                            <td><strong>Estatura:</strong> ${val(athlete.height)} cm</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Telefono:</strong> ${athlete.phone || '—'}</td>
+                            <td><strong>Contacto de Emergencia:</strong> ${athlete.emergencyContact || '—'}</td>
+                            <td><strong>Telefono Emergencia:</strong> ${athlete.emergencyPhone || '—'}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- COMPOSICION CORPORAL -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Composicion Corporal y Antropometria Marcial</h3>
+                    <table class="print-individual-table">
+                        <tr>
+                            <td><strong>Estatura:</strong> ${val(phys.height)} cm</td>
+                            <td><strong>Peso:</strong> ${val(phys.weight)} kg</td>
+                            <td><strong>Cintura:</strong> ${val(phys.waist)} cm</td>
+                            <td><strong>Grasa Corporal:</strong> ${val(phys.fat)}%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Envergadura:</strong> ${val(phys.wingspan)} cm</td>
+                            <td><strong>Perimetro Cuello:</strong> ${val(phys.neck)} cm</td>
+                            <td><strong>Perimetro Muslo:</strong> ${val(phys.thigh)} cm</td>
+                            <td><strong>Pliegue Triceps:</strong> ${val(phys.skinfoldTri)} mm</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pliegue Abdominal:</strong> ${val(phys.skinfoldAbd)} mm</td>
+                            <td colspan="3"><strong>Ultima Evaluacion:</strong> ${evalDate}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- EVALUACION CARDIOVASCULAR -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Evaluacion Cardiovascular (Ruffier & FC Reposo)</h3>
+                    <table class="print-individual-table">
+                        <tr>
+                            <td><strong>FC Reposo (P1):</strong> ${val(phys.pulseP1)} ppm</td>
+                            <td><strong>FC Post 30s (P2):</strong> ${val(phys.pulseP2)} ppm</td>
+                            <td><strong>FC 1 min (P3):</strong> ${val(phys.pulseP3)} ppm</td>
+                            <td><strong>Indice Ruffier:</strong> ${val(phys.ruffierIndex)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nivel Ruffier:</strong> ${val(phys.ruffierLevel)}</td>
+                            <td><strong>FC Reposo (Reposo):</strong> ${val(phys.rhr)} ppm</td>
+                            <td colspan="2"><strong>Cooper (20 min):</strong> ${val(phys.cooper)} m</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- FUERZA Y CORE -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Fuerza y Core (1 minuto)</h3>
+                    <table class="print-individual-table">
+                        <tr>
+                            <td><strong>Pechadas:</strong> ${val(phys.pushups)} reps</td>
+                            <td><strong>Abdominales:</strong> ${val(phys.situps)} reps</td>
+                            <td><strong>Plancha:</strong> ${val(phys.plank)} seg</td>
+                            <td><strong>Agarre (Grip):</strong> ${val(phys.grip)} kg</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- POTENCIA Y FLEXIBILIDAD -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Potencia y Flexibilidad</h3>
+                    <table class="print-individual-table">
+                        <tr>
+                            <td><strong>Salto Horizontal:</strong> ${val(phys.jumpHorizontal)} cm</td>
+                            <td><strong>Salto Vertical:</strong> ${val(phys.jumpVertical)} cm</td>
+                            <td><strong>Flexibilidad (Sit & Reach):</strong> ${val(phys.flexibility)} cm</td>
+                            <td><strong>Split:</strong> ${val(phys.split)} cm al suelo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Patada (Kick Flex):</strong> ${val(phys.kickFlex)} cm</td>
+                            <td><strong>Equilibrio:</strong> ${val(phys.balance)} seg</td>
+                            <td colspan="2"><strong>Velocidad de Patada:</strong> ${val(phys.kickSpeed)} reps/10s</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- AGILIDAD Y TECNICO -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Agilidad y Technica (1-10)</h3>
+                    <table class="print-individual-table">
+                        <tr>
+                            <td><strong>Shuttle Run:</strong> ${val(phys.shuttle)} seg</td>
+                            <td><strong>Agilidad:</strong> ${val(phys.agility)} seg</td>
+                            <td><strong>Reaccion:</strong> ${val(phys.reaction)} seg</td>
+                            <td><strong>Anaerobico:</strong> ${val(phys.anaerobic)} reps</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- AREA PARA ANOTACIONES -->
+                <div class="print-individual-section">
+                    <h3 class="print-section-title">Notas y Observaciones del Maestro</h3>
+                    <div class="print-notes-area">
+                        <p>_____________________________________________________________________________</p>
+                        <p>_____________________________________________________________________________</p>
+                        <p>_____________________________________________________________________________</p>
+                        <p>_____________________________________________________________________________</p>
+                    </div>
+                </div>
+
+                <div class="print-sheet-footer">
+                    <div>
+                        <p><strong>Instrucciones:</strong> Esta ficha es para archivo fisico del atleta. Actualizar con cada evaluacion.</p>
+                        <p>Transcribir los resultados en la app: <em>https://alucardje.github.io/Hapkido_Atlhete_Track/</em></p>
+                    </div>
+                    <div class="print-signature-box">
+                        Firma del Maestro / Evaluador
+                    </div>
+                </div>
+            `;
+
+            // Close modal if open
+            const modal = document.getElementById('field-sheet-modal');
+            if (modal) modal.classList.remove('active');
+
+            // Trigger browser print dialog
+            setTimeout(() => {
+                window.print();
+            }, 150);
+            return;
+        }
+
+        // MODO COLECTIVA (funcion original)
             let rowsHTML = '';
             if (fillAthletes && athletesList.length > 0) {
                 athletesList.forEach((ath, idx) => {
