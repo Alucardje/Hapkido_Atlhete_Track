@@ -2486,23 +2486,52 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
             optionsHTML += `<option value="${a.id}">${this.escapeHTML(a.name)} (${this.escapeHTML(a.belt)}, ${age} anos)</option>`;
         });
 
-        this.showConfirm(
-            `<div style="text-align:left;">
-                <p style="margin-bottom:12px;color:var(--text-muted);">Selecciona el atleta para generar su ficha individual completa:</p>
-                <select id="individual-sheet-athlete" style="width:100%;padding:10px;border-radius:var(--radius-md);background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);">
-                    ${optionsHTML}
-                </select>
-            </div>`,
-            () => {
-                const selectedId = document.getElementById('individual-sheet-athlete')?.value;
-                if (!selectedId) {
-                    this.showAlert('Debes seleccionar un atleta.');
-                    return;
-                }
-                this.printFieldSheet('individual', false, selectedId);
-            },
-            'Seleccionar y Imprimir'
-        );
+        const overlay = document.getElementById('app-modal-overlay');
+        const iconWrap = document.getElementById('app-modal-icon');
+        const titleEl = document.getElementById('app-modal-title');
+        const bodyEl = document.getElementById('app-modal-body');
+        const cancelBtn = document.getElementById('app-modal-cancel-btn');
+        const confirmBtn = document.getElementById('app-modal-confirm-btn');
+
+        if (!overlay) return;
+
+        iconWrap.className = 'app-modal-icon type-question';
+        iconWrap.innerHTML = '<i class="fa-solid fa-id-card"></i>';
+        titleEl.textContent = 'Planilla Individual por Atleta';
+        bodyEl.innerHTML = `<div style="text-align:left;">
+            <p style="margin-bottom:12px;color:var(--text-muted);">Selecciona el atleta para generar su ficha individual completa:</p>
+            <select id="individual-sheet-athlete" style="width:100%;padding:10px;border-radius:var(--radius-md);background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);">
+                ${optionsHTML}
+            </select>
+        </div>`;
+
+        cancelBtn.style.display = 'inline-flex';
+        cancelBtn.textContent = 'Cancelar';
+        confirmBtn.textContent = 'Imprimir Ficha';
+        overlay.classList.add('active');
+
+        const cleanup = () => {
+            overlay.classList.remove('active');
+            confirmBtn.removeEventListener('click', onConfirm);
+            cancelBtn.removeEventListener('click', onCancel);
+        };
+
+        const onConfirm = () => {
+            const selectedId = document.getElementById('individual-sheet-athlete')?.value;
+            if (!selectedId) {
+                this.showAlert('Debes seleccionar un atleta.');
+                return;
+            }
+            cleanup();
+            this.printFieldSheet('individual', false, selectedId);
+        };
+
+        const onCancel = () => {
+            cleanup();
+        };
+
+        confirmBtn.addEventListener('click', onConfirm);
+        cancelBtn.addEventListener('click', onCancel);
     };
 
     /**
