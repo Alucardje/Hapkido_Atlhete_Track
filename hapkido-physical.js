@@ -2716,6 +2716,7 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
         }
 
         // MODO COLECTIVA (funcion original)
+        if (mode === 'colectiva') {
             let rowsHTML = '';
             if (fillAthletes && athletesList.length > 0) {
                 athletesList.forEach((ath, idx) => {
