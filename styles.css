@@ -737,6 +737,7 @@ button {
 
 .icon-btn.edit:hover { color: var(--primary); border-color: rgba(56, 189, 248, 0.4); }
 .icon-btn.delete:hover { color: var(--danger); border-color: rgba(239, 68, 68, 0.4); }
+.icon-btn.history:hover { color: var(--accent); border-color: rgba(56, 189, 248, 0.4); }
 
 /* ==========================================================================
    LISTS & TABLES
@@ -2743,6 +2744,23 @@ body.role-athlete #nav-timer,
 body.role-athlete #nav-usuarios,
 body.role-athlete #nav-ajustes {
     display: none !important;
+}
+
+/* Para rol Atleta: mostrar Historial directamente sin acordeón */
+body.role-athlete #group-atletas .nav-group-header {
+    display: none !important;
+}
+body.role-athlete #group-atletas .nav-group-items {
+    display: flex !important;
+    flex-direction: column;
+    padding-left: 0;
+    margin-left: 0;
+    border-left: none;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+body.role-athlete #nav-historial {
+    display: flex !important;
 }
 
 /* Ocultar en Barra Inferior Móvil (Solo dejar Inicio, Mi Historial, Manual y Salir) */

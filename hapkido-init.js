@@ -17,7 +17,7 @@ const requiredMethods = [
     // Athletes (hapkido-athletes.js)
     'renderAthletesList', 'populateAthleteDropdowns', 'openNewAthleteModal',
     'saveAthlete', 'deleteAthlete', 'calculateAge', 'calculateAgeCategory',
-    'getWeightDivision', 'getAthleteAlerts',
+    'getWeightDivision', 'getAthleteAlerts', 'viewAthleteHistory',
     // Combat (hapkido-combate.js)
     'updateOpponentDropdown', 'startCombatScoring', 'updateScoreboardUI',
     'addScore', 'addPenalty', 'removeScore', 'removePenalty',

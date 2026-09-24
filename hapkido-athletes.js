@@ -227,6 +227,7 @@ HapkidoApp.prototype.renderAthletesList = function() {
                 <td><span class="badge ${(ath.modalities && ath.modalities.deportivo) ? 'success' : 'warning'}">${this.escapeHTML(modText.join(' / '))}</span></td>
                 <td>${safeCategory} (${safeDivision})</td>
                 <td class="actions-cell">
+                    <button class="icon-btn history" onclick="app.viewAthleteHistory('${safeId}')" title="Ver Histórico y Gráficos"><i class="fa-solid fa-chart-line"></i></button>
                     <button class="icon-btn edit" onclick="app.openEditAthleteModal('${safeId}')" title="Editar Atleta"><i class="fa-solid fa-pen"></i></button>
                     <button class="icon-btn delete" onclick="app.deleteAthlete('${safeId}')" title="Eliminar Atleta"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
@@ -566,6 +567,9 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
         const athlete = this.data.athletes.find(a => a.id === this.currentUser.athleteId);
         if (!athlete) return;
 
+        const btnHistory = document.getElementById('btn-ath-history');
+        if (btnHistory) btnHistory.dataset.athleteId = athlete.id;
+
         document.getElementById('ath-dash-name').textContent = athlete.name;
         
         const beltBadge = document.getElementById('ath-dash-belt');
@@ -648,6 +652,11 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
                         ${details.jumpHorizontal ? `<p><strong>Salto Horizontal:</strong> ${details.jumpHorizontal} cm (${details.evalResults?.jumpHorizontal?.level || 'N/A'})</p>` : ''}
                         ${details.shuttle ? `<p><strong>Shuttle 4x10m:</strong> ${details.shuttle} seg (${details.evalResults?.shuttle?.level || 'N/A'})</p>` : ''}
                     </div>
+                </div>
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                    <button type="button" class="primary-btn" onclick="app.navigateTo('#historial')" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; padding: 8px 16px;">
+                        <i class="fa-solid fa-chart-line"></i> Ver Mi Histórico y Evolución Completa
+                    </button>
                 </div>
             `;
 
@@ -1501,7 +1510,22 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
         return '"' + str.replace(/"/g, '""') + '"';
     };
 
-    HapkidoApp.prototype.exportAthletesToCSV = function() {
+    /**
+     * Redirección directa al historial y análisis específico de un atleta
+     */
+    HapkidoApp.prototype.viewAthleteHistory = function(athleteId) {
+        if (!athleteId) return;
+        this.navigateTo('#historial');
+        setTimeout(() => {
+            const select = document.getElementById('analysis-athlete-select');
+            if (select) {
+                select.value = athleteId;
+            }
+            this.loadAthleteAnalysis(athleteId);
+        }, 60);
+    };
+
+        HapkidoApp.prototype.exportAthletesToCSV = function() {
         const athletes = this.data.athletes || [];
         if (athletes.length === 0) {
             this.showToast('No hay atletas registrados para exportar.', 'warning');
