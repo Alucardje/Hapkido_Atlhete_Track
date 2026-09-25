@@ -196,6 +196,9 @@
                         <i class="fa-solid fa-cloud" id="header-sync-icon"></i>
                         <span id="header-sync-text">Sincronizado</span>
                     </div>
+                    <button type="button" class="header-settings-btn" id="header-settings-btn" onclick="app.navigateTo('ajustes')" title="Configuración" aria-label="Ir a configuración">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
                     <div class="datetime">
                         <i class="fa-regular fa-calendar"></i>
                         <span id="current-date">--/--/----</span>
@@ -2716,25 +2719,17 @@
             <div class="mobile-nav-icon"><i class="fa-solid fa-gauge-high"></i></div>
             <span class="mobile-nav-label">Inicio</span>
         </a>
-        <a href="#atletas" class="mobile-nav-item" data-nav="atletas">
+        <a href="javascript:void(0)" class="mobile-nav-item mobile-nav-group" data-nav="atletas" onclick="app.toggleMobileSheet('atletas')">
             <div class="mobile-nav-icon"><i class="fa-solid fa-users"></i></div>
             <span class="mobile-nav-label">Atletas</span>
         </a>
-        <a href="#historial" class="mobile-nav-item" data-nav="historial">
-            <div class="mobile-nav-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
-            <span class="mobile-nav-label">Mi Historial</span>
-        </a>
-        <a href="#fisica" class="mobile-nav-item" data-nav="fisica">
+        <a href="javascript:void(0)" class="mobile-nav-item mobile-nav-group" data-nav="mediciones" onclick="app.toggleMobileSheet('mediciones')">
             <div class="mobile-nav-icon"><i class="fa-solid fa-heart-pulse"></i></div>
-            <span class="mobile-nav-label">Medición</span>
+            <span class="mobile-nav-label">Mediciones</span>
         </a>
-        <a href="#combate" class="mobile-nav-item" data-nav="combate">
-            <div class="mobile-nav-icon"><i class="fa-solid fa-hand-fist"></i></div>
-            <span class="mobile-nav-label">Combate</span>
-        </a>
-        <a href="#torneos" class="mobile-nav-item" data-nav="torneos">
-            <div class="mobile-nav-icon"><i class="fa-solid fa-trophy"></i></div>
-            <span class="mobile-nav-label">Torneos</span>
+        <a href="javascript:void(0)" class="mobile-nav-item mobile-nav-group" data-nav="organizacion" onclick="app.toggleMobileSheet('organizacion')">
+            <div class="mobile-nav-icon"><i class="fa-solid fa-school"></i></div>
+            <span class="mobile-nav-label">Organización</span>
         </a>
         <a href="#timer" class="mobile-nav-item" data-nav="timer">
             <div class="mobile-nav-icon"><i class="fa-solid fa-stopwatch-20"></i></div>
@@ -2744,15 +2739,21 @@
             <div class="mobile-nav-icon"><i class="fa-solid fa-book-open"></i></div>
             <span class="mobile-nav-label">Manual</span>
         </a>
-        <a href="javascript:void(0)" class="mobile-nav-item" id="mobile-more-btn" onclick="app.toggleSidebar()">
-            <div class="mobile-nav-icon"><i class="fa-solid fa-bars"></i></div>
-            <span class="mobile-nav-label">Menú</span>
-        </a>
         <a href="javascript:void(0)" class="mobile-nav-item mobile-nav-logout" id="mobile-logout-btn" onclick="app.logout()" title="Cerrar Sesión / Cambiar de Rol">
             <div class="mobile-nav-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
             <span class="mobile-nav-label">Salir</span>
         </a>
     </nav>
+
+    <!-- Mobile Bottom Sheet (Submenu) -->
+    <div class="mobile-sheet-overlay" id="mobile-sheet-overlay" onclick="app.closeMobileSheet()"></div>
+    <div class="mobile-sheet" id="mobile-sheet">
+        <div class="mobile-sheet-handle"></div>
+        <div class="mobile-sheet-title" id="mobile-sheet-title">Menú</div>
+        <div class="mobile-sheet-items" id="mobile-sheet-items">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
 
     <!-- Modal para Visualizador y Generador de Llaves de Torneo / Brackets -->
     <div class="modal" id="tournament-bracket-modal">

@@ -10,6 +10,7 @@ const requiredMethods = [
     'escapeHTML', 'navigateTo', 'toggleSidebar', 'closeSidebarMobile',
     'toggleDesktopCollapse', 'restoreSidebarState', 'toggleNavGroup',
     'showAlert', 'showConfirm', 'showToast',
+    'toggleMobileSheet', 'closeMobileSheet',
     'updateBodyClasses', 'initOperatingMode', 'toggleOperatingMode', 'applyOperatingModeUI',
     'updateDashboardStats', 'handleRouting',
     // Auth (hapkido-auth.js)

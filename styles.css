@@ -2763,20 +2763,11 @@ body.role-athlete #nav-historial {
     display: flex !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Solo dejar Inicio, Mi Historial, Manual y Salir) */
-body.role-athlete .mobile-nav-item[data-nav="atletas"],
-body.role-athlete .mobile-nav-item[data-nav="fisica"],
-body.role-athlete .mobile-nav-item[data-nav="combate"],
-body.role-athlete .mobile-nav-item[data-nav="torneos"],
-body.role-athlete .mobile-nav-item[data-nav="timer"],
-body.role-athlete #mobile-more-btn {
+/* Ocultar en Barra Inferior Móvil (Atleta: solo Inicio, Atletas→Historial, Manual, Salir) */
+body.role-athlete .mobile-nav-item[data-nav="mediciones"],
+body.role-athlete .mobile-nav-item[data-nav="organizacion"],
+body.role-athlete .mobile-nav-item[data-nav="timer"] {
     display: none !important;
-}
-
-body.role-athlete .mobile-nav-item[data-nav="historial"],
-body.role-athlete .mobile-nav-item[data-nav="manual"],
-body.role-athlete .mobile-nav-logout {
-    display: flex !important;
 }
 
 /* Ocultar paneles globales de entrenador en Dashboard */
@@ -2814,19 +2805,10 @@ body.role-ayudante #nav-ajustes {
     display: none !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Combate, Torneos, Timer, Menú y Salir) */
+/* Ocultar en Barra Inferior Móvil (Mesa Técnica: Inicio, Mediciones→Combate, Organización→Torneos, Timer, Salir) */
 body.role-ayudante .mobile-nav-item[data-nav="atletas"],
-body.role-ayudante .mobile-nav-item[data-nav="historial"],
-body.role-ayudante .mobile-nav-item[data-nav="fisica"],
 body.role-ayudante .mobile-nav-item[data-nav="manual"] {
     display: none !important;
-}
-
-body.role-ayudante .mobile-nav-item[data-nav="combate"],
-body.role-ayudante .mobile-nav-item[data-nav="torneos"],
-body.role-ayudante .mobile-nav-item[data-nav="timer"],
-body.role-ayudante .mobile-nav-logout {
-    display: flex !important;
 }
 
 /* Ocultar creación/edición de torneos para Mesa Técnica */
@@ -2847,39 +2829,15 @@ body.role-instructor #nav-escuelas {
     display: none !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Dejar Inicio, Atletas, Física, Combate, Menú y Salir) */
-body.role-instructor .mobile-nav-item[data-nav="historial"],
-body.role-instructor .mobile-nav-item[data-nav="torneos"],
-body.role-instructor .mobile-nav-item[data-nav="timer"],
+/* Ocultar en Barra Inferior Móvil (Instructor: Inicio, Atletas, Mediciones, Organización→Torneos, Timer, Salir) */
 body.role-instructor .mobile-nav-item[data-nav="manual"] {
     display: none !important;
 }
 
-body.role-instructor .mobile-nav-item[data-nav="atletas"],
-body.role-instructor .mobile-nav-item[data-nav="fisica"],
-body.role-instructor .mobile-nav-item[data-nav="combate"],
-body.role-instructor .mobile-nav-logout {
-    display: flex !important;
-}
-
 /* --------------------------------------------------------------------------
-   4. ROL: MAESTRO / ADMINISTRADOR (Mobile Bottom Nav Optimizado)
+   4. ROL: MAESTRO / ADMINISTRADOR (Mobile Bottom Nav - Todos los grupos)
    -------------------------------------------------------------------------- */
-/* En barra inferior móvil, mostrar 5 módulos clave + Menú + Salir */
-body.role-admin .mobile-nav-item[data-nav="historial"],
-body.role-admin .mobile-nav-item[data-nav="timer"],
-body.role-admin .mobile-nav-item[data-nav="manual"] {
-    display: none !important;
-}
-
-body.role-admin .mobile-nav-item[data-nav="atletas"],
-body.role-admin .mobile-nav-item[data-nav="fisica"],
-body.role-admin .mobile-nav-item[data-nav="combate"],
-body.role-admin .mobile-nav-item[data-nav="torneos"],
-body.role-admin #mobile-more-btn,
-body.role-admin .mobile-nav-logout {
-    display: flex !important;
-}
+/* Admin ve los 7 items del bottom nav */
 
 /* --------------------------------------------------------------------------
    5. REGLAS GENERALES PARA ROLES NO ADMINISTRADORES
@@ -3532,6 +3490,35 @@ body:not(.role-admin) #group-configuracion {
     display: none;
 }
 
+.mobile-sheet-overlay {
+    display: none;
+}
+
+.mobile-sheet {
+    display: none;
+}
+
+.header-settings-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-settings-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .app-modal-drag-handle {
     display: none;
 }
@@ -3605,6 +3592,104 @@ body:not(.role-admin) #group-configuracion {
     .mobile-nav-item.active .mobile-nav-label {
         font-weight: 700;
         color: #f0f6fc;
+    }
+
+    /* Bottom Sheet para submenus */
+    .mobile-sheet-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 960;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .mobile-sheet-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .mobile-sheet {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        background: #161b22;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px 16px 0 0;
+        z-index: 970;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .mobile-sheet.active {
+        transform: translateY(0);
+    }
+
+    .mobile-sheet-handle {
+        width: 40px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        margin: 10px auto 6px;
+    }
+
+    .mobile-sheet-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 6px 20px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mobile-sheet-items {
+        display: flex;
+        flex-direction: column;
+        padding: 6px 0;
+    }
+
+    .mobile-sheet-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 20px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        transition: background 0.15s ease;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+    }
+
+    .mobile-sheet-item:active {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .mobile-sheet-item i {
+        width: 22px;
+        text-align: center;
+        font-size: 16px;
+        color: var(--primary);
+    }
+
+    .mobile-sheet-item .sheet-item-arrow {
+        margin-left: auto;
+        color: var(--text-muted);
+        font-size: 12px;
     }
 
     /* Structured 2-column mobile form grid */

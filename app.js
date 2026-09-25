@@ -165,12 +165,23 @@ class HapkidoApp {
         });
 
         // Update Mobile Bottom Nav Active State
+        const groupNavMap = {
+            atletas: ['#atletas', '#historial'],
+            mediciones: ['#fisica', '#combate', '#examenes'],
+            organizacion: ['#escuelas', '#torneos']
+        };
         document.querySelectorAll('.mobile-nav-item').forEach(item => {
             const itemTarget = item.getAttribute('data-nav');
             const targetHash = '#' + itemTarget;
-            if (itemTarget && (hash === targetHash || (hash === '' && itemTarget === 'dashboard'))) {
+            let isActive = false;
+            if (itemTarget && groupNavMap[itemTarget]) {
+                isActive = groupNavMap[itemTarget].includes(hash);
+            } else if (itemTarget && (hash === targetHash || (hash === '' && itemTarget === 'dashboard'))) {
+                isActive = true;
+            }
+            if (isActive) {
                 item.classList.add('active');
-            } else if (item.getAttribute('id') !== 'mobile-more-btn') {
+            } else {
                 item.classList.remove('active');
             }
         });
@@ -864,6 +875,83 @@ class HapkidoApp {
         toast.onclick = () => toast.remove();
         document.body.appendChild(toast);
         setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
+    }
+
+    /**
+     * Bottom Sheet móvil para submenus (Atletas, Mediciones, Organización)
+     */
+    toggleMobileSheet(group) {
+        const overlay = document.getElementById('mobile-sheet-overlay');
+        const sheet = document.getElementById('mobile-sheet');
+        const titleEl = document.getElementById('mobile-sheet-title');
+        const itemsEl = document.getElementById('mobile-sheet-items');
+        if (!overlay || !sheet || !titleEl || !itemsEl) return;
+
+        // If already open with same group, close it
+        if (sheet.classList.contains('active') && sheet.dataset.group === group) {
+            this.closeMobileSheet();
+            return;
+        }
+
+        const configs = {
+            atletas: {
+                title: 'Atletas',
+                items: [
+                    { label: 'Gestión Atletas', icon: 'fa-user-shield', href: '#atletas', navId: 'nav-atletas' },
+                    { label: 'Historial / Gráficos', icon: 'fa-clock-rotate-left', href: '#historial', navId: 'nav-historial' }
+                ]
+            },
+            mediciones: {
+                title: 'Mediciones',
+                items: [
+                    { label: 'Medición Física', icon: 'fa-notes-medical', href: '#fisica', navId: 'nav-fisica' },
+                    { label: 'Medición Combate', icon: 'fa-user-ninja', href: '#combate', navId: 'nav-combate' },
+                    { label: 'Exámenes de Cinta', icon: 'fa-graduation-cap', href: '#examenes', navId: 'nav-examenes' }
+                ]
+            },
+            organizacion: {
+                title: 'Organización',
+                items: [
+                    { label: 'Escuelas / Dojangs', icon: 'fa-building-columns', href: '#escuelas', navId: 'nav-escuelas' },
+                    { label: 'Torneos y Topes', icon: 'fa-trophy', href: '#torneos', navId: 'nav-torneos' }
+                ]
+            }
+        };
+
+        const config = configs[group];
+        if (!config) return;
+
+        // Filter items by sidebar visibility (role-based)
+        const visibleItems = config.items.filter(item => {
+            const el = document.getElementById(item.navId);
+            if (!el) return false;
+            return getComputedStyle(el).display !== 'none';
+        });
+
+        if (visibleItems.length === 0) return;
+
+        titleEl.textContent = config.title;
+        itemsEl.innerHTML = visibleItems.map(item => `
+            <a href="${item.href}" class="mobile-sheet-item" onclick="app.closeMobileSheet()">
+                <i class="fa-solid ${item.icon}"></i>
+                <span>${item.label}</span>
+                <i class="fa-solid fa-chevron-right sheet-item-arrow"></i>
+            </a>
+        `).join('');
+
+        sheet.dataset.group = group;
+        overlay.classList.add('active');
+        sheet.classList.add('active');
+    }
+
+    closeMobileSheet() {
+        const overlay = document.getElementById('mobile-sheet-overlay');
+        const sheet = document.getElementById('mobile-sheet');
+        if (overlay) overlay.classList.remove('active');
+        if (sheet) {
+            sheet.classList.remove('active');
+            delete sheet.dataset.group;
+        }
     }
 
     /**
