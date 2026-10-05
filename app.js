@@ -974,6 +974,12 @@ class HapkidoApp {
         this.operatingMode = (this.operatingMode === 'dojang') ? 'federation' : 'dojang';
         localStorage.setItem('hapkido_operating_mode', this.operatingMode);
         this.applyOperatingModeUI();
+
+        // Si se cambia a Dojang, volver a la pestaña de Escuelas
+        if (this.operatingMode === 'dojang' && typeof this.switchSchoolSubTab === 'function') {
+            this.switchSchoolSubTab('schools');
+        }
+
         const modeName = this.operatingMode === 'dojang' ? 'Modo Dojang (Club)' : 'Modo Federación (Nacional)';
         this.showToast(`Modo de operación: ${modeName}`, 'info');
     }
@@ -993,6 +999,50 @@ class HapkidoApp {
                 badge.classList.remove('dojang-active');
                 badge.classList.add('federation-active');
             }
+        }
+
+        // Sync heading text based on mode
+        const syncHeading = document.querySelector('#section-ajustes .panel-card:first-child .panel-header h2');
+        if (syncHeading) {
+            syncHeading.innerHTML = this.operatingMode === 'federation'
+                ? `<i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Sincronización en la Nube Federativa (Multi-Dispositivo)`
+                : `<i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Sincronización en la Nube (Multi-Dispositivo)`;
+        }
+
+        // Toggle required on federation-only selects (hidden fields block validation)
+        const schoolAssoc = document.getElementById('school-association');
+        if (schoolAssoc) {
+            if (this.operatingMode === 'federation') {
+                schoolAssoc.setAttribute('required', '');
+            } else {
+                schoolAssoc.removeAttribute('required');
+            }
+        }
+        const torneoState = document.getElementById('torneo-state');
+        if (torneoState) {
+            if (this.operatingMode === 'federation') {
+                torneoState.setAttribute('required', '');
+            } else {
+                torneoState.removeAttribute('required');
+            }
+        }
+
+        // Sync provider: avoid leaving a hidden federation option selected
+        const syncProvider = document.getElementById('sync-provider-select');
+        if (syncProvider) {
+            if (this.operatingMode === 'dojang' && syncProvider.value === 'fevehapkido_api') {
+                syncProvider.value = 'supabase';
+            } else if (this.operatingMode === 'federation' && !syncProvider.value) {
+                syncProvider.value = 'fevehapkido_api';
+            }
+        }
+
+        // Timer combat mode button text
+        const combatBtn = document.querySelector('.timer-mode-btn[data-mode="combat"]');
+        if (combatBtn) {
+            combatBtn.innerHTML = this.operatingMode === 'federation'
+                ? `<i class="fa-solid fa-hand-fist"></i> Combate Oficial (FEVEHAPKIDO)`
+                : `<i class="fa-solid fa-hand-fist"></i> Combate Oficial`;
         }
     }
 

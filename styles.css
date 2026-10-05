@@ -5810,6 +5810,22 @@ body.mode-dojang .federation-only {
     display: none !important;
 }
 
+body.mode-federation .dojang-only {
+    display: none !important;
+}
+
+/* Ocultar tipos de evento federativos en Modo Dojang */
+body.mode-dojang #torneo-type option[value="Tope Inter-estados"],
+body.mode-dojang #torneo-type option[value="Torneo Estatal"],
+body.mode-dojang #torneo-type option[value="Torneo Nacional"] {
+    display: none;
+}
+
+/* Ocultar opcion federativa de proveedor de nube en Modo Dojang */
+body.mode-dojang #sync-provider-select option[value="fevehapkido_api"] {
+    display: none;
+}
+
 /* ==========================================================================
    PRINT STYLES FOR FIELD DATA SHEETS & ATHLETE PDF REPORTS
    ========================================================================== */
@@ -6030,10 +6046,6 @@ body.mode-dojang .federation-only {
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(2, 132, 199, 0.4) 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
-}
-
-body.mode-dojang .federation-only {
-    display: none !important;
 }
 
 /* ==========================================================================

@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <!-- Local Chart.js for interactive analytics -->
     <script defer src="vendor/chartjs/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260901-2">
+    <link rel="stylesheet" href="styles.css?v=20261005-01">
 </head>
 <body>
     <div class="app-container">
@@ -1929,7 +1929,7 @@
                     <button class="tab-btn active" id="subtab-btn-schools" onclick="app.switchSchoolSubTab('schools')">
                         <i class="fa-solid fa-school"></i> Dojangs / Escuelas locales
                     </button>
-                    <button class="tab-btn" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')">
+                    <button class="tab-btn federation-only" id="subtab-btn-associations" onclick="app.switchSchoolSubTab('associations')">
                         <i class="fa-solid fa-sitemap"></i> Asociaciones Estatales
                     </button>
                 </div>
@@ -1948,7 +1948,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nombre de la Escuela</th>
-                                        <th>Asociación Estatal</th>
+                                        <th class="federation-only">Asociación Estatal</th>
                                         <th>Ubicación / Sede</th>
                                         <th>Instructor Encargado</th>
                                         <th>Rol del Instructor</th>
@@ -1964,7 +1964,7 @@
                 </div>
 
                 <!-- Sub-tab Associations Container -->
-                <div id="subtab-associations-container" style="display: none;">
+                <div id="subtab-associations-container" class="federation-only" style="display: none;">
                     <div class="section-actions">
                         <button class="primary-btn" id="btn-new-association" onclick="app.openNewAssociationModal()"><i class="fa-solid fa-plus"></i> Nueva Asociación Estatal</button>
                     </div>
@@ -2004,7 +2004,7 @@
                                     <label for="school-name">Nombre de la Escuela / Dojang</label>
                                     <input type="text" id="school-name" required placeholder="Ej: Dojang Tigres Celestes">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group federation-only">
                                     <label for="school-association">Asociación Estatal Vinculada</label>
                                     <select id="school-association" required>
                                         <!-- Dinámico -->
@@ -2030,7 +2030,7 @@
                 </div>
 
                 <!-- Modal para Asociación Estatal -->
-                <div class="modal" id="association-modal">
+                <div class="modal federation-only" id="association-modal">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h2 id="association-modal-title">Agregar Nueva Asociación</h2>
@@ -2154,7 +2154,8 @@
                 <div class="section-actions" style="display: flex; justify-content: space-between; align-items: center;">
                     <div class="section-title-desc">
                         <h2><i class="fa-solid fa-trophy"></i> Calendario de Competencias, Topes y Fogueos</h2>
-                        <p class="section-subtitle" style="color: var(--text-muted); font-size: 13px;">Intercambios técnicos inter-dojang e inter-estados autorizados por FEVEHAPKIDO</p>
+                        <p class="section-subtitle federation-only" style="color: var(--text-muted); font-size: 13px;">Intercambios técnicos inter-dojang e inter-estados autorizados por FEVEHAPKIDO</p>
+                        <p class="section-subtitle dojang-only" style="color: var(--text-muted); font-size: 13px;">Topes, fogueos y competencias internas de tu escuela</p>
                     </div>
                     <button class="primary-btn" id="btn-new-torneo" onclick="app.openNewTorneoModal()"><i class="fa-solid fa-trophy"></i> Solicitar Tope / Torneo</button>
                 </div>
@@ -2169,7 +2170,7 @@
                             <i class="fa-solid fa-hourglass-half"></i>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card federation-only">
                         <div class="stat-info">
                             <h3>Eventos Aprobados</h3>
                             <p class="stat-value" id="stat-torneos-aprobados">0</p>
@@ -2203,7 +2204,7 @@
                                         <th>Tipo</th>
                                         <th>Fecha</th>
                                         <th>Organizador</th>
-                                        <th>Estado Sede</th>
+                                        <th class="federation-only">Estado Sede</th>
                                         <th>Modalidades</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
@@ -2217,7 +2218,7 @@
                     </div>
 
                     <!-- Federation Guidelines & Rules -->
-                    <div class="panel-card" style="grid-column: span 4;">
+                    <div class="panel-card federation-only" style="grid-column: span 4;">
                         <div class="panel-header">
                             <h2><i class="fa-solid fa-gavel"></i> Directrices de la Federación (FEVEHAPKIDO)</h2>
                         </div>
@@ -2364,7 +2365,7 @@
                                             <!-- Dinámico -->
                                         </select>
                                     </div>
-                                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                    <div class="form-group federation-only" style="flex: 1; margin-bottom: 0;">
                                         <label for="torneo-state">Estado Sede / Asociación</label>
                                         <select id="torneo-state" required>
                                             <!-- Dinámico -->
@@ -2392,7 +2393,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group" id="torneo-referee-group">
+                                <div class="form-group federation-only" id="torneo-referee-group">
                                     <label for="torneo-referee">Árbitro Principal / Juez Federativo</label>
                                     <input type="text" id="torneo-referee" placeholder="Ej: Maestro Juan Pérez (Árbitro Nacional)">
                                     <small class="form-text text-muted">Requerido para torneos estadales/nacionales y topes inter-estados.</small>
@@ -2403,7 +2404,7 @@
                                     <textarea id="torneo-notes" rows="3" placeholder="Indicar categorías de peso, edad, reglamentos o directrices especiales para el fogueo..."></textarea>
                                 </div>
 
-                                <div class="form-group admin-only-field" id="torneo-status-group" style="display: none;">
+                                <div class="form-group admin-only-field federation-only" id="torneo-status-group" style="display: none;">
                                     <label for="torneo-status">Estado de la Solicitud (Federación)</label>
                                     <select id="torneo-status">
                                         <option value="Solicitado">Solicitado (Pendiente por FEVEHAPKIDO)</option>
@@ -2971,18 +2972,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20260924-01"></script>
-    <script src="hapkido-data.js?v=20260924-01"></script>
-    <script src="hapkido-auth.js?v=20260924-01"></script>
-    <script src="hapkido-athletes.js?v=20260924-01"></script>
-    <script src="hapkido-physical.js?v=20260924-01"></script>
-    <script src="hapkido-exams.js?v=20260924-01"></script>
-    <script src="hapkido-combat.js?v=20260924-01"></script>
-    <script src="hapkido-schools.js?v=20260924-01"></script>
-    <script src="hapkido-torneos.js?v=20260924-01"></script>
-    <script src="hapkido-vocab.js?v=20260924-01"></script>
-    <script src="hapkido-timer.js?v=20260924-01"></script>
-    <script src="hapkido-sync.js?v=20260924-01"></script>
-    <script src="hapkido-init.js?v=20260924-01"></script>
+    <script src="app.js?v=20261005-01"></script>
+    <script src="hapkido-data.js?v=20261005-01"></script>
+    <script src="hapkido-auth.js?v=20261005-01"></script>
+    <script src="hapkido-athletes.js?v=20261005-01"></script>
+    <script src="hapkido-physical.js?v=20261005-01"></script>
+    <script src="hapkido-exams.js?v=20261005-01"></script>
+    <script src="hapkido-combat.js?v=20261005-01"></script>
+    <script src="hapkido-schools.js?v=20261005-01"></script>
+    <script src="hapkido-torneos.js?v=20261005-01"></script>
+    <script src="hapkido-vocab.js?v=20261005-01"></script>
+    <script src="hapkido-timer.js?v=20261005-01"></script>
+    <script src="hapkido-sync.js?v=20261005-01"></script>
+    <script src="hapkido-init.js?v=20261005-01"></script>
 </body>
 </html>

@@ -94,7 +94,7 @@ HapkidoApp.prototype.renderSchoolsList = function() {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${safeName}</strong></td>
-                <td>${safeAssocName}</td>
+                <td class="federation-only">${safeAssocName}</td>
                 <td>${safeLocation}</td>
                 <td>${safeInstructor}</td>
                 <td><span class="badge ${sch.instructorRole.includes('Maestro') ? 'success' : 'warning'}">${safeRole}</span></td>
@@ -197,6 +197,9 @@ HapkidoApp.prototype.deleteSchool = function(id) {
 
 
 HapkidoApp.prototype.switchSchoolSubTab = function(subTab) {
+        // En Modo Dojang siempre mostrar la pestaña de escuelas
+        if (this.operatingMode === 'dojang') subTab = 'schools';
+
         const tabBtnSchools = document.getElementById('subtab-btn-schools');
         const tabBtnAssoc = document.getElementById('subtab-btn-associations');
         const containerSchools = document.getElementById('subtab-schools-container');

@@ -76,6 +76,13 @@ HapkidoApp.prototype.openEditTorneoModal = function(id) {
         document.getElementById('torneo-type').value = trn.type;
         document.getElementById('torneo-date').value = trn.date;
 
+        // En Modo Dojang, si el tipo es federativo, usar uno dojang por defecto
+        const fedTypes = ['Tope Inter-estados', 'Torneo Estatal', 'Torneo Nacional'];
+        const typeSelect = document.getElementById('torneo-type');
+        if (this.operatingMode === 'dojang' && fedTypes.includes(typeSelect.value)) {
+            typeSelect.value = 'Tope Inter-escuelas';
+        }
+
         this.populateTorneoModalDropdowns();
 
         document.getElementById('torneo-school').value = trn.school || '';
@@ -279,7 +286,7 @@ HapkidoApp.prototype.renderTorneosList = function() {
                 <td>${safeType}</td>
                 <td>${safeDate}</td>
                 <td>${safeSchool}</td>
-                <td>${safeState}</td>
+                <td class="federation-only">${safeState}</td>
                 <td>${modsText}</td>
                 <td><span class="badge ${badgeClass}">${safeStatus.toUpperCase()}</span></td>
                 <td class="actions-cell">
