@@ -83,6 +83,7 @@ HapkidoApp.prototype.login = async function(event) {
             this.currentUser = user;
             localStorage.setItem('hapkido_current_user', JSON.stringify(user));
             this.updateBodyClasses();
+            this.enforceRoleOperatingMode();
             
             const errorMsg = document.getElementById('login-error-msg');
             if (errorMsg) errorMsg.classList.add('hidden');
@@ -165,6 +166,7 @@ HapkidoApp.prototype.login = async function(event) {
             this.currentUser = user;
             localStorage.setItem('hapkido_current_user', JSON.stringify(user));
             this.updateBodyClasses();
+            this.enforceRoleOperatingMode();
 
             const overlay = document.getElementById('login-overlay');
             if (overlay) overlay.classList.remove('active');
@@ -186,6 +188,8 @@ HapkidoApp.prototype.logout = function() {
         this.currentUser = null;
         localStorage.removeItem('hapkido_current_user');
         this.updateBodyClasses();
+        // Restaurar badge de modo al cerrar sesion
+        this.enforceRoleOperatingMode();
 
         // Close mobile drawer if open
         const sidebar = document.querySelector('.sidebar');

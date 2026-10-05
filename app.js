@@ -56,6 +56,7 @@ class HapkidoApp {
             }
             if (this.currentUser) {
                 this.updateBodyClasses();
+                this.enforceRoleOperatingMode();
                 const overlay = document.getElementById('login-overlay');
                 if (overlay) overlay.classList.remove('active');
             } else {
@@ -971,6 +972,12 @@ class HapkidoApp {
     }
 
     toggleOperatingMode() {
+        // Rol Entrenador: modo fijo, sin alternancia
+        if (this.currentUser && this.currentUser.role === 'instructor') {
+            this.showToast('El rol Entrenador opera fijo en Modo Dojang.', 'info');
+            return;
+        }
+
         this.operatingMode = (this.operatingMode === 'dojang') ? 'federation' : 'dojang';
         localStorage.setItem('hapkido_operating_mode', this.operatingMode);
         this.applyOperatingModeUI();
@@ -982,6 +989,30 @@ class HapkidoApp {
 
         const modeName = this.operatingMode === 'dojang' ? 'Modo Dojang (Club)' : 'Modo Federación (Nacional)';
         this.showToast(`Modo de operación: ${modeName}`, 'info');
+    }
+
+    /**
+     * Aplica la restriccion de modo por rol:
+     * - Entrenador (instructor): siempre Modo Dojang, badge de cambio oculto.
+     * - Demas roles: modo segun preferencia guardada, badge visible.
+     * El modo forzado del instructor solo vive en memoria (no pisa la
+     * preferencia guardada, que es del dispositivo/usuario admin).
+     */
+    enforceRoleOperatingMode() {
+        const isInstructor = !!(this.currentUser && this.currentUser.role === 'instructor');
+
+        if (isInstructor) {
+            this.operatingMode = 'dojang';
+        } else {
+            // Restaurar preferencia guardada del dispositivo
+            const saved = localStorage.getItem('hapkido_operating_mode');
+            this.operatingMode = (saved === 'federation') ? 'federation' : 'dojang';
+        }
+
+        const badge = document.getElementById('mode-toggle-badge');
+        if (badge) badge.style.display = isInstructor ? 'none' : '';
+
+        this.applyOperatingModeUI();
     }
 
     applyOperatingModeUI() {

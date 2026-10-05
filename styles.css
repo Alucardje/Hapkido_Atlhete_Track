@@ -2834,6 +2834,11 @@ body.role-instructor .mobile-nav-item[data-nav="manual"] {
     display: none !important;
 }
 
+/* Entrenador: Modo Dojang fijo, sin badge de alternancia de modo */
+body.role-instructor #mode-toggle-badge {
+    display: none !important;
+}
+
 /* --------------------------------------------------------------------------
    4. ROL: MAESTRO / ADMINISTRADOR (Mobile Bottom Nav - Todos los grupos)
    -------------------------------------------------------------------------- */

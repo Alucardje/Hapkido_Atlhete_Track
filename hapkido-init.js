@@ -12,6 +12,7 @@ const requiredMethods = [
     'showAlert', 'showConfirm', 'showToast',
     'toggleMobileSheet', 'closeMobileSheet',
     'updateBodyClasses', 'initOperatingMode', 'toggleOperatingMode', 'applyOperatingModeUI',
+    'enforceRoleOperatingMode',
     'updateDashboardStats', 'handleRouting',
     // Auth (hapkido-auth.js)
     'validateUserPrivilege', 'renderUsersList',
