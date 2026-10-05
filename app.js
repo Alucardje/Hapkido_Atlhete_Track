@@ -247,12 +247,14 @@ class HapkidoApp {
         }
 
         if (hash === '#historial') {
-            if (this.currentUser.role === 'athlete') {
+            this.populateAthleteDropdowns();
+            const histSelect = document.getElementById('analysis-athlete-select');
+            if (this.currentUser.role === 'athlete' && histSelect) {
+                histSelect.value = this.currentUser.athleteId;
+                this.switchHistorySubTab('progreso');
                 setTimeout(() => {
                     this.loadAthleteAnalysis(this.currentUser.athleteId);
                 }, 50);
-            } else {
-                this.populateAthleteDropdowns();
             }
         }
 

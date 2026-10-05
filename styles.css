@@ -2779,6 +2779,9 @@ body.role-athlete .header-sync-widget {
 
 /* Ocultar controles de filtrado o edición para Atletas */
 body.role-athlete #analysis-select-group,
+/* El Comparador H2H muestra a otros atletas: solo rol Staff/Admin */
+body.role-athlete #subtab-btn-hist-h2h,
+body.role-athlete #subtab-hist-h2h-container,
 body.role-athlete .actions-cell,
 body.role-athlete .btn-new-test,
 body.role-athlete .admin-only-btn,
@@ -2805,9 +2808,8 @@ body.role-ayudante #nav-ajustes {
     display: none !important;
 }
 
-/* Ocultar en Barra Inferior Móvil (Mesa Técnica: Inicio, Mediciones→Combate, Organización→Torneos, Timer, Salir) */
-body.role-ayudante .mobile-nav-item[data-nav="atletas"],
-body.role-ayudante .mobile-nav-item[data-nav="manual"] {
+/* Ocultar en Barra Inferior Móvil (Mesa Técnica: Inicio, Mediciones→Combate, Organización→Torneos, Timer, Manual, Salir) */
+body.role-ayudante .mobile-nav-item[data-nav="atletas"] {
     display: none !important;
 }
 
@@ -2826,11 +2828,6 @@ body.role-instructor #group-configuracion,
 body.role-instructor #nav-usuarios,
 body.role-instructor #nav-ajustes,
 body.role-instructor #nav-escuelas {
-    display: none !important;
-}
-
-/* Ocultar en Barra Inferior Móvil (Instructor: Inicio, Atletas, Mediciones, Organización→Torneos, Timer, Salir) */
-body.role-instructor .mobile-nav-item[data-nav="manual"] {
     display: none !important;
 }
 
@@ -3700,19 +3697,44 @@ body:not(.role-admin) #group-configuracion {
     /* Structured 2-column mobile form grid */
     .form-row {
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
+        /* minmax(0, ...) prevents intrinsic input widths from overflowing the viewport */
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 10px !important;
         margin-bottom: 12px !important;
+        min-width: 0;
     }
 
     .form-row .form-group {
         width: 100% !important;
+        min-width: 0 !important;
         margin-bottom: 0 !important;
+    }
+
+    .form-row .form-group input,
+    .form-row .form-group select,
+    .form-row .form-group textarea {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .form-row .form-group.full-width,
     .form-group.full-width {
         grid-column: 1 / -1 !important;
+    }
+
+    /* Single-column mobile grids: avoid implicit extra columns from span-2 items */
+    .dashboard-grid > .panel-card[style*="grid-column"] {
+        grid-column: 1 / -1 !important;
+    }
+
+    .form-actions {
+        flex-wrap: wrap;
+    }
+
+    .radio-checkbox-group {
+        flex-wrap: wrap;
+        gap: 10px 16px;
     }
 
     /* Touch-optimized inputs */

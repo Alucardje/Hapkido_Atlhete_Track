@@ -244,7 +244,9 @@ HapkidoApp.prototype.populateAthleteDropdowns = function() {
         if (!this.currentUser) return;
 
         let athletes = this.data.athletes.filter(a => a.status !== 'inactivo');
-        if (this.currentUser.role !== 'admin') {
+        if (this.currentUser.role === 'athlete') {
+            athletes = athletes.filter(a => a.id === this.currentUser.athleteId);
+        } else if (this.currentUser.role !== 'admin') {
             athletes = athletes.filter(a => a.school === this.currentUser.school);
         }
 
@@ -686,6 +688,11 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
 
         if (!btnProgreso || !btnH2H || !contProgreso || !contH2H) return;
 
+        // El rol Estudiante solo puede ver su propia evolución (sin comparador H2H)
+        if (this.currentUser && this.currentUser.role === 'athlete' && subTab === 'h2h') {
+            subTab = 'progreso';
+        }
+
         if (subTab === 'h2h') {
             btnProgreso.classList.remove('active');
             btnH2H.classList.add('active');
@@ -722,7 +729,9 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
         if (!selectBlue || !selectRed) return;
 
         let athletes = this.data.athletes || [];
-        if (this.currentUser && this.currentUser.role !== 'admin') {
+        if (this.currentUser && this.currentUser.role === 'athlete') {
+            athletes = athletes.filter(a => a.id === this.currentUser.athleteId);
+        } else if (this.currentUser && this.currentUser.role !== 'admin') {
             athletes = athletes.filter(a => a.school === this.currentUser.school);
         }
 
@@ -740,6 +749,10 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
     };
 
     HapkidoApp.prototype.loadAthleteAnalysis = function(athleteId, timeframe = 'all') {
+        // El rol Estudiante solo puede consultar su propio historial
+        if (this.currentUser && this.currentUser.role === 'athlete') {
+            athleteId = this.currentUser.athleteId;
+        }
         const chartContainer = document.getElementById('progress-charts-container');
         if (!athleteId) {
             chartContainer.classList.add('hidden');
