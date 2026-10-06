@@ -1438,6 +1438,77 @@ button {
     color: var(--primary);
 }
 
+/* Panel de completitud de la ficha (guardado incremental de métricas) */
+.measure-progress-panel {
+    background-color: rgba(56, 189, 248, 0.06);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+}
+
+.measure-progress-panel .mp-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.measure-progress-panel .mp-head i {
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.measure-progress-panel .mp-bar {
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.measure-progress-panel .mp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary);
+    border-radius: var(--radius-full);
+    transition: width 0.35s ease, background-color 0.35s ease;
+}
+
+.measure-progress-panel .mp-missing {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.measure-progress-panel .mp-hint {
+    margin: 6px 0 0;
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.85;
+}
+
+.measure-progress-panel .mp-hint i {
+    color: var(--primary);
+}
+
+.measure-progress-panel.is-complete {
+    background-color: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.35);
+}
+
+.measure-progress-panel.is-complete .mp-bar-fill {
+    background-color: var(--success);
+}
+
+.measure-progress-panel .mp-status-badge {
+    margin-left: auto;
+}
+
 .ruffier-result-panel {
     background-color: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);

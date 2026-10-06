@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <!-- Local Chart.js for interactive analytics -->
     <script defer src="vendor/chartjs/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20261005-03">
+    <link rel="stylesheet" href="styles.css?v=20261005-04">
 </head>
 <body>
     <div class="app-container">
@@ -727,6 +727,18 @@
                                 </div>
                             </div>
 
+                            <!-- Progreso de completitud de la ficha (guardado incremental) -->
+                            <div class="measure-progress-panel" id="measure-progress-panel">
+                                <div class="mp-head">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <span>Completitud de la ficha: <strong id="mp-count">--</strong></span>
+                                    <span class="badge" id="mp-status">Sin datos</span>
+                                </div>
+                                <div class="mp-bar"><div class="mp-bar-fill" id="mp-bar-fill"></div></div>
+                                <p class="mp-missing" id="mp-missing">Seleccione un atleta y una fecha para ver las métricas pendientes.</p>
+                                <p class="mp-hint"><i class="fa-solid fa-circle-info"></i> Puede guardar aunque la ficha esté incompleta: si vuelve a la misma fecha, los campos cargados lo esperan y sigue midiendo donde quedó.</p>
+                            </div>
+
                             <!-- Composición Corporal -->
                             <!-- Composición Corporal y Antropometría Marcial -->
                             <div class="sub-section-title"><i class="fa-solid fa-ruler-combined"></i> Composición Corporal y Antropometría Marcial</div>
@@ -789,15 +801,15 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="pulse-p1">P1: Pulso previo al test <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('ruffier')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
-                                    <input type="number" id="pulse-p1" min="30" max="220" required placeholder="Ej: 62">
+                                    <input type="number" id="pulse-p1" min="30" max="220" placeholder="Ej: 62">
                                 </div>
                                 <div class="form-group">
                                     <label for="pulse-p2">P2: Pulso post-esfuerzo <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('ruffier')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
-                                    <input type="number" id="pulse-p2" min="30" max="220" required placeholder="Ej: 115">
+                                    <input type="number" id="pulse-p2" min="30" max="220" placeholder="Ej: 115">
                                 </div>
                                 <div class="form-group">
                                     <label for="pulse-p3">P3: Pulso recuperación 1 min <button type="button" class="metric-help-btn" onclick="app.showMetricHelp('ruffier')" title="Ver protocolo"><i class="fa-solid fa-circle-question"></i></button></label>
-                                    <input type="number" id="pulse-p3" min="30" max="220" required placeholder="Ej: 72">
+                                    <input type="number" id="pulse-p3" min="30" max="220" placeholder="Ej: 72">
                                 </div>
                             </div>
                             <div class="ruffier-result-panel" id="ruffier-result-panel">
@@ -934,7 +946,7 @@
 
                             <div class="form-actions mt-20">
                                 <button type="reset" class="btn-cancel">Limpiar</button>
-                                <button type="submit" class="primary-btn">Registrar Ficha</button>
+                                <button type="submit" class="primary-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar Mediciones</button>
                             </div>
                         </form>
                     </div>
@@ -2972,18 +2984,18 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20261005-03"></script>
-    <script src="hapkido-data.js?v=20261005-03"></script>
-    <script src="hapkido-auth.js?v=20261005-03"></script>
-    <script src="hapkido-athletes.js?v=20261005-03"></script>
-    <script src="hapkido-physical.js?v=20261005-03"></script>
-    <script src="hapkido-exams.js?v=20261005-03"></script>
-    <script src="hapkido-combat.js?v=20261005-03"></script>
-    <script src="hapkido-schools.js?v=20261005-03"></script>
-    <script src="hapkido-torneos.js?v=20261005-03"></script>
-    <script src="hapkido-vocab.js?v=20261005-03"></script>
-    <script src="hapkido-timer.js?v=20261005-03"></script>
-    <script src="hapkido-sync.js?v=20261005-03"></script>
-    <script src="hapkido-init.js?v=20261005-03"></script>
+    <script src="app.js?v=20261005-04"></script>
+    <script src="hapkido-data.js?v=20261005-04"></script>
+    <script src="hapkido-auth.js?v=20261005-04"></script>
+    <script src="hapkido-athletes.js?v=20261005-04"></script>
+    <script src="hapkido-physical.js?v=20261005-04"></script>
+    <script src="hapkido-exams.js?v=20261005-04"></script>
+    <script src="hapkido-combat.js?v=20261005-04"></script>
+    <script src="hapkido-schools.js?v=20261005-04"></script>
+    <script src="hapkido-torneos.js?v=20261005-04"></script>
+    <script src="hapkido-vocab.js?v=20261005-04"></script>
+    <script src="hapkido-timer.js?v=20261005-04"></script>
+    <script src="hapkido-sync.js?v=20261005-04"></script>
+    <script src="hapkido-init.js?v=20261005-04"></script>
 </body>
 </html>

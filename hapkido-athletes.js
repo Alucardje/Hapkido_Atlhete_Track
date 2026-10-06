@@ -633,7 +633,7 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
                     <div>
                         <p style="margin-bottom: 6px; color: var(--primary); font-weight: 600;"><i class="fa-solid fa-heart-pulse"></i> Cardiovascular</p>
                         <p><strong>Fecha:</strong> ${latest.date}</p>
-                        <p><strong>Índice Ruffier:</strong> <span class="badge ${details.ruffierIndex > 10 ? 'danger' : (details.ruffierIndex > 5 ? 'warning' : 'success')}">${details.ruffierIndex.toFixed(1)} (${details.ruffierLevel})</span></p>
+                        <p><strong>Índice Ruffier:</strong> ${details.ruffierIndex != null ? `<span class="badge ${details.ruffierIndex > 10 ? 'danger' : (details.ruffierIndex > 5 ? 'warning' : 'success')}">${details.ruffierIndex.toFixed(1)} (${details.ruffierLevel})</span>` : '<span class="badge warning">Pendiente</span>'}</p>
                         ${details.rhr ? `<p><strong>FC Reposo:</strong> ${details.rhr} lpm (${details.evalResults?.rhr?.level || 'N/A'})</p>` : ''}
                         ${details.evalResults?.globalScore ? `<p style="margin-top: 8px;"><strong>Rendimiento General:</strong> <span class="badge ${details.evalResults.globalCls}">${details.evalResults.globalScore.toFixed(1)}/10 (${details.evalResults.globalLevel})</span></p>` : ''}
                     </div>
@@ -796,10 +796,11 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
             const first = allPhys[0].physicalDetails;
             const last = allPhys[allPhys.length - 1].physicalDetails;
 
-            // Ruffier delta
-            const ruffierDiff = (last.ruffierIndex - first.ruffierIndex);
-            const ruffierGood = ruffierDiff <= 0;
-            const ruffierTxt = ruffierDiff === 0 ? "Sin cambio" : (ruffierGood ? `${Math.abs(ruffierDiff).toFixed(1)} pts mejor` : `+${ruffierDiff.toFixed(1)} pts`);
+            // Ruffier delta (los pulsos pueden faltar en fichas guardadas de forma parcial)
+            const hasRuffier = first.ruffierIndex != null && last.ruffierIndex != null;
+            const ruffierDiff = hasRuffier ? (last.ruffierIndex - first.ruffierIndex) : null;
+            const ruffierGood = ruffierDiff === null ? true : ruffierDiff <= 0;
+            const ruffierTxt = ruffierDiff === null ? "Pendiente" : (ruffierDiff === 0 ? "Sin cambio" : (ruffierGood ? `${Math.abs(ruffierDiff).toFixed(1)} pts mejor` : `+${ruffierDiff.toFixed(1)} pts`));
 
             // Fat delta
             let fatTxt = "--";
@@ -813,7 +814,8 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
             // Kick Speed / FSKT delta
             let kickTxt = "--";
             let kickGood = true;
-            if (first.kickSpeed !== undefined && last.kickSpeed !== undefined) {
+            const hasKickSpeed = first.kickSpeed != null && last.kickSpeed != null;
+            if (hasKickSpeed) {
                 const kickDiff = last.kickSpeed - first.kickSpeed;
                 kickGood = kickDiff >= 0;
                 kickTxt = kickDiff === 0 ? "0 reps" : (kickGood ? `+${kickDiff} reps` : `${kickDiff} reps`);
@@ -831,20 +833,20 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
                     <div class="delta-val">${lastScore.toFixed(1)}/10</div>
                     <div class="delta-trend">${scoreDiff >= 0 ? '▲ +' + scoreDiff.toFixed(1) : '▼ ' + scoreDiff.toFixed(1)} pts vs inicio</div>
                 </div>
-                <div class="evolution-delta-card ${ruffierGood ? 'positive' : 'negative'}">
+                <div class="evolution-delta-card ${hasRuffier ? (ruffierGood ? 'positive' : 'negative') : 'neutral'}">
                     <div class="delta-label">Índice Ruffier</div>
-                    <div class="delta-val">${last.ruffierIndex.toFixed(1)}</div>
-                    <div class="delta-trend">${ruffierGood ? '▲ ' : '▼ '}${ruffierTxt}</div>
+                    <div class="delta-val">${hasRuffier ? last.ruffierIndex.toFixed(1) : '--'}</div>
+                    <div class="delta-trend">${hasRuffier ? ((ruffierGood ? '▲ ' : '▼ ') + ruffierTxt) : 'Pulsos pendientes'}</div>
                 </div>
                 <div class="evolution-delta-card ${fatGood ? 'positive' : 'negative'}">
                     <div class="delta-label">% Grasa Corporal</div>
                     <div class="delta-val">${last.fat ? last.fat.toFixed(1) + '%' : '--'}</div>
                     <div class="delta-trend">${fatTxt !== '--' ? (fatGood ? '▲ ' : '▼ ') + fatTxt + ' vs inicio' : 'Monitoreo regular'}</div>
                 </div>
-                <div class="evolution-delta-card ${kickGood ? 'positive' : 'negative'}">
+                <div class="evolution-delta-card ${hasKickSpeed ? (kickGood ? 'positive' : 'negative') : 'neutral'}">
                     <div class="delta-label">Cadencia Pateo FSKT</div>
-                    <div class="delta-val">${last.kickSpeed !== undefined ? last.kickSpeed + ' reps' : '--'}</div>
-                    <div class="delta-trend">${kickTxt !== '--' ? (kickGood ? '▲ ' : '▼ ') + kickTxt + ' en 10s' : 'Prueba de combate'}</div>
+                    <div class="delta-val">${hasKickSpeed ? last.kickSpeed + ' reps' : '--'}</div>
+                    <div class="delta-trend">${hasKickSpeed ? ((kickGood ? '▲ ' : '▼ ') + kickTxt + ' en 10s') : 'Prueba de combate'}</div>
                 </div>
             `;
         }
@@ -1269,10 +1271,16 @@ HapkidoApp.prototype.renderAthleteHistoryTable = function(athleteId) {
                 detailCell = `${winLabel} ${reason} (${rec.combatDetails.stage})`;
             } else {
                 typeCell = '<span class="badge warning">Ficha Fisiológica</span>';
-                valCell = `Ruffier: <strong>${rec.physicalDetails.ruffierIndex.toFixed(1)}</strong>`;
+                const pd = rec.physicalDetails || {};
+                valCell = pd.ruffierIndex != null
+                    ? `Ruffier: <strong>${pd.ruffierIndex.toFixed(1)}</strong>`
+                    : 'Ruffier: <strong>--</strong>';
                 
-                const level = rec.physicalDetails.ruffierLevel;
-                let details = `P1: ${rec.physicalDetails.pulseP1}, P2: ${rec.physicalDetails.pulseP2}, P3: ${rec.physicalDetails.pulseP3} (${level})`;
+                const level = pd.ruffierLevel;
+                const hasPulses = pd.pulseP1 != null || pd.pulseP2 != null || pd.pulseP3 != null;
+                let details = hasPulses
+                    ? `P1: ${pd.pulseP1 ?? '--'}, P2: ${pd.pulseP2 ?? '--'}, P3: ${pd.pulseP3 ?? '--'}${level ? ' (' + level + ')' : ''}`
+                    : (level ? `(${level})` : 'Ficha parcial (sin pulsos registrados)');
                 
                 if (rec.physicalDetails.jumpLong) {
                     details += ` | Saltos: L:${rec.physicalDetails.jumpLong}m, A:${rec.physicalDetails.jumpHigh}m`;

@@ -842,6 +842,62 @@ INTENT: test_pwa_install
 
 ---
 
+## FLUJO 13: Guardado Incremental de Mediciones Fisicas (ALTO)
+
+```
+ENTIDAD: seccion = fisica
+ENTIDAD: panel_completitud = mp-count | mp-status | mp-missing | mp-bar-fill
+ENTIDAD: campos_obligatorios = physical-athlete-select | physical-date
+CONTEXTO: sesion_activa = true, rol = admin | instructor
+
+INTENT: verificar_campos_no_obligatorios
+  -> PRECONDICION: sesion_activa = true
+  -> ACCION: Navegar a #fisica
+  -> PROMPT: "Haz clic en Mediciones > Medicion Fisica"
+  -> VERIFICAR: El panel "Completitud de la ficha" muestra "--" y texto "Sin atleta"
+  -> VERIFICAR: Solo "Seleccionar Atleta" y "Fecha de la Prueba" tienen marca de obligatorio
+  -> VERIFICAR: Los campos P1/P2/P3 (Ruffier) ya NO son obligatorios
+
+  -> SIGUIENTE: guardar_parcial
+
+INTENT: guardar_parcial
+  -> ACCION: Seleccionar un atleta y dejar solo 2-3 metricas cargadas (ej: estatura y peso)
+  -> VERIFICAR: El panel actualiza el contador (ej: 2/28) y lista "Faltan N: ..."
+  -> ACCION: Clic en "Guardar Mediciones"
+  -> VERIFICAR: Aparece toast "Progreso guardado (2/28). Faltan: ..."
+  -> VERIFICAR: NO se redirige a Historial ni se limpia el formulario
+  -> VERIFICAR: Console sin errores
+
+  -> SIGUIENTE: recargar_misma_fecha
+
+INTENT: recargar_misma_fecha
+  -> ACCION: Cambiar el atleta a "-- Seleccione --" y volver a elegir el mismo atleta (misma fecha)
+  -> VERIFICAR: Los campos cargados antes reaparecen (no se perdieron)
+  -> VERIFICAR: El panel muestra el mismo progreso que tras guardar
+
+  -> SIGUIENTE: completar_y_verificar
+
+INTENT: completar_y_verificar
+  -> ACCION: Completar el resto de las metricas y volver a guardar
+  -> VERIFICAR: Toast "Ficha completa guardada (N/N metricas)"
+  -> VERIFICAR: Badge del panel en "Completa" y barra al 100%
+  -> ACCION: Ir a Atletas > Historial y abrir el atleta
+  -> VERIFICAR: Existe UNA sola ficha para esa fecha (sin duplicados), con todas las metricas
+  -> VERIFICAR: Sin errores de consola ("null", "toFixed")
+
+  -> SIGUIENTE: verificar_ficha_parcial_historial
+
+INTENT: verificar_ficha_parcial_historial
+  -> PRECONDICION: Existe al menos una ficha guardada solo con pulsos (sin Ruffier)
+  -> ACCION: Abrir Historial del atleta y abrir el reporte/imprimir
+  -> VERIFICAR: El indice Ruffier muestra "--" o "Pendiente" (no "NaN" ni error de consola)
+  -> VERIFICAR: Las metricas sin dato muestran "--" (no "null reps" / "null seg")
+
+  -> SIGUIENTE: siguiente_test
+```
+
+---
+
 ## Registro de Resultados
 
 ### Resumen de la Sesion
@@ -871,6 +927,7 @@ INTENT: test_pwa_install
 | 10 | Chart.js Defer | Fix #11 | Bajo | | |
 | 11 | Aria Labels y Roles | Fix #12 | Bajo | | |
 | 12 | Manifest PWA | Fix #13 | Bajo | | |
+| 13 | Guardado Incremental Mediciones | n/a | Alto | | |
 
 **Leyenda:** PASS = pasa | FAIL = falla | WARN = advertencia | SKIP = no aplica
 

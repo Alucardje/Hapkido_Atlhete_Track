@@ -26,6 +26,8 @@ const requiredMethods = [
     'changeRound', 'finishCombat', 'toggleTimer', 'resetTimer',
     // Physical (hapkido-physical.js)
     'updatePhysicalFormLabels', 'calculateLiveBodyFat',
+    'getPhysicalMetricCatalog', 'parsePhysicalInput', 'getPhysicalRecordForDate',
+    'updateMeasureProgressPanel', 'prefillPhysicalForm',
     'savePhysicalTest', 'evaluatePhysicalMetrics', 'generatePhysicalReportHTML',
     'renderPhysicalProfileChart', 'openPrintSheetModal', 'showIndividualSheetModal', 'printFieldSheet',
     'exportRecordsToCSV',

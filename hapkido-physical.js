@@ -104,142 +104,282 @@ HapkidoApp.prototype.calculateLiveBodyFat = function() {
      * Physical Test Save Operations
      */
 
-HapkidoApp.prototype.savePhysicalTest = function() {
+    // Catálogo de métricas de la ficha física: id (input), key (physicalDetails), type de parseo
+    // Nota: fit-fat se excluye porque es un valor derivado (calculado en vivo, campo readonly)
+    const PHYSICAL_METRIC_CATALOG = [
+        { id: 'fit-height', key: 'height', type: 'float', label: 'Estatura (cm)' },
+        { id: 'fit-weight', key: 'weight', type: 'float', label: 'Peso (kg)' },
+        { id: 'fit-waist', key: 'waist', type: 'float', label: 'Cintura (cm)' },
+        { id: 'fit-wingspan', key: 'wingspan', type: 'float', label: 'Envergadura (cm)' },
+        { id: 'fit-neck', key: 'neck', type: 'float', label: 'Perímetro Cuello (cm)' },
+        { id: 'fit-thigh', key: 'thigh', type: 'float', label: 'Perímetro Muslo (cm)' },
+        { id: 'fit-skinfold-tri', key: 'skinfoldTri', type: 'float', label: 'Pliegue Tríceps (mm)' },
+        { id: 'fit-skinfold-abd', key: 'skinfoldAbd', type: 'float', label: 'Pliegue Abdominal (mm)' },
+        { id: 'fit-rhr', key: 'rhr', type: 'int', label: 'FC en Reposo (lpm)' },
+        { id: 'pulse-p1', key: 'pulseP1', type: 'int', label: 'P1 Pulso previo al test' },
+        { id: 'pulse-p2', key: 'pulseP2', type: 'int', label: 'P2 Pulso post-esfuerzo' },
+        { id: 'pulse-p3', key: 'pulseP3', type: 'int', label: 'P3 Pulso recuperación 1 min' },
+        { id: 'fit-pushups', key: 'pushups', type: 'int', label: 'Flexiones (1 min)' },
+        { id: 'fit-situps', key: 'situps', type: 'int', label: 'Abdominales (1 min)' },
+        { id: 'fit-plank', key: 'plank', type: 'int', label: 'Plancha Prona (seg)' },
+        { id: 'fit-grip', key: 'grip', type: 'float', label: 'Fuerza de Agarre (seg)' },
+        { id: 'fit-jump-vertical', key: 'jumpVertical', type: 'float', label: 'Salto Vertical (cm)' },
+        { id: 'fit-jump-horizontal', key: 'jumpHorizontal', type: 'float', label: 'Salto Horizontal (cm)' },
+        { id: 'fit-cooper', key: 'cooper', type: 'int', label: 'Test de Cooper (m)' },
+        { id: 'fit-flexibility', key: 'flexibility', type: 'int', label: 'Sit & Reach (cm)' },
+        { id: 'fit-split', key: 'split', type: 'float', label: 'Apertura Split (cm)' },
+        { id: 'fit-kick-flex', key: 'kickFlex', type: 'float', label: 'Flex. Activa Patada (%)' },
+        { id: 'fit-balance', key: 'balance', type: 'int', label: 'Equilibrio Flamenco (seg)' },
+        { id: 'fit-agility', key: 'agility', type: 'float', label: 'Velocidad 10m Planos (seg)' },
+        { id: 'fit-shuttle', key: 'shuttle', type: 'float', label: 'Shuttle Run 4x10m (seg)' },
+        { id: 'fit-reaction', key: 'reaction', type: 'float', label: 'Tiempo Reacción Técnica (seg)' },
+        { id: 'fit-kick-speed', key: 'kickSpeed', type: 'int', label: 'Pateo Continuo FSKT (reps/10s)' },
+        { id: 'fit-anaerobic', key: 'anaerobic', type: 'int', label: 'Ráfaga de Golpeo 30s (reps)' },
+        // Pruebas competitivas (solo atletas de modalidad Deportiva)
+        { id: 'jump-long', key: 'jumpLong', type: 'float', label: 'Salto Largo (m)', deportivo: true },
+        { id: 'jump-high', key: 'jumpHigh', type: 'float', label: 'Salto Alto (m)', deportivo: true },
+        { id: 'score-figures-sin', key: 'scoreFiguresSin', type: 'float', label: 'Figuras Sin Armas (1-10)', deportivo: true },
+        { id: 'score-figures-con', key: 'scoreFiguresCon', type: 'float', label: 'Figuras Con Armas (1-10)', deportivo: true },
+        { id: 'score-demo', key: 'scoreDemo', type: 'float', label: 'Demostraciones DP (1-10)', deportivo: true }
+    ];
+
+    /**
+     * Métricas aplicables al atleta (condiciona las pruebas deportivas) con etiqueta tomada del DOM
+     */
+    HapkidoApp.prototype.getPhysicalMetricCatalog = function(athlete) {
+        const isDeportivo = !!(athlete && athlete.modalities && athlete.modalities.deportivo);
+        return PHYSICAL_METRIC_CATALOG
+            .filter(m => !m.deportivo || isDeportivo)
+            .map(m => {
+                const lbl = document.querySelector('label[for="' + m.id + '"]');
+                return { id: m.id, key: m.key, type: m.type, deportivo: !!m.deportivo, label: lbl ? lbl.textContent.trim() : m.label };
+            });
+    };
+
+    /**
+     * Lectura segura de un input numérico (null si está vacío o inválido)
+     */
+    HapkidoApp.prototype.parsePhysicalInput = function(id, type) {
+        const el = document.getElementById(id);
+        if (!el || el.value === '' || el.value === null || el.value === undefined) return null;
+        const v = type === 'int' ? parseInt(el.value, 10) : parseFloat(el.value);
+        return isNaN(v) ? null : v;
+    };
+
+    /**
+     * Ficha física ya registrada para ese atleta y fecha (guardado incremental / upsert)
+     */
+    HapkidoApp.prototype.getPhysicalRecordForDate = function(athleteId, date) {
+        if (!athleteId || !date) return null;
+        // Si hay registros legados duplicados para la misma fecha, se toma el más reciente
+        const matches = this.data.records.filter(r => r.type === 'FISICA' && r.athleteId === athleteId && r.date === date);
+        return matches.length ? matches[matches.length - 1] : null;
+    };
+
+    /**
+     * Panel de completitud: qué métricas están cargadas y cuáles faltan
+     */
+    HapkidoApp.prototype.updateMeasureProgressPanel = function() {
+        const panel = document.getElementById('measure-progress-panel');
+        const countEl = document.getElementById('mp-count');
+        const statusEl = document.getElementById('mp-status');
+        const missingEl = document.getElementById('mp-missing');
+        const barEl = document.getElementById('mp-bar-fill');
+        if (!panel || !countEl || !statusEl || !missingEl || !barEl) return;
+
         const athleteId = document.getElementById('physical-athlete-select').value;
         const date = document.getElementById('physical-date').value;
-        
-        const pulseP1 = parseInt(document.getElementById('pulse-p1').value);
-        const pulseP2 = parseInt(document.getElementById('pulse-p2').value);
-        const pulseP3 = parseInt(document.getElementById('pulse-p3').value);
 
-        if (!athleteId || !date || isNaN(pulseP1) || isNaN(pulseP2) || isNaN(pulseP3)) {
-            alert("Por favor rellene todos los campos obligatorios.");
+        const setStatus = (txt, cls) => {
+            statusEl.textContent = txt;
+            statusEl.className = 'badge mp-status-badge' + (cls ? ' ' + cls : '');
+        };
+
+        if (!athleteId) {
+            countEl.textContent = '--';
+            setStatus('Sin atleta', '');
+            missingEl.textContent = 'Seleccione un atleta y una fecha para ver las métricas pendientes.';
+            barEl.style.width = '0%';
+            panel.classList.remove('is-complete');
+            return;
+        }
+
+        const athlete = this.data.athletes.find(a => a.id === athleteId);
+        const catalog = this.getPhysicalMetricCatalog(athlete);
+        const missing = catalog.filter(m => this.parsePhysicalInput(m.id, m.type) === null);
+        const filled = catalog.length - missing.length;
+        const pct = catalog.length ? Math.round((filled / catalog.length) * 100) : 0;
+
+        countEl.textContent = filled + '/' + catalog.length;
+        barEl.style.width = pct + '%';
+
+        const complete = filled > 0 && missing.length === 0;
+        panel.classList.toggle('is-complete', complete);
+
+        if (filled === 0) {
+            setStatus('Sin datos', '');
+        } else if (complete) {
+            setStatus('Completa', 'success');
+        } else {
+            setStatus(pct + '%', 'warning');
+        }
+
+        const MAX_LIST = 6;
+        const names = missing.slice(0, MAX_LIST).map(m => m.label).join(' • ');
+        let txt = '';
+        if (!date) txt += 'Indique la fecha de la prueba para poder guardar. ';
+        if (filled === 0) {
+            txt += 'Ninguna métrica cargada todavía.';
+        } else if (missing.length === 0) {
+            txt += 'Ficha completa: todas las métricas de esta sección están registradas.';
+        } else {
+            txt += 'Faltan ' + missing.length + ': ' + names + (missing.length > MAX_LIST ? ' • +' + (missing.length - MAX_LIST) + ' más' : '');
+        }
+        missingEl.textContent = txt;
+    };
+
+    /**
+     * Recarga el formulario con la ficha guardada de esa fecha (o con el perfil del atleta)
+     * y actualiza el panel de completitud. Permite guardar de forma incremental.
+     */
+    HapkidoApp.prototype.prefillPhysicalForm = function() {
+        const athleteSel = document.getElementById('physical-athlete-select');
+        if (!athleteSel) return;
+        const athleteId = athleteSel.value;
+        const dateInput = document.getElementById('physical-date');
+        const date = dateInput ? dateInput.value : '';
+
+        // Limpiar todas las métricas para no arrastrar datos de otro atleta u otra sesión
+        PHYSICAL_METRIC_CATALOG.forEach(m => {
+            const el = document.getElementById(m.id);
+            if (el) el.value = '';
+        });
+        const fatEl = document.getElementById('fit-fat');
+        if (fatEl) fatEl.value = '';
+
+        const record = this.getPhysicalRecordForDate(athleteId, date);
+        if (record && record.physicalDetails) {
+            const det = record.physicalDetails;
+            PHYSICAL_METRIC_CATALOG.forEach(m => {
+                const el = document.getElementById(m.id);
+                if (!el) return;
+                const v = det[m.key];
+                if (v !== null && v !== undefined && !isNaN(parseFloat(v))) el.value = v;
+            });
+            if (det.fat !== null && det.fat !== undefined && !isNaN(parseFloat(det.fat))) fatEl.value = det.fat;
+        } else if (athleteId) {
+            const athlete = this.data.athletes.find(a => a.id === athleteId);
+            if (athlete) {
+                const h = document.getElementById('fit-height');
+                const w = document.getElementById('fit-weight');
+                if (h) h.value = athlete.height || '';
+                if (w) w.value = athlete.weight || '';
+            }
+        }
+
+        this.calculateLiveBodyFat();
+        this.updateMeasureProgressPanel();
+    };
+
+HapkidoApp.prototype.savePhysicalTest = function() {
+        const athleteSelect = document.getElementById('physical-athlete-select');
+        const dateInput = document.getElementById('physical-date');
+        const athleteId = athleteSelect ? athleteSelect.value : '';
+        const date = dateInput ? dateInput.value : '';
+
+        // Solo el atleta y la fecha son obligatorios: el resto se completa en varias sesiones
+        if (!athleteId || !date) {
+            this.showToast('Seleccione un atleta y la fecha de la prueba para guardar.', 'warning');
             return;
         }
 
         const athlete = this.data.athletes.find(a => a.id === athleteId);
         if (!athlete) return;
 
-        const ruffierIndex = ((pulseP1 + pulseP2 + pulseP3) - 200) / 10;
-        let ruffierLevel = "Malo";
-        if (ruffierIndex <= 0) ruffierLevel = "Excelente";
-        else if (ruffierIndex <= 5) ruffierLevel = "Bueno";
-        else if (ruffierIndex <= 10) ruffierLevel = "Medio";
-        else if (ruffierIndex <= 15) ruffierLevel = "Insuficiente";
+        const catalog = this.getPhysicalMetricCatalog(athlete);
+        const typedMetrics = catalog.filter(m => this.parsePhysicalInput(m.id, m.type) !== null);
+        if (typedMetrics.length === 0 && this.parsePhysicalInput('fit-fat', 'float') === null) {
+            this.showToast('Ingrese al menos una métrica antes de guardar.', 'warning');
+            return;
+        }
 
-        const height = parseFloat(document.getElementById('fit-height').value) || null;
-        const weight = parseFloat(document.getElementById('fit-weight').value) || null;
-        const waist = parseFloat(document.getElementById('fit-waist').value) || null;
-        const fat = parseFloat(document.getElementById('fit-fat').value) || null;
+        // Guardado incremental: si ya existe una ficha para ese atleta+fecha, se actualiza
+        const existing = this.getPhysicalRecordForDate(athleteId, date);
+        const merged = (existing && existing.physicalDetails) ? Object.assign({}, existing.physicalDetails) : {};
 
-        const wingspan = parseFloat(document.getElementById('fit-wingspan').value) || null;
-        const neck = parseFloat(document.getElementById('fit-neck').value) || null;
-        const thigh = parseFloat(document.getElementById('fit-thigh').value) || null;
-        const skinfoldTri = parseFloat(document.getElementById('fit-skinfold-tri').value) || null;
-        const skinfoldAbd = parseFloat(document.getElementById('fit-skinfold-abd').value) || null;
-        const rhr = parseInt(document.getElementById('fit-rhr').value) || null;
+        // Solo sobrescriben las métricas tipeadas en esta sesión (las vacías conservan lo guardado)
+        catalog.forEach(m => {
+            const v = this.parsePhysicalInput(m.id, m.type);
+            if (v !== null) merged[m.key] = v;
+        });
 
-        const pushups = parseInt(document.getElementById('fit-pushups').value) || null;
-        const situps = parseInt(document.getElementById('fit-situps').value) || null;
-        const plank = parseInt(document.getElementById('fit-plank').value) || null;
-        const grip = parseFloat(document.getElementById('fit-grip').value) || null;
-
-        const jumpVertical = parseFloat(document.getElementById('fit-jump-vertical').value) || null;
-        const jumpHorizontal = parseFloat(document.getElementById('fit-jump-horizontal').value) || null;
-        const cooper = parseInt(document.getElementById('fit-cooper').value) || null;
-
-        const flexibility = parseInt(document.getElementById('fit-flexibility').value) || null;
-        const split = parseFloat(document.getElementById('fit-split').value) || null;
-        const kickFlex = parseFloat(document.getElementById('fit-kick-flex').value) || null;
-        const balance = parseInt(document.getElementById('fit-balance').value) || null;
-
-        const agility = parseFloat(document.getElementById('fit-agility').value) || null;
-        const shuttle = parseFloat(document.getElementById('fit-shuttle').value) || null;
-        const reaction = parseFloat(document.getElementById('fit-reaction').value) || null;
-
-        const kickSpeed = parseInt(document.getElementById('fit-kick-speed').value) || null;
-        const anaerobic = parseInt(document.getElementById('fit-anaerobic').value) || null;
+        const fat = this.parsePhysicalInput('fit-fat', 'float');
+        if (fat !== null) merged.fat = fat;
 
         // Technical martial aspects (Hyungs/Hosinsul/Weapons) are evaluated in belt exams (hapkido-exams.js)
-        const scoreHyungs = null;
-        const scoreHosinsul = null;
-        const scoreWeapons = null;
+        if (merged.scoreHyungs === undefined) merged.scoreHyungs = null;
+        if (merged.scoreHosinsul === undefined) merged.scoreHosinsul = null;
+        if (merged.scoreWeapons === undefined) merged.scoreWeapons = null;
+
+        // Índice de Ruffier solo cuando los 3 pulsos están completos
+        const p1 = merged.pulseP1, p2 = merged.pulseP2, p3 = merged.pulseP3;
+        if (typeof p1 === 'number' && typeof p2 === 'number' && typeof p3 === 'number') {
+            const ruffierIndex = ((p1 + p2 + p3) - 200) / 10;
+            let ruffierLevel = "Malo";
+            if (ruffierIndex <= 0) ruffierLevel = "Excelente";
+            else if (ruffierIndex <= 5) ruffierLevel = "Bueno";
+            else if (ruffierIndex <= 10) ruffierLevel = "Medio";
+            else if (ruffierIndex <= 15) ruffierLevel = "Insuficiente";
+            merged.ruffierIndex = ruffierIndex;
+            merged.ruffierLevel = ruffierLevel;
+        } else {
+            merged.ruffierIndex = null;
+            merged.ruffierLevel = null;
+        }
 
         // Update athlete profile dynamically
-        if (height) athlete.height = height;
-        if (weight) athlete.weight = weight;
-
-        const physicalDetails = {
-            pulseP1, pulseP2, pulseP3,
-            ruffierIndex, ruffierLevel,
-            rhr,
-            height,
-            weight,
-            waist,
-            fat,
-            wingspan,
-            neck,
-            thigh,
-            skinfoldTri,
-            skinfoldAbd,
-            pushups,
-            situps,
-            plank,
-            grip,
-            jumpVertical,
-            jumpHorizontal,
-            cooper,
-            flexibility,
-            split,
-            kickFlex,
-            balance,
-            agility,
-            shuttle,
-            reaction,
-            kickSpeed,
-            anaerobic,
-            scoreHyungs,
-            scoreHosinsul,
-            scoreWeapons
-        };
-
-        // Deportivas specific fields, only if deportivo modality is active
-        if (athlete.modalities && athlete.modalities.deportivo) {
-            physicalDetails.jumpLong = parseFloat(document.getElementById('jump-long').value) || null;
-            physicalDetails.jumpHigh = parseFloat(document.getElementById('jump-high').value) || null;
-            physicalDetails.scoreFiguresSin = parseFloat(document.getElementById('score-figures-sin').value) || null;
-            physicalDetails.scoreFiguresCon = parseFloat(document.getElementById('score-figures-con').value) || null;
-            physicalDetails.scoreDemo = parseFloat(document.getElementById('score-demo').value) || null;
-        }
+        if (merged.height) athlete.height = merged.height;
+        if (merged.weight) athlete.weight = merged.weight;
 
         // Run physical metrics evaluation
         const age = this.calculateAge(athlete.birthdate);
-        physicalDetails.evalResults = this.evaluatePhysicalMetrics(age, athlete.gender, physicalDetails, athlete);
+        merged.evalResults = this.evaluatePhysicalMetrics(age, athlete.gender, merged, athlete);
 
-        const record = {
-            id: 'rec_' + Date.now(),
-            athleteId,
-            date,
-            type: 'FISICA',
-            physicalDetails
-        };
-
-        this.data.records.push(record);
+        const isNew = !existing;
+        if (existing) {
+            existing.physicalDetails = merged;
+        } else {
+            this.data.records.push({
+                id: 'rec_' + Date.now(),
+                athleteId,
+                date,
+                type: 'FISICA',
+                physicalDetails: merged
+            });
+        }
         this.saveData();
 
-        document.getElementById('physical-test-form').reset();
-        document.getElementById('ruffier-result-panel').innerHTML = `
-            <span>Índice de Ruffier: <strong id="ruffier-index-val">--</strong></span>
-            <span class="badge" id="ruffier-level-badge">Estado: --</span>
-        `;
+        // Feedback: qué se guardó y qué sigue pendiente
+        const missing = catalog.filter(m => this.parsePhysicalInput(m.id, m.type) === null);
+        if (missing.length === 0) {
+            this.showToast('Ficha completa guardada (' + catalog.length + '/' + catalog.length + ' métricas).', 'success');
+        } else {
+            const MAX_LIST = 4;
+            const names = missing.slice(0, MAX_LIST).map(m => m.label).join(', ');
+            const more = missing.length > MAX_LIST ? ' y ' + (missing.length - MAX_LIST) + ' más' : '';
+            this.showToast('Progreso guardado (' + (catalog.length - missing.length) + '/' + catalog.length + '). Faltan: ' + names + more + '.', 'success');
+        }
+
+        this.updateMeasureProgressPanel();
 
         // Check if first physical test to auto-display the training plan
-        const isFirstTest = this.data.records.filter(r => r.athleteId === athleteId && r.type === 'FISICA').length === 1;
+        const isFirstTest = isNew && this.data.records.filter(r => r.athleteId === athleteId && r.type === 'FISICA').length === 1;
         if (isFirstTest) {
+            const record = this.data.records.find(r => r.athleteId === athleteId && r.type === 'FISICA');
             const planHTML = this.generateTrainingPlanHTML(athlete, record);
             document.getElementById('plan-modal-body').innerHTML = planHTML;
             document.getElementById('plan-modal').classList.add('active');
-            
+
             // Set listener for modal close to redirect
             document.getElementById('close-plan-modal').onclick = () => {
                 document.getElementById('plan-modal').classList.remove('active');
@@ -247,7 +387,7 @@ HapkidoApp.prototype.savePhysicalTest = function() {
                 document.getElementById('analysis-athlete-select').value = athleteId;
                 this.loadAthleteAnalysis(athleteId);
             };
-            
+
             const acceptBtn = document.querySelector('#plan-modal .primary-btn');
             if (acceptBtn) {
                 acceptBtn.onclick = () => {
@@ -257,11 +397,6 @@ HapkidoApp.prototype.savePhysicalTest = function() {
                     this.loadAthleteAnalysis(athleteId);
                 };
             }
-        } else {
-            alert("Ficha de evaluación fisiológica y técnica registrada con éxito.");
-            this.navigateTo('historial');
-            document.getElementById('analysis-athlete-select').value = athleteId;
-            this.loadAthleteAnalysis(athleteId);
         }
     }
 
@@ -497,17 +632,19 @@ HapkidoApp.prototype.evaluatePhysicalMetrics = function(age, gender, details, at
         }
 
         const idx = details.ruffierIndex;
-        let ruffierEval = { score: 1, level: "Deficiente", cls: "danger" };
-        if (idx <= 0) ruffierEval = { score: 10, level: "Excelente", cls: "success" };
-        else if (idx <= 2) ruffierEval = { score: 9, level: "Excelente", cls: "success" };
-        else if (idx <= 5) ruffierEval = { score: 8, level: "Bueno", cls: "success" };
-        else if (idx <= 7.5) ruffierEval = { score: 7, level: "Bueno", cls: "success" };
-        else if (idx <= 10) ruffierEval = { score: 6, level: "Medio", cls: "warning" };
-        else if (idx <= 12.5) ruffierEval = { score: 5, level: "Medio", cls: "warning" };
-        else if (idx <= 15) ruffierEval = { score: 4, level: "Insuficiente", cls: "danger" };
-        else if (idx <= 17.5) ruffierEval = { score: 3, level: "Insuficiente", cls: "danger" };
-        else if (idx <= 20) ruffierEval = { score: 2, level: "Deficiente", cls: "danger" };
-        else ruffierEval = { score: 1, level: "Deficiente", cls: "danger" };
+        let ruffierEval = null;
+        if (typeof idx === 'number' && !isNaN(idx)) {
+            if (idx <= 0) ruffierEval = { score: 10, level: "Excelente", cls: "success" };
+            else if (idx <= 2) ruffierEval = { score: 9, level: "Excelente", cls: "success" };
+            else if (idx <= 5) ruffierEval = { score: 8, level: "Bueno", cls: "success" };
+            else if (idx <= 7.5) ruffierEval = { score: 7, level: "Bueno", cls: "success" };
+            else if (idx <= 10) ruffierEval = { score: 6, level: "Medio", cls: "warning" };
+            else if (idx <= 12.5) ruffierEval = { score: 5, level: "Medio", cls: "warning" };
+            else if (idx <= 15) ruffierEval = { score: 4, level: "Insuficiente", cls: "danger" };
+            else if (idx <= 17.5) ruffierEval = { score: 3, level: "Insuficiente", cls: "danger" };
+            else if (idx <= 20) ruffierEval = { score: 2, level: "Deficiente", cls: "danger" };
+            else ruffierEval = { score: 1, level: "Deficiente", cls: "danger" };
+        }
 
         // Evaluation of new combat metrics
         const rhrBrackets = { excel: 50, good: 60, avg: 72, poor: 85 };
@@ -602,7 +739,8 @@ HapkidoApp.prototype.evaluatePhysicalMetrics = function(age, gender, details, at
         const avgScore = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
         let globalLevel = "Medio";
         let globalCls = "warning";
-        if (avgScore >= 8.5) { globalLevel = "Excelente"; globalCls = "success"; }
+        if (scores.length === 0) { globalLevel = "Sin datos"; globalCls = "warning"; }
+        else if (avgScore >= 8.5) { globalLevel = "Excelente"; globalCls = "success"; }
         else if (avgScore >= 7.0) { globalLevel = "Bueno"; globalCls = "success"; }
         else if (avgScore >= 4.5) { globalLevel = "Medio"; globalCls = "warning"; }
         else if (avgScore >= 3.0) { globalLevel = "Insuficiente"; globalCls = "danger"; }
@@ -2302,33 +2440,33 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
             
             // Cardiovascular & Resistencia
             { name: "FC en Reposo Basal", val: details.rhr ? `${details.rhr} lpm` : "--", score: evalResults.rhr ? evalResults.rhr.score.toFixed(1) : "--", level: evalResults.rhr?.level, cls: evalResults.rhr?.cls },
-            { name: "Test de Ruffier-Dickson", val: details.ruffierIndex !== undefined ? `P1:${details.p1 || '--'} P2:${details.p2 || '--'} P3:${details.p3 || '--'} (Índice: ${details.ruffierIndex.toFixed(1)})` : "--", score: evalResults.ruffier ? evalResults.ruffier.score.toFixed(1) : "--", level: details.ruffierLevel, cls: details.ruffierIndex > 10 ? "danger" : (details.ruffierIndex > 5 ? "warning" : "success") },
+            { name: "Test de Ruffier-Dickson", val: details.ruffierIndex != null ? `P1:${details.pulseP1 || '--'} P2:${details.pulseP2 || '--'} P3:${details.pulseP3 || '--'} (Índice: ${details.ruffierIndex.toFixed(1)})` : "--", score: evalResults.ruffier ? evalResults.ruffier.score.toFixed(1) : "--", level: details.ruffierLevel || 'N/A', cls: details.ruffierIndex == null ? "primary" : (details.ruffierIndex > 10 ? "danger" : (details.ruffierIndex > 5 ? "warning" : "success")) },
             { name: "Test de Cooper (Resistencia)", val: details.cooper ? `${details.cooper} m` : "--", score: evalResults.cooper ? evalResults.cooper.score.toFixed(1) : "--", level: evalResults.cooper?.level, cls: evalResults.cooper?.cls },
             
             // Fuerza & Core
-            { name: "Flexiones de Pecho (1 min)", val: details.pushups !== undefined ? `${details.pushups} reps` : "--", score: evalResults.pushups ? evalResults.pushups.score.toFixed(1) : "--", level: evalResults.pushups?.level, cls: evalResults.pushups?.cls },
-            { name: "Abdominales (1 min)", val: details.situps !== undefined ? `${details.situps} reps` : "--", score: evalResults.situps ? evalResults.situps.score.toFixed(1) : "--", level: evalResults.situps?.level, cls: evalResults.situps?.cls },
-            { name: "Plancha Prona Isométrica", val: details.plank !== undefined ? `${details.plank} seg` : "--", score: evalResults.plank ? evalResults.plank.score.toFixed(1) : "--", level: evalResults.plank?.level, cls: evalResults.plank?.cls },
-            { name: "Fuerza de Agarre / Barra", val: details.grip !== undefined ? `${details.grip} seg` : "--", score: evalResults.grip ? evalResults.grip.score.toFixed(1) : "--", level: evalResults.grip?.level, cls: evalResults.grip?.cls },
+            { name: "Flexiones de Pecho (1 min)", val: details.pushups != null ? `${details.pushups} reps` : "--", score: evalResults.pushups ? evalResults.pushups.score.toFixed(1) : "--", level: evalResults.pushups?.level, cls: evalResults.pushups?.cls },
+            { name: "Abdominales (1 min)", val: details.situps != null ? `${details.situps} reps` : "--", score: evalResults.situps ? evalResults.situps.score.toFixed(1) : "--", level: evalResults.situps?.level, cls: evalResults.situps?.cls },
+            { name: "Plancha Prona Isométrica", val: details.plank != null ? `${details.plank} seg` : "--", score: evalResults.plank ? evalResults.plank.score.toFixed(1) : "--", level: evalResults.plank?.level, cls: evalResults.plank?.cls },
+            { name: "Fuerza de Agarre / Barra", val: details.grip != null ? `${details.grip} seg` : "--", score: evalResults.grip ? evalResults.grip.score.toFixed(1) : "--", level: evalResults.grip?.level, cls: evalResults.grip?.cls },
             
             // Potencia & Saltabilidad
-            { name: "Salto Vertical (Sargent)", val: details.jumpVertical !== undefined ? `${details.jumpVertical} cm` : "--", score: evalResults.jumpVertical ? evalResults.jumpVertical.score.toFixed(1) : "--", level: evalResults.jumpVertical?.level, cls: evalResults.jumpVertical?.cls },
-            { name: "Salto Horizontal a Pies Juntos", val: details.jumpHorizontal !== undefined ? `${details.jumpHorizontal} cm` : "--", score: evalResults.jumpHorizontal ? evalResults.jumpHorizontal.score.toFixed(1) : "--", level: evalResults.jumpHorizontal?.level, cls: evalResults.jumpHorizontal?.cls },
+            { name: "Salto Vertical (Sargent)", val: details.jumpVertical != null ? `${details.jumpVertical} cm` : "--", score: evalResults.jumpVertical ? evalResults.jumpVertical.score.toFixed(1) : "--", level: evalResults.jumpVertical?.level, cls: evalResults.jumpVertical?.cls },
+            { name: "Salto Horizontal a Pies Juntos", val: details.jumpHorizontal != null ? `${details.jumpHorizontal} cm` : "--", score: evalResults.jumpHorizontal ? evalResults.jumpHorizontal.score.toFixed(1) : "--", level: evalResults.jumpHorizontal?.level, cls: evalResults.jumpHorizontal?.cls },
             
             // Flexibilidad & Equilibrio
-            { name: "Flexibilidad Sit & Reach", val: details.flexibility !== undefined ? `${details.flexibility} cm` : "--", score: evalResults.flexibility ? evalResults.flexibility.score.toFixed(1) : "--", level: evalResults.flexibility?.level, cls: evalResults.flexibility?.cls },
-            { name: "Apertura Split al Suelo", val: details.split !== undefined ? `${details.split} cm` : "--", score: evalResults.split ? evalResults.split.score.toFixed(1) : "--", level: evalResults.split?.level, cls: evalResults.split?.cls },
-            { name: "Flexibilidad Activa de Patada", val: details.kickFlex !== undefined ? `${details.kickFlex}%` : "--", score: evalResults.kickFlex ? evalResults.kickFlex.score.toFixed(1) : "--", level: evalResults.kickFlex?.level, cls: evalResults.kickFlex?.cls },
-            { name: "Equilibrio Flamenco", val: details.balance !== undefined ? `${details.balance} seg` : "--", score: evalResults.balance ? evalResults.balance.score.toFixed(1) : "--", level: evalResults.balance?.level, cls: evalResults.balance?.cls },
+            { name: "Flexibilidad Sit & Reach", val: details.flexibility != null ? `${details.flexibility} cm` : "--", score: evalResults.flexibility ? evalResults.flexibility.score.toFixed(1) : "--", level: evalResults.flexibility?.level, cls: evalResults.flexibility?.cls },
+            { name: "Apertura Split al Suelo", val: details.split != null ? `${details.split} cm` : "--", score: evalResults.split ? evalResults.split.score.toFixed(1) : "--", level: evalResults.split?.level, cls: evalResults.split?.cls },
+            { name: "Flexibilidad Activa de Patada", val: details.kickFlex != null ? `${details.kickFlex}%` : "--", score: evalResults.kickFlex ? evalResults.kickFlex.score.toFixed(1) : "--", level: evalResults.kickFlex?.level, cls: evalResults.kickFlex?.cls },
+            { name: "Equilibrio Flamenco", val: details.balance != null ? `${details.balance} seg` : "--", score: evalResults.balance ? evalResults.balance.score.toFixed(1) : "--", level: evalResults.balance?.level, cls: evalResults.balance?.cls },
             
             // Velocidad, Agilidad & Reflejos
-            { name: "Sprint 10m Planos", val: details.agility !== undefined ? `${details.agility} seg` : "--", score: evalResults.agility ? evalResults.agility.score.toFixed(1) : "--", level: evalResults.agility?.level, cls: evalResults.agility?.cls },
-            { name: "Shuttle Run 4×10m", val: details.shuttle !== undefined ? `${details.shuttle} seg` : "--", score: evalResults.shuttle ? evalResults.shuttle.score.toFixed(1) : "--", level: evalResults.shuttle?.level, cls: evalResults.shuttle?.cls },
-            { name: "Tiempo de Reacción Técnica", val: details.reaction !== undefined ? `${details.reaction} seg` : "--", score: evalResults.reaction ? evalResults.reaction.score.toFixed(1) : "--", level: evalResults.reaction?.level, cls: evalResults.reaction?.cls },
+            { name: "Sprint 10m Planos", val: details.agility != null ? `${details.agility} seg` : "--", score: evalResults.agility ? evalResults.agility.score.toFixed(1) : "--", level: evalResults.agility?.level, cls: evalResults.agility?.cls },
+            { name: "Shuttle Run 4×10m", val: details.shuttle != null ? `${details.shuttle} seg` : "--", score: evalResults.shuttle ? evalResults.shuttle.score.toFixed(1) : "--", level: evalResults.shuttle?.level, cls: evalResults.shuttle?.cls },
+            { name: "Tiempo de Reacción Técnica", val: details.reaction != null ? `${details.reaction} seg` : "--", score: evalResults.reaction ? evalResults.reaction.score.toFixed(1) : "--", level: evalResults.reaction?.level, cls: evalResults.reaction?.cls },
             
             // Rendimiento Específico de Combate
-            { name: "Velocidad de Patada FSKT (10s)", val: details.kickSpeed !== undefined ? `${details.kickSpeed} reps` : "--", score: evalResults.kickSpeed ? evalResults.kickSpeed.score.toFixed(1) : "--", level: evalResults.kickSpeed?.level, cls: evalResults.kickSpeed?.cls },
-            { name: "Ráfaga de Golpeo 30s", val: details.anaerobic !== undefined ? `${details.anaerobic} reps` : "--", score: evalResults.anaerobic ? evalResults.anaerobic.score.toFixed(1) : "--", level: evalResults.anaerobic?.level, cls: evalResults.anaerobic?.cls }
+            { name: "Velocidad de Patada FSKT (10s)", val: details.kickSpeed != null ? `${details.kickSpeed} reps` : "--", score: evalResults.kickSpeed ? evalResults.kickSpeed.score.toFixed(1) : "--", level: evalResults.kickSpeed?.level, cls: evalResults.kickSpeed?.cls },
+            { name: "Ráfaga de Golpeo 30s", val: details.anaerobic != null ? `${details.anaerobic} reps` : "--", score: evalResults.anaerobic ? evalResults.anaerobic.score.toFixed(1) : "--", level: evalResults.anaerobic?.level, cls: evalResults.anaerobic?.cls }
         ];
 
         return rows.map(r => `
@@ -2401,7 +2539,7 @@ HapkidoApp.prototype.generateTrainingPlanHTML = function(athlete, physRecord) {
                         <div><strong>% Grasa:</strong> ${details.fat ? details.fat.toFixed(1) + '%' : '--'}</div>
                         <div><strong>IMC:</strong> ${evalResults.imc ? evalResults.imc.toFixed(2) + ' (' + (evalResults.imcLevel || 'N/A') + ')' : '--'}</div>
                         <div><strong>Ape Index:</strong> ${evalResults.apeIndex ? evalResults.apeIndex.toFixed(3) : '--'}</div>
-                        <div><strong>Índice Ruffier:</strong> ${details.ruffierIndex !== undefined ? details.ruffierIndex.toFixed(1) + ' (' + (details.ruffierLevel || 'N/A') + ')' : '--'}</div>
+                        <div><strong>Índice Ruffier:</strong> ${details.ruffierIndex != null ? details.ruffierIndex.toFixed(1) + ' (' + (details.ruffierLevel || 'N/A') + ')' : '--'}</div>
                     </div>
                 </div>
 

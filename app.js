@@ -540,16 +540,12 @@ class HapkidoApp {
                 if (!athleteId) {
                     depBlock.style.display = 'none';
                     this.updatePhysicalFormLabels(false);
+                    this.prefillPhysicalForm();
                     return;
                 }
 
                 const athlete = this.data.athletes.find(a => a.id === athleteId);
                 if (athlete) {
-                    // Autofill height and weight
-                    document.getElementById('fit-height').value = athlete.height || '';
-                    document.getElementById('fit-weight').value = athlete.weight || '';
-                    this.calculateLiveBodyFat();
-
                     const isInf = this.calculateAge(athlete.birthdate) < 12;
                     this.updatePhysicalFormLabels(isInf);
 
@@ -564,7 +560,20 @@ class HapkidoApp {
                         depBlock.style.display = 'none';
                     }
                 }
+
+                // Carga la ficha guardada de esa fecha (o el perfil del atleta) + panel de completitud
+                this.prefillPhysicalForm();
             };
+        }
+
+        const physDate = document.getElementById('physical-date');
+        if (physDate) {
+            physDate.onchange = () => this.prefillPhysicalForm();
+            if (!physDate.value) {
+                const d = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                physDate.value = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+            }
         }
 
         // Pulse inputs live index calculation
@@ -626,6 +635,21 @@ class HapkidoApp {
             physicalForm.onsubmit = (e) => {
                 e.preventDefault();
                 this.savePhysicalTest();
+            };
+            // Panel de completitud en vivo mientras se capturan las mediciones
+            physicalForm.oninput = () => this.updateMeasureProgressPanel();
+            physicalForm.onchange = () => this.updateMeasureProgressPanel();
+            physicalForm.onreset = () => {
+                setTimeout(() => {
+                    const rp = document.getElementById('ruffier-result-panel');
+                    if (rp) {
+                        rp.innerHTML = `
+                            <span>Índice de Ruffier: <strong id="ruffier-index-val">--</strong></span>
+                            <span class="badge" id="ruffier-level-badge">Estado: --</span>
+                        `;
+                    }
+                    this.updateMeasureProgressPanel();
+                }, 0);
             };
         }
 

@@ -7,10 +7,14 @@ y este proyecto adherce al [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Added
+- **Guardado incremental de mediciones físicas:** La ficha física solo exige atleta y fecha; las métricas se van capturando en varias sesiones. Nuevo panel "Completitud de la ficha" con contador, barra de progreso y lista de métricas pendientes en vivo. Se reutiliza la ficha del atleta+fecha (upsert con merge) para no duplicar registros, se recarga automáticamente al cambiar de atleta/fecha y el botón pasó a "Guardar Mediciones".
+
 ### Fixed
 - **Impresión de planilla en blanco:** El CSS de impresión (`@media print`) ocultaba todos los elementos hijos de `#printable-area` porque la regla `body * { visibility: hidden !important }` no era sobrescrita para la planilla de campo. Se agregó `#printable-area, #printable-area * { visibility: visible !important }` en el bloque de impresión de `styles.css`.
 - **`showToast()` no definido:** El método `showToast()` era invocado en `toggleOperatingMode()` y en la exportación CSV de atletas/evaluaciones, pero nunca fue definido en la clase `HapkidoApp`. Se implementó el método con notificaciones toast visuales que se auto-eliminan a los 4 segundos.
 - **Meta tag deprecada:** Se agregó `<meta name="mobile-web-app-capable" content="yes">` en `index.html` para reemplazar la versión deprecada `apple-mobile-web-app-capable`.
+- **Null-safety en fichas parciales:** El Índice Ruffier y otras métricas sin dato ahora muestran `--`/`Pendiente` en dashboard, evolución, historial e impresión (antes `toFixed` sobre `null` podía romper la vista y `null <= 0` calificaba Ruffier como "Excelente"). Corregidas también las claves legacy `details.p1/p2/p3` en la fila de impresión del Ruffier.
 
 ### Added
 - **Documentación README.md:** Documentación completa del proyecto con objetivos de la aplicación, funcionalidades detalladas (12 módulos), roles y permisos, stack tecnológico, estructura de archivos, guía de instalación y uso como PWA.
