@@ -8,6 +8,14 @@ y este proyecto adherce al [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Added
+- **Analizador determinista de combate (Fase 1):** Nuevo módulo `hapkido-analysis.js` que clasifica el estilo de pelea (Dominante explosivo, Explosivo técnico, Presión por volumen, Contraataque defensivo, Técnico táctico, etc.) a partir de los datos por round que ya captura el marcador (puntos, técnicas de 1/2/3 pts, kyongos, gamchoms). Calcula curva de fatiga R2-vs-R1, disciplina, fortalezas/debilidades y recomendaciones con evidencia numérica, cruzadas con la última ficha física (Ruffier, cadencia de patada, ráfaga 30s). Nuevo panel "Análisis de Combate y Estilo de Pelea" en Historial (respeta filtros de tiempo).
+- **Perfil de combate subjetivo del entrenador:** Nuevo modal accesible solo desde el listado de atletas (roles instructor/admin) con 8 habilidades puntuadas 1-10 (Explosividad, Derribos/Proyecciones, Patadas, Golpes, Disciplina/Temperamento, Resistencia/Recuperación, Lectura Táctica/Adaptación, Guardia/Defensa) con rúbrica explicativa y observaciones. Se guarda en `athlete.combatProfile`, se muestra con barras en el panel de análisis y alimenta el "Índice de Combate" y la predicción orientativa (combinada con la forma oficial reciente; con descargo explícito de que no garantiza resultados).
+- **Predicción orientativa:** Heurística transparente perfil subjetivo (50%) + margen oficial promedio (50%) que emite etiqueta (Favorito claro leve / Paridad / Desventaja) solo como referencia para planificar combates.
+
+### Fixed
+- **Edición de atleta borraba campos extra:** `saveAthlete()` reemplazaba el objeto atleta completo al editar, perdiendo campos adicionales como `combatProfile` (y potencialmente `status`). Ahora preserva los campos extra con `Object.assign`.
+
+### Added
 - **Guardado incremental de mediciones físicas:** La ficha física solo exige atleta y fecha; las métricas se van capturando en varias sesiones. Nuevo panel "Completitud de la ficha" con contador, barra de progreso y lista de métricas pendientes en vivo. Se reutiliza la ficha del atleta+fecha (upsert con merge) para no duplicar registros, se recarga automáticamente al cambiar de atleta/fecha y el botón pasó a "Guardar Mediciones".
 
 ### Fixed

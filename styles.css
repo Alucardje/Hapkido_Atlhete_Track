@@ -6241,6 +6241,163 @@ body.mode-dojang #sync-provider-select option[value="fevehapkido_api"] {
     line-height: 1.35;
 }
 
+/* ===== Combat Profile Modal (subjective instructor evaluation) ===== */
+.cp-note {
+    font-size: 12px;
+    color: var(--text-muted, #9ca3af);
+    margin-bottom: 16px;
+    line-height: 1.45;
+}
+
+.cp-metric {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color, #2d333b);
+    border-radius: 8px;
+    background: rgba(148, 163, 184, 0.04);
+}
+
+.cp-metric-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.cp-metric-head label {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0;
+}
+
+.cp-metric-value {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--primary, #38bdf8);
+    background: rgba(56, 189, 248, 0.12);
+    border-radius: 6px;
+    padding: 2px 10px;
+    min-width: 34px;
+    text-align: center;
+}
+
+.cp-range {
+    width: 100%;
+    margin: 10px 0 6px;
+    accent-color: var(--primary, #38bdf8);
+}
+
+.cp-rubric {
+    display: block;
+    font-size: 11.5px;
+    color: var(--text-muted, #9ca3af);
+    line-height: 1.4;
+}
+
+/* ===== Deterministic Combat Analysis Panel ===== */
+.ca-summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.ca-chip {
+    background: var(--card-bg, #161b22);
+    border: 1px solid var(--border-color, #2d333b);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text-muted, #9ca3af);
+}
+
+.ca-chip strong {
+    display: block;
+    font-size: 15px;
+    color: var(--text-main, #e6edf3);
+    margin-top: 2px;
+}
+
+.ca-trend-success { color: var(--success, #22c55e) !important; }
+.ca-trend-warning { color: var(--warning, #f59e0b) !important; }
+.ca-trend-danger { color: var(--danger, #ef4444) !important; }
+
+.ca-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.ca-card {
+    border: 1px solid var(--border-color, #2d333b);
+    border-radius: 10px;
+    padding: 14px;
+    background: var(--card-bg, #161b22);
+}
+
+.ca-card h4 {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: var(--primary, #38bdf8);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ca-card ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.ca-card ul li {
+    margin-bottom: 6px;
+}
+
+.ca-card p {
+    font-size: 13px;
+}
+
+.ca-full {
+    grid-column: 1 / -1;
+}
+
+.ca-prediction {
+    border-left: 3px solid var(--accent, #a78bfa);
+}
+
+.cp-bar-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 40px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.cp-bar-track {
+    height: 8px;
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.cp-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--primary, #38bdf8);
+}
+
+@media (max-width: 600px) {
+    .cp-bar-row {
+        grid-template-columns: 110px 1fr 36px;
+        font-size: 12px;
+    }
+}
+
 
 
 

@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <!-- Local Chart.js for interactive analytics -->
     <script defer src="vendor/chartjs/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20261005-04">
+    <link rel="stylesheet" href="styles.css?v=20261016-01">
 </head>
 <body>
     <div class="app-container">
@@ -539,6 +539,32 @@
                                     <button type="submit" class="primary-btn">Guardar Atleta</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal: Perfil de Combate del Atleta (evaluación subjetiva del entrenador) -->
+                <div class="modal" id="combat-profile-modal" role="dialog" aria-modal="true" aria-labelledby="combat-profile-modal-title">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="combat-profile-modal-title"><i class="fa-solid fa-people-martial-arts"></i> Perfil de Combate</h2>
+                            <span class="close-modal" id="close-combat-profile-modal">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <p id="cp-athlete-display" style="margin-bottom: 6px;"></p>
+                            <input type="hidden" id="cp-athlete-id">
+                            <p class="cp-note">Evaluación subjetiva del entrenador (1-10 por habilidad). Sirve como referencia cuando no hay combates oficiales recientes y alimenta el Índice de Combate junto con la forma reciente del atleta.</p>
+                            <div id="combat-profile-metrics">
+                                <!-- Dinámico desde COMBAT_PROFILE_CATALOG -->
+                            </div>
+                            <div class="form-group">
+                                <label for="cp-notes">Observaciones del entrenador</label>
+                                <textarea id="cp-notes" rows="3" placeholder="Ej: Mejoró las entradas con barrido tras dos semanas de trabajo en distancias cortas."></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-cancel" id="btn-cancel-combat-profile">Cancelar</button>
+                                <button type="button" class="primary-btn" id="btn-save-combat-profile">Guardar Perfil</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1142,6 +1168,16 @@
                             </div>
                             <div class="panel-body" id="athlete-plan-content">
                                 <!-- Dinámico -->
+                            </div>
+                        </div>
+
+                        <!-- Análisis Determinista de Combate + Perfil de Combate -->
+                        <div class="panel-card" id="athlete-combat-analysis-card" style="margin-bottom: 24px;">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-people-martial-arts"></i> Análisis de Combate y Estilo de Pelea</h2>
+                            </div>
+                            <div class="panel-body" id="athlete-combat-analysis-content">
+                                <!-- Dinámico (hapkido-analysis.js) -->
                             </div>
                         </div>
 
@@ -2984,18 +3020,19 @@
     </div>
 
     <!-- Hapkido App Modules -->
-    <script src="app.js?v=20261015-01"></script>
-    <script src="hapkido-data.js?v=20261015-01"></script>
-    <script src="hapkido-auth.js?v=20261015-01"></script>
-    <script src="hapkido-athletes.js?v=20261015-01"></script>
-    <script src="hapkido-physical.js?v=20261015-01"></script>
-    <script src="hapkido-exams.js?v=20261015-01"></script>
-    <script src="hapkido-combat.js?v=20261015-01"></script>
-    <script src="hapkido-schools.js?v=20261015-01"></script>
-    <script src="hapkido-torneos.js?v=20261015-01"></script>
-    <script src="hapkido-vocab.js?v=20261015-01"></script>
-    <script src="hapkido-timer.js?v=20261015-01"></script>
-    <script src="hapkido-sync.js?v=20261015-01"></script>
-    <script src="hapkido-init.js?v=20261015-01"></script>
+    <script src="app.js?v=20261016-01"></script>
+    <script src="hapkido-data.js?v=20261016-01"></script>
+    <script src="hapkido-auth.js?v=20261016-01"></script>
+    <script src="hapkido-athletes.js?v=20261016-01"></script>
+    <script src="hapkido-physical.js?v=20261016-01"></script>
+    <script src="hapkido-exams.js?v=20261016-01"></script>
+    <script src="hapkido-combat.js?v=20261016-01"></script>
+    <script src="hapkido-analysis.js?v=20261016-01"></script>
+    <script src="hapkido-schools.js?v=20261016-01"></script>
+    <script src="hapkido-torneos.js?v=20261016-01"></script>
+    <script src="hapkido-vocab.js?v=20261016-01"></script>
+    <script src="hapkido-timer.js?v=20261016-01"></script>
+    <script src="hapkido-sync.js?v=20261016-01"></script>
+    <script src="hapkido-init.js?v=20261016-01"></script>
 </body>
 </html>

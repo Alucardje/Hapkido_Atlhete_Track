@@ -218,6 +218,15 @@ HapkidoApp.prototype.renderAthletesList = function() {
             const safeDivision = this.escapeHTML(division);
             const safeId = this.escapeHTML(ath.id);
 
+            // Perfil de Combate (evaluación subjetiva): solo entrenador/administrador
+            let combatProfileBtn = '';
+            if (this.currentUser && (this.currentUser.role === 'instructor' || this.currentUser.role === 'admin')) {
+                const cpBadge = (ath.combatProfile && ath.combatProfile.scores)
+                    ? ' <span style="color: var(--success, #22c55e); margin-left:2px;" title="Perfil de combate registrado"><i class="fa-solid fa-circle-check" style="font-size:10px;"></i></span>'
+                    : '';
+                combatProfileBtn = `<button class="icon-btn" onclick="app.openCombatProfileModal('${safeId}')" title="Perfil de Combate (evaluación del entrenador)"><i class="fa-solid fa-people-martial-arts"></i>${cpBadge}</button>`;
+            }
+
             tr.innerHTML = `
                 <td><strong>${safeName}</strong>${alertBadge}</td>
                 <td>${age} años</td>
@@ -228,6 +237,7 @@ HapkidoApp.prototype.renderAthletesList = function() {
                 <td>${safeCategory} (${safeDivision})</td>
                 <td class="actions-cell">
                     <button class="icon-btn history" onclick="app.viewAthleteHistory('${safeId}')" title="Ver Histórico y Gráficos"><i class="fa-solid fa-chart-line"></i></button>
+                    ${combatProfileBtn}
                     <button class="icon-btn edit" onclick="app.openEditAthleteModal('${safeId}')" title="Editar Atleta"><i class="fa-solid fa-pen"></i></button>
                     <button class="icon-btn delete" onclick="app.deleteAthlete('${safeId}')" title="Eliminar Atleta"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
@@ -367,13 +377,13 @@ HapkidoApp.prototype.saveAthlete = function() {
         }
 
         if (id) {
-            // Edit mode
+            // Edit mode — preserve extra fields (combatProfile, status, createdAt, etc.)
             const index = this.data.athletes.findIndex(a => a.id === id);
             if (index !== -1) {
-                this.data.athletes[index] = {
+                this.data.athletes[index] = Object.assign({}, this.data.athletes[index], {
                     id, name, birthdate, gender, belt, weight, height, experience, school, isAyudante,
                     modalities: { tradicional: modTradicional, deportivo: modDeportivo }
-                };
+                });
                 // Sync user.rank when belt changes
                 const linkedUser = this.data.users.find(u => u.athleteId === id);
                 if (linkedUser) {
@@ -753,6 +763,7 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
         if (this.currentUser && this.currentUser.role === 'athlete') {
             athleteId = this.currentUser.athleteId;
         }
+        this._lastHistTimeframe = timeframe;
         const chartContainer = document.getElementById('progress-charts-container');
         if (!athleteId) {
             chartContainer.classList.add('hidden');
@@ -1184,6 +1195,9 @@ HapkidoApp.prototype.renderAthleteDashboard = function() {
     } else {
         document.getElementById('card-chart-combat').style.display = 'none';
     }
+
+    // Deterministic combat analysis panel (hapkido-analysis.js)
+    this.renderCombatAnalysisPanel(athleteId, timeframe);
 }
 
 

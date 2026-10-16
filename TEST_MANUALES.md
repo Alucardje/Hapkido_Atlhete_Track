@@ -898,6 +898,68 @@ INTENT: verificar_ficha_parcial_historial
 
 ---
 
+## FLUJO 14: Analizador Determinista de Combate + Perfil de Combate (ALTO)
+
+```
+ENTIDAD: seccion = historial (subtab progreso)
+ENTIDAD: panel_analisis = athlete-combat-analysis-card | athlete-combat-analysis-content
+ENTIDAD: modal_perfil = combat-profile-modal | cp-score-* | cp-notes
+CONTEXTO: sesion_activa = true, rol = instructor | admin
+DATOS: al menos 1 atleta deportivo con >=1 registro COMBATE guardado (idealmente 2+)
+
+INTENT: verificar_boton_perfil_solo_entrenador
+  -> PRECONDICION: sesion_activa = true, rol = instructor
+  -> ACCION: Navegar a Atletas
+  -> VERIFICAR: Cada atleta tiene un icono extra "people-martial-arts" en Acciones
+  -> VERIFICAR: El icono tiene mini-check verde si ya tiene perfil de combate guardado
+  -> ACCION: Cambiar de rol a estudiante (o abrir en ventana privada con login atleta)
+  -> VERIFICAR: El atleta NO ve el boton de perfil de combate (solo Historial/Editar/Eliminar si aplica)
+
+  -> SIGUIENTE: evaluar_perfil_subjetivo
+
+INTENT: evaluar_perfil_subjetivo
+  -> PRECONDICION: rol = instructor
+  -> ACCION: Clic en el icono de perfil de combate de un atleta
+  -> VERIFICAR: Se abre el modal "Perfil de Combate" con nombre/cinta/categoria del atleta
+  -> VERIFICAR: 8 metricas con slider 1-10 (Explosividad, Derribos, Patadas, Golpes, Disciplina, Resistencia/Recuperacion, Lectura Tactica, Guardia/Defensa) con su rubrica
+  -> ACCION: Mover sliders (ej: Patadas=8) y escribir observaciones
+  -> VERIFICAR: El numero junto al slider se actualiza en vivo
+  -> ACCION: Clic "Guardar Perfil"
+  -> VERIFICAR: Toast de exito; el icono en la lista ahora muestra check verde
+
+  -> SIGUIENTE: ver_panel_analisis
+
+INTENT: ver_panel_analisis
+  -> ACCION: Ir a Historial > seleccionar el atleta (con combates oficiales)
+  -> VERIFICAR: Aparece el panel "Analisis de Combate y Estilo de Pelea"
+  -> VERIFICAR: Bloque superior muestra las 5 barras del perfil subjetivo + Indice X/10 + etiqueta
+  -> VERIFICAR: Chips de resumen: Combats, Record V-D, Margen prom., Pts prom., Faltas prom., Tendencia
+  -> VERIFICAR: Tarjeta "Estilo de pelea" con badge clasificado (ej: Presion por volumen) + evidencia numerica
+  -> VERIFICAR: Tarjetas de Fatiga, Disciplina, Fortalezas, Debilidades, Recomendaciones y Cruce fisico
+  -> VERIFICAR: Card "Predicion orientativa" con indice, factores y descargo ("no garantiza resultados")
+  -> VERIFICAR: Console sin errores (null/undefined/toFixed)
+
+  -> SIGUIENTE: verificar_sin_datos
+
+INTENT: verificar_sin_datos
+  -> ACCION: Seleccionar un atleta sin combates ni perfil
+  -> VERIFICAR: Panel muestra empty-state explicativo (sin errores)
+  -> ACCION: Cambiar timeframe (3m/6m/1y) con combates antiguos
+  -> VERIFICAR: El analisis se recalcula segun el filtro de tiempo
+
+  -> SIGUIENTE: verificar_preservacion_editar
+
+INTENT: verificar_preservacion_editar
+  -> PRECONDICION: Atleta con perfil de combate guardado
+  -> ACCION: Editar cualquier dato del atleta (peso, cinturon) y guardar
+  -> VERIFICAR: El perfil de combate NO se borro (reabrir modal: valores intactos)
+  -> VERIFICAR: Sigue apareciendo el check verde en la lista
+
+  -> SIGUIENTE: siguiente_test
+```
+
+---
+
 ## Registro de Resultados
 
 ### Resumen de la Sesion
@@ -928,6 +990,7 @@ INTENT: verificar_ficha_parcial_historial
 | 11 | Aria Labels y Roles | Fix #12 | Bajo | | |
 | 12 | Manifest PWA | Fix #13 | Bajo | | |
 | 13 | Guardado Incremental Mediciones | n/a | Alto | | |
+| 14 | Analizador Combate + Perfil | n/a | Alto | | |
 
 **Leyenda:** PASS = pasa | FAIL = falla | WARN = advertencia | SKIP = no aplica
 

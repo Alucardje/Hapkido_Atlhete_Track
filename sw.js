@@ -4,7 +4,7 @@
  * Strategy: Network-First for Application Code (Instant Updates), Cache-First for Static Assets (100% Offline Capable)
  */
 
-const CACHE_NAME = 'hapkido-tracker-v20261015-01';
+const CACHE_NAME = 'hapkido-tracker-v20261016-01';
 
 const CORE_ASSETS = [
   './',

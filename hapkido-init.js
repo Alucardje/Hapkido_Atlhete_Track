@@ -24,6 +24,11 @@ const requiredMethods = [
     'updateOpponentDropdown', 'startCombatScoring', 'updateScoreboardUI',
     'addScore', 'addPenalty', 'removeScore', 'removePenalty',
     'changeRound', 'finishCombat', 'toggleTimer', 'resetTimer',
+    // Combat Analysis (hapkido-analysis.js)
+    'getCombatProfileCatalog', 'getCombatProfileIndex', 'getCombatProfileLabel',
+    'classifyFightStyle', 'analyzeCombatRecord', 'analyzeAthleteCombatForm',
+    'getCombatPrediction', 'openCombatProfileModal', 'saveCombatProfile',
+    'closeCombatProfileModal', 'renderCombatAnalysisPanel',
     // Physical (hapkido-physical.js)
     'updatePhysicalFormLabels', 'calculateLiveBodyFat',
     'getPhysicalMetricCatalog', 'parsePhysicalInput', 'getPhysicalRecordForDate',
