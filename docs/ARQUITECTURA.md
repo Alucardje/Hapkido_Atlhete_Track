@@ -985,7 +985,7 @@ const allowedHashes = ['#dashboard', '#combate', '#torneos', '#timer', '#manual'
 
 ## 12. Variables CSS (Design System)
 
-`styles.css` define un design system completo mediante CSS Custom Properties:
+Los archivos de `css/` (base.css y el resto de la carpeta) definen un design system completo mediante CSS Custom Properties:
 
 ```css
 :root {
@@ -1068,7 +1068,7 @@ Todas las dependencias están vendored localmente en `vendor/`. No se realizan p
 Navegador carga index.html
          │
          ▼
-Carga CSS (styles.css) + Fonts (Outfit/Orbitron)
+Carga CSS (css/*.css, 9 archivos en cascada) + Fonts (Outfit/Orbitron)
          │
          ▼
 Carga Chart.js (vendor)

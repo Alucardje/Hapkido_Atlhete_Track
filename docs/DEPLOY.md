@@ -181,16 +181,17 @@ Si un usuario tiene una versión cacheada y no actualiza:
 
 ### Estrategia actual: Query strings
 
-Los archivos CSS se cargan con un query string de versión:
+Los archivos CSS (carpeta `css/`, 9 archivos temáticos) se cargan con un query string de versión:
 
 ```html
-<link rel="stylesheet" href="styles.css?v=20260901-2">
+<link rel="stylesheet" href="css/base.css?v=20261016-02">
+<!-- ... resto de los 9 archivos css/ en orden de cascada ... -->
 ```
 
-Cuando se modifique `styles.css`, actualizar el query string:
+Cuando se modifiquen los archivos CSS, actualizar el query string de **todos** en `index.html`:
 
 ```html
-<link rel="stylesheet" href="styles.css?v=20260902-1">
+<link rel="stylesheet" href="css/base.css?v=20261016-03">
 ```
 
 Esto fuerza al navegador a descargar la nueva versión ignorando la caché.

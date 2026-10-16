@@ -12,7 +12,7 @@ Cualquier modelo de lenguaje o programador humano que trabaje en este codigo deb
 ### 1.1. Programacion Organizada, Modular y Estructuradamente Limpia
 - **Separacion de Responsabilidades (SoC)**: Cada modulo JS extiende `HapkidoApp.prototype` y tiene una responsabilidad unica. No mezclar logica de distintos dominios en un solo archivo.
 - **Sin codigo espagueti ni duplicaciones**: Cada funcion debe tener un unico proposito claro, nombres descriptivos, y manejo de excepciones coherente.
-- **Legado monolitico - no agravar**: Los archivos grandes son `hapkido-physical.js` (2631 lineas), `index.html` (2975 lineas) y `styles.css` (5893 lineas). NO anadir funcionalidad que los haga crecer innecesariamente. Si un cambio encaja en un modulo existente, usarlo. Si se necesitan muchas funciones nuevas, proponer extraerlas a un modulo nuevo.
+- **Legado monolitico - no agravar**: Los archivos grandes son `hapkido-physical.js` (2631 lineas), `index.html` (~3000 lineas) y la carpeta `css/` (9 archivos tematicos, antes styles.css monolito). NO anadir funcionalidad que los haga crecer innecesariamente. Si un cambio encaja en un modulo existente, usarlo. Si se necesitan muchas funciones nuevas, proponer extraerlas a un modulo nuevo. El markup nuevo (modales, paneles) debe inyectarse desde JS, no agregar bloques estaticos a index.html.
 - **Mantenibilidad**: Comentar puntos criticos (logica de negocio, algoritmos de baremos, migraciones de datos) y preferir funciones puras.
 
 ### 1.2. Evidenciar el Codigo Disponible Antes de Cualquier Cambio
@@ -49,8 +49,17 @@ Hapkido Athlete Tracker/
 ├── README.md                           # Documentacion principal
 ├── CHANGELOG.md                        # Historial de versiones
 ├── CONTRIBUTING.md                     # Guia para contribuidores
-├── index.html                          # Punto de entrada SPA (2975 lineas)
-├── styles.css                          # Sistema de disenno completo (5893 lineas)
+├── index.html                          # Punto de entrada SPA (~3000 lineas)
+├── css/                                # Sistema de diseno (9 archivos tematicos, orden de cascada fijo)
+│   ├── base.css                        # Variables, reset, tipografia
+│   ├── layout.css                      # Grid de app, header, sidebar
+│   ├── components.css                  # Paneles, tablas, botones, badges, modales
+│   ├── combat.css                      # Scoreboard y panel de completitud
+│   ├── physical.css                    # Fichas, plan de entrenamiento, protocolos
+│   ├── roles-auth.css                  # Login, logout, reglas de visibilidad por rol
+│   ├── dashboard-manual.css            # Curriculum, responsive general, print #1
+│   ├── history-torneos-timer.css       # H2H, torneos, brackets, tatami timer
+│   └── themes-analysis.css             # Temas de rol, modo Dojang, print #2, analisis de combate
 ├── manifest.json                       # Web App Manifest (PWA)
 ├── sw.js                               # Service Worker (caché offline)
 ├── app.js                              # Clase core: routing, RBAC, sidebar, dashboard
@@ -232,7 +241,7 @@ Todas las funciones estan en el prototype de `HapkidoApp`. Las funciones critica
 - **Iconos:** Font Awesome 6 (vendored). Usar clases `fa-solid fa-*`.
 - **Fuentes:** Outfit (cuerpo), Orbitron (digital/scoreboard). Vendored en `vendor/fonts/`.
 - **Charts:** Chart.js (vendored). Instancias en `this.charts`. Destruir antes de recrear.
-- **Impresion:** Usar `@media print` en `styles.css`. El contenido imprimible va en `#printable-area` (fuera del DOM principal, se muestra solo en print).
+- **Impresion:** Usar `@media print` en los bloques existentes (`dashboard-manual.css`, `history-torneos-timer.css`, `themes-analysis.css`). El contenido imprimible va en `#printable-area` (fuera del DOM principal, se muestra solo en print).
 - **Prohibido:**
   - No introducir librerias externas sin aprobacion
   - No cambiar la identidad visual (colores, fuentes, layout) sin preguntar
@@ -246,9 +255,9 @@ Todas las funciones estan en el prototype de `HapkidoApp`. Las funciones critica
 - **Ninguno activo**. Los bugs de impresion, showToast y meta tag fueron corregidos en v1.0.1.
 
 ### 7.2. Archivos monoliticos a vigilar
-- `styles.css` (5893 lineas): Si se necesitan muchos estilos nuevos, considerar extraer a modulos CSS separados.
+- `css/` (9 archivos, ~6400 lineas totales): divididos desde styles.css en 2026-10-16 con corte secuencial (concatenar en orden reproduce el original). Nuevos estilos van en el archivo tematico que corresponda; NO reordenar los `<link>` de index.html.
 - `hapkido-physical.js` (2631 lineas): El modulo mas grande. Si crece mas, extraer funciones de scoring/baremos a un archivo separado.
-- `index.html` (2975 lineas): Los modales y secciones son extensos. Si se agregan muchas secciones, considerar lazy loading.
+- `index.html` (~3000 lineas): Los modales y secciones son extensos. El markup nuevo debe inyectarse desde JS (patron de paneles de analisis/plan); no agregar secciones estaticas grandes.
 
 ### 7.3. Prohibiciones explicitas
 - **No hardcodear secretos** en codigo.

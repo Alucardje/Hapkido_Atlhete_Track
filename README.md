@@ -119,7 +119,7 @@ Aplicación web progresiva (PWA) para la medición, evaluación y gestión integ
 ├── hapkido-timer.js        # Temporizador de tatami (4 modos)
 ├── hapkido-sync.js         # Sincronización nube y transferencia P2P
 ├── hapkido-init.js         # Bootstrap: instanciación y Service Worker
-├── styles.css              # Sistema de diseño completo (5893 líneas)
+├── css/                    # Estilos (9 archivos temáticos: base, layout, components, combat, physical, roles-auth, dashboard-manual, history-torneos-timer, themes-analysis)
 ├── manifest.json           # Web App Manifest (PWA)
 ├── sw.js                   # Service Worker (caché offline)
 ├── vendor/                 # Dependencias vendored (Chart.js, FA, fuentes)
