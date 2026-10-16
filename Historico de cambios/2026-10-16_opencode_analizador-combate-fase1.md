@@ -46,6 +46,7 @@ Contexto: descartada la idea de analisis de video con LLM (requiere backend/GPU 
 - Pendiente: prueba manual en navegador (FLUJO 14) por el usuario
 
 ## Siguientes Pasos (Fase 2, no implementada)
-- Captura exprés en descanso de round (chips: fatiga 1-5, le funciono/le fallo, tendencias del rival)
+- Captura exprés en descanso de round (chips: fatiga 1-5, le funciono/le fallo, tendencias del rival, "no pudo cerrar distancia (alcance)")
 - "Ficha de Esquina" imprimible para compartir con coach asesor
 - Incluir comparacion de perfiles subjetivos en el H2H
+- Flag "Al borde de KO técnico" (gap >= 10 pts): SOLO en el historial/panel del entrenador, NUNCA visible en el marcador en vivo (decision del usuario 2026-10-16 — evitar presion psicologica en pleno combate). Contexto: en San Cristobal una atleta gano por faltas rivales pero estuvo a 1 punto del KO tecnico (12 de 13); el margen debe alertar retroactivamente.
